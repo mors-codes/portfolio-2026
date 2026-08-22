@@ -126,7 +126,7 @@ export default function Hero() {
         <div className="inline-block text-left">
           <p
             ref={roleLabelsRef}
-            className="mb-4 ml-2 flex items-center gap-5 font-sans text-sm"
+            className="mb-2 ml-2 flex items-center gap-5 font-sans text-sm"
           >
             <span>Full Stack Developer</span>
             <span>/</span>
@@ -137,7 +137,7 @@ export default function Hero() {
           <AnimatedName ref={nameRef} />
           <p
             ref={yearRef}
-            className="-mt-2 text-right font-sans text-sm font-bold"
+            className="-mt-4 text-right font-sans text-sm font-bold"
           >
             2026
           </p>
@@ -153,7 +153,7 @@ export default function Hero() {
             width={480}
             height={480}
             priority
-            className="h-auto w-full max-w-[320px]"
+            className="h-auto w-full max-w-[300px]"
           />
         </div>
 

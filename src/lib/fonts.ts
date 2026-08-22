@@ -8,7 +8,7 @@ export const archivo = Archivo({
 
 export const inter = Inter({
   subsets: ["latin"],
-  weight: ["900"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
   variable: "--font-inter",
   display: "swap",
 });
