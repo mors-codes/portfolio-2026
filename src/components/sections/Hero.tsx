@@ -1,20 +1,121 @@
+"use client";
+
+import { useLayoutEffect, useRef } from "react";
+import { gsap } from "gsap";
 import Image from "next/image";
 import NavRow from "@/components/ui/NavRow";
+import AnimatedName from "@/components/ui/AnimatedName";
 
 export default function Hero() {
+  const eyebrowRef = useRef<HTMLParagraphElement>(null);
+  const logoRef = useRef<HTMLParagraphElement>(null);
+  const folioRef = useRef<HTMLDivElement>(null);
+  const roleLabelsRef = useRef<HTMLParagraphElement>(null);
+  const nameRef = useRef<HTMLHeadingElement>(null);
+  const yearRef = useRef<HTMLParagraphElement>(null);
+  const illustrationRef = useRef<HTMLDivElement>(null);
+  const navWrapRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    if (!nameRef.current) return;
+    const letters = nameRef.current.querySelectorAll(".letter");
+    if (letters.length === 0) return;
+
+    const center = (letters.length - 1) / 2;
+    const order = Array.from(letters)
+      .map((el, i) => ({ el, distance: Math.abs(i - center) }))
+      .sort((a, b) => a.distance - b.distance)
+      .map((item) => item.el);
+
+    gsap.set(letters, { y: "100%", opacity: 0 });
+    if (roleLabelsRef.current) {
+      gsap.set(roleLabelsRef.current, { x: -24, opacity: 0 });
+    }
+    if (yearRef.current) {
+      gsap.set(yearRef.current, { x: 24, opacity: 0 });
+    }
+    if (eyebrowRef.current) gsap.set(eyebrowRef.current, { y: -12, opacity: 0 });
+    if (logoRef.current) gsap.set(logoRef.current, { y: -12, opacity: 0 });
+    if (folioRef.current) gsap.set(folioRef.current, { y: -12, opacity: 0 });
+    if (illustrationRef.current) {
+      gsap.set(illustrationRef.current, { y: 24, opacity: 0 });
+    }
+    if (navWrapRef.current) {
+      gsap.set(navWrapRef.current, { y: 16, opacity: 0 });
+    }
+
+    const tl = gsap.timeline();
+
+    tl.to(
+      order,
+      {
+        y: "0%",
+        opacity: 1,
+        duration: 0.7,
+        ease: "back.out(1.7)",
+        stagger: 0.035,
+      },
+      0.1
+    );
+
+    if (roleLabelsRef.current) {
+      tl.to(
+        roleLabelsRef.current,
+        { x: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
+        0.9
+      );
+    }
+
+    if (yearRef.current) {
+      tl.to(
+        yearRef.current,
+        { x: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
+        1.3
+      );
+    }
+
+    tl.to(
+      [eyebrowRef.current, logoRef.current, folioRef.current].filter(Boolean),
+      { y: 0, opacity: 1, duration: 0.6, ease: "power3.out", stagger: 0.08 },
+      1.5
+    );
+
+    if (illustrationRef.current) {
+      tl.to(
+        illustrationRef.current,
+        { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" },
+        1.8
+      );
+    }
+
+    if (navWrapRef.current) {
+      tl.to(
+        navWrapRef.current,
+        { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
+        2.1
+      );
+    }
+  }, []);
+
   return (
     <section className="relative min-h-screen px-8 py-10 md:px-16 md:py-12">
       {/* Top row: eyebrow / logo / folio label */}
       <div className="relative flex items-start font-sans text-xs">
-        <p className="max-w-[160px] font-medium leading-snug">
+        <p
+          ref={eyebrowRef}
+          className="max-w-[160px] font-medium leading-snug"
+        >
           Open for work and collaborations
         </p>
 
-        <p className="absolute left-1/2 -translate-x-1/2 font-logo text-2xl">
+        <p
+          ref={logoRef}
+          className="absolute left-1/2 -translate-x-1/2 font-logo text-2xl"
+        >
           MORS.
         </p>
 
-        <div className="ml-auto font-medium leading-tight">
+        <div ref={folioRef} className="ml-auto font-medium leading-tight">
           <p className="pl-[30px]">-FOLIO</p>
           <p>PORTO</p>
         </div>
@@ -23,23 +124,29 @@ export default function Hero() {
       {/* Role labels + Name lockup + year, sharing one centered block */}
       <div className="mt-16 flex justify-center md:mt-20">
         <div className="inline-block text-left">
-          <p className="mb-6 ml-2 flex items-center gap-5 font-sans text-sm">
+          <p
+            ref={roleLabelsRef}
+            className="mb-4 ml-2 flex items-center gap-5 font-sans text-sm"
+          >
             <span>Full Stack Developer</span>
             <span>/</span>
             <span>UI Designer</span>
             <span>/</span>
             <span>AI Automation Specialist</span>
           </p>
-          <h1 className="font-display text-[16vw] font-black leading-[0.8] tracking-[-0.1em] md:text-[12vw]">
-            MorissMatias
-          </h1>
-          <p className="text-right font-sans text-sm font-bold">2026</p>
+          <AnimatedName ref={nameRef} />
+          <p
+            ref={yearRef}
+            className="-mt-2 text-right font-sans text-sm font-bold"
+          >
+            2026
+          </p>
         </div>
       </div>
 
       {/* Illustration + Numbered nav row, nav vertically centered on illustration */}
       <div className="relative mt-6">
-        <div className="flex justify-center">
+        <div ref={illustrationRef} className="flex justify-center">
           <Image
             src="/illustrations/hero-desk.svg"
             alt="Illustration of Moriss at his desk, working at a computer with his cat nearby"
@@ -50,7 +157,10 @@ export default function Hero() {
           />
         </div>
 
-        <div className="absolute inset-y-0 left-0 right-0 flex items-center">
+        <div
+          ref={navWrapRef}
+          className="absolute inset-y-0 left-0 right-0 flex items-center"
+        >
           <NavRow />
         </div>
       </div>
