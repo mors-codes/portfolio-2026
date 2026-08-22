@@ -1,4 +1,5 @@
 import Image from "next/image";
+import NavRow from "@/components/ui/NavRow";
 
 export default function Hero() {
   return (
@@ -37,40 +38,22 @@ export default function Hero() {
       </div>
 
       {/* Illustration + Numbered nav row, nav vertically centered on illustration */}
-<div className="relative mt-6">
-  <div className="flex justify-center">
-    <Image
-      src="/illustrations/hero-desk.svg"
-      alt="Illustration of Moriss at his desk, working at a computer with his cat nearby"
-      width={480}
-      height={480}
-      priority
-      className="h-auto w-full max-w-[320px]"
-    />
-  </div>
+      <div className="relative mt-6">
+        <div className="flex justify-center">
+          <Image
+            src="/illustrations/hero-desk.svg"
+            alt="Illustration of Moriss at his desk, working at a computer with his cat nearby"
+            width={480}
+            height={480}
+            priority
+            className="h-auto w-full max-w-[320px]"
+          />
+        </div>
 
-  <nav className="absolute inset-y-0 left-0 right-0 flex items-center justify-between font-sans text-sm">
-  <a href="#about" className="group">
-    <span className="font-mono-label block text-xs text-ink/50">01</span>
-    <span className="font-semibold">About</span>
-  </a>
-  <a href="#works" className="group">
-    <span className="font-mono-label block text-xs text-ink/50">02</span>
-    <span className="font-semibold">Works</span>
-  </a>
-  <span aria-hidden="true" className="invisible">
-    spacer
-  </span>
-  <a href="#stack" className="group">
-    <span className="font-mono-label block text-xs text-ink/50">03</span>
-    <span className="font-semibold">Stack</span>
-  </a>
-  <a href="#contact" className="group">
-    <span className="font-mono-label block text-xs text-ink/50">04</span>
-    <span className="font-semibold">Contact</span>
-  </a>
-</nav>
-</div>
+        <div className="absolute inset-y-0 left-0 right-0 flex items-center">
+          <NavRow />
+        </div>
+      </div>
     </section>
   );
 }
