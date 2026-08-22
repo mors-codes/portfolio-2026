@@ -145,8 +145,8 @@ export default function Hero() {
       </div>
 
       {/* Illustration + Numbered nav row, nav vertically centered on illustration */}
-      <div className="relative mt-6">
-        <div ref={illustrationRef} className="flex justify-center">
+      <div className="relative mt-8">
+        <div ref={illustrationRef} className="flex justify-center"> 
           <Image
             src="/illustrations/hero-desk.svg"
             alt="Illustration of Moriss at his desk, working at a computer with his cat nearby"
