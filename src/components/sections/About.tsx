@@ -54,36 +54,40 @@ export default function About() {
         typeCounter,
         {
           n: FULL_TEXT.length,
-          duration: 0.9,
+          duration: 1.6,
           ease: "none",
           onUpdate: () => setTypedCount(Math.round(typeCounter.n)),
         },
-        0.15
+        0.15,
       )
-      .to(
-        cursorRef.current,
-        { opacity: 0, duration: 0.3, delay: 0.3 },
-        ">"
-      )
+      .call(() => {
+        gsap.to(cursorRef.current, {
+          opacity: 0,
+          duration: 0.5,
+          repeat: -1,
+          yoyo: true,
+          ease: "power1.inOut",
+        });
+      })
       .to(
         illustrationColRef.current,
         { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
-        0.4
+        0.4,
       )
       .to(
         bioRef.current,
         { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
-        0.5
+        0.5,
       )
       .to(
         contactRef.current,
         { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
-        0.65
+        0.65,
       )
       .to(
         timelineRef.current,
         { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" },
-        0.5
+        0.5,
       );
 
     return () => {
@@ -93,16 +97,13 @@ export default function About() {
   }, []);
 
   return (
-    <section
-      ref={sectionRef}
-      className="px-8 py-20 md:px-16 md:py-28"
-    >
+        <section ref={sectionRef} className="px-8 py-10 md:px-16 md:py-14">
       <p
         ref={eyebrowRef}
         className="flex items-center gap-2 text-4xl text-[#B5B5B5]"
       >
         <span className="font-mono-label">01</span>
-        <span className="font-mono-label">—</span>
+        <span className="font-sans font-thin">—</span>
         <span className="font-display font-black tracking-[-0.1em]">
           AboutMe
         </span>
@@ -121,10 +122,9 @@ export default function About() {
         <span
           ref={cursorRef}
           aria-hidden="true"
-          className="ml-1 inline-block w-[3px] bg-ink font-sans font-extralight"
-          style={{ height: "0.75em" }}
+          className="ml-1 inline-block font-sans font-extralight text-ink"
         >
-          &nbsp;
+          _
         </span>
       </h2>
 
@@ -169,7 +169,7 @@ export default function About() {
                 href="/resume.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 rounded-2xl border-3 border-ink bg-ink py-3 font-sans text-sm font-medium text-bg transition-opacity hover:opacity-80"
+                className="flex items-center justify-center gap-2 rounded-xl border-3 border-ink bg-ink py-3 font-sans text-sm font-medium text-bg transition-opacity hover:opacity-80"
               >
                 View Resume
                 <span aria-hidden="true">→</span>
@@ -178,16 +178,15 @@ export default function About() {
 
             <div ref={bioRef} className="flex flex-col gap-4">
               <p className="text-justify font-sans text-base leading-relaxed text-ink hyphens-auto">
-                A developer with a strong passion about building modern web
-                and mobile apps, and these days I&apos;m focused on AI
-                automation.
+                A developer with a strong passion about building modern web and
+                mobile apps, and these days I&apos;m focused on AI automation.
               </p>
               <p className="text-justify font-sans text-base leading-relaxed text-ink hyphens-auto">
-                I enjoy combining design and development to create
-                applications that are functional, engaging, and thoughtfully
-                designed. I am seeking opportunities where I can continue
-                learning while contributing meaningfully through the projects
-                I work on and the ideas I bring to life.
+                I enjoy combining design and development to create applications
+                that are functional, engaging, and thoughtfully designed. I am
+                seeking opportunities where I can continue learning while
+                contributing meaningfully through the projects I work on and the
+                ideas I bring to life.
               </p>
             </div>
           </div>

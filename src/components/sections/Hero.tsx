@@ -159,6 +159,7 @@ export default function Hero() {
 
         <div
           ref={navWrapRef}
+          id="hero-nav-row"
           className="absolute inset-y-0 left-0 right-0 flex items-center"
         >
           <NavRow />
