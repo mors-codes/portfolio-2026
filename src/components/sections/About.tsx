@@ -1,10 +1,106 @@
+"use client";
+
+import { useLayoutEffect, useRef, useState } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
 import TimelineEntry from "@/components/ui/TimelineEntry";
+import PixelTransition from "@/components/ui/PixelTransition";
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default function About() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const eyebrowRef = useRef<HTMLParagraphElement>(null);
+  const headlineRef = useRef<HTMLHeadingElement>(null);
+  const cursorRef = useRef<HTMLSpanElement>(null);
+  const [typedCount, setTypedCount] = useState(0);
+  const illustrationColRef = useRef<HTMLDivElement>(null);
+  const bioRef = useRef<HTMLDivElement>(null);
+  const contactRef = useRef<HTMLDivElement>(null);
+  const timelineRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    if (!sectionRef.current) return;
+    if (cursorRef.current) gsap.set(cursorRef.current, { opacity: 1 });
+
+    const targets = [
+      eyebrowRef.current,
+      illustrationColRef.current,
+      bioRef.current,
+      contactRef.current,
+      timelineRef.current,
+    ].filter(Boolean);
+
+    gsap.set(targets, { y: 32, opacity: 0 });
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: "top 75%",
+      },
+    });
+
+    const FULL_TEXT = "Hello! I'm Mors.";
+    const typeCounter = { n: 0 };
+
+    tl.to(eyebrowRef.current, {
+      y: 0,
+      opacity: 1,
+      duration: 0.6,
+      ease: "power3.out",
+    })
+      .to(
+        typeCounter,
+        {
+          n: FULL_TEXT.length,
+          duration: 0.9,
+          ease: "none",
+          onUpdate: () => setTypedCount(Math.round(typeCounter.n)),
+        },
+        0.15
+      )
+      .to(
+        cursorRef.current,
+        { opacity: 0, duration: 0.3, delay: 0.3 },
+        ">"
+      )
+      .to(
+        illustrationColRef.current,
+        { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
+        0.4
+      )
+      .to(
+        bioRef.current,
+        { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
+        0.5
+      )
+      .to(
+        contactRef.current,
+        { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
+        0.65
+      )
+      .to(
+        timelineRef.current,
+        { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" },
+        0.5
+      );
+
+    return () => {
+      tl.scrollTrigger?.kill();
+      tl.kill();
+    };
+  }, []);
+
   return (
-    <section className="px-8 py-20 md:px-16 md:py-28">
-      <p className="flex items-center gap-2 text-4xl text-[#B5B5B5]">
+    <section
+      ref={sectionRef}
+      className="px-8 py-20 md:px-16 md:py-28"
+    >
+      <p
+        ref={eyebrowRef}
+        className="flex items-center gap-2 text-4xl text-[#B5B5B5]"
+      >
         <span className="font-mono-label">01</span>
         <span className="font-mono-label">—</span>
         <span className="font-display font-black tracking-[-0.1em]">
@@ -12,23 +108,60 @@ export default function About() {
         </span>
       </p>
 
-      <h2 className="mt-12 font-sans text-6xl font-bold leading-none md:text-8xl">
-        <span className="tracking-[-0.07em]">Hello!</span>{" "}
-        <span className="font-sans font-extralight tracking-[-0.05em]">I&apos;m Mors.</span>
+      <h2
+        ref={headlineRef}
+        className="mt-12 font-sans text-6xl font-bold leading-none md:text-8xl"
+      >
+        <span className="tracking-[-0.07em]">
+          {"Hello! ".slice(0, typedCount)}
+        </span>
+        <span className="font-sans font-extralight tracking-[-0.05em]">
+          {"I'm Mors.".slice(0, Math.max(0, typedCount - 7))}
+        </span>
+        <span
+          ref={cursorRef}
+          aria-hidden="true"
+          className="ml-1 inline-block w-[3px] bg-ink font-sans font-extralight"
+          style={{ height: "0.75em" }}
+        >
+          &nbsp;
+        </span>
       </h2>
 
       <div className="mt-4 grid gap-16 md:grid-cols-[1fr_1fr] md:gap-24">
         {/* Left: illustration + bio + resume + contact */}
         <div>
-                    <div className="flex flex-col gap-8 md:flex-row md:items-start">
-            <div className="flex w-full max-w-[280px] shrink-0 flex-col gap-3">
+          <div className="flex flex-col gap-8 md:flex-row md:items-start">
+            <div
+              ref={illustrationColRef}
+              className="flex w-full max-w-[280px] shrink-0 flex-col gap-3"
+            >
               <div className="relative aspect-square overflow-hidden rounded-2xl border-3 border-ink">
-                <Image
-                  src="/illustrations/about-portrait.svg"
-                  alt="Illustration of Mors, wearing glasses and headphones around his neck"
-                  width={280}
-                  height={350}
-                  className="absolute bottom-0 left-1/2 h-[90%] w-auto -translate-x-1/2 object-contain"
+                <PixelTransition
+                  gridSize={10}
+                  pixelColor="#222222"
+                  animationStepDuration={0.4}
+                  once={false}
+                  firstContent={
+                    <div className="relative h-full w-full bg-white">
+                      <Image
+                        src="/illustrations/about-portrait.svg"
+                        alt="Illustration of Mors, wearing glasses and headphones around his neck"
+                        width={280}
+                        height={350}
+                        className="absolute bottom-0 left-1/2 h-[90%] w-auto -translate-x-1/2 object-contain"
+                      />
+                    </div>
+                  }
+                  secondContent={
+                    <Image
+                      src="/images/portrait-photo.jpg"
+                      alt="Photo of Mors"
+                      width={280}
+                      height={280}
+                      className="h-full w-full object-cover"
+                    />
+                  }
                 />
               </div>
 
@@ -43,7 +176,7 @@ export default function About() {
               </a>
             </div>
 
-            <div className="flex flex-col gap-4">
+            <div ref={bioRef} className="flex flex-col gap-4">
               <p className="text-justify font-sans text-base leading-relaxed text-ink hyphens-auto">
                 A developer with a strong passion about building modern web
                 and mobile apps, and these days I&apos;m focused on AI
@@ -59,7 +192,7 @@ export default function About() {
             </div>
           </div>
 
-          <div className="mt-12">
+          <div ref={contactRef} className="mt-12">
             <p className="font-display text-base font-black lowercase tracking-[-0.05em] text-ink">
               Contact
             </p>
@@ -70,7 +203,7 @@ export default function About() {
         </div>
 
         {/* Right: education + experience */}
-        <div className="flex flex-col gap-12">
+        <div ref={timelineRef} className="flex flex-col gap-12">
           <div>
             <p className="font-display text-base font-black lowercase tracking-[-0.05em] text-ink">
               Education
