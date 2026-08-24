@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import Hero from "@/components/sections/Hero";
 import About from "@/components/sections/About";
 import Works from "@/components/sections/Works";
+import Stack from "@/components/sections/Stack";
+import Contact from "@/components/sections/Contact";
 import PillNav from "@/components/ui/PillNav";
 
 export default function Home() {
@@ -44,6 +46,12 @@ export default function Home() {
       </div>
       <div id="works" className="scroll-mt-10">
         <Works />
+      </div>
+      <div id="stack" className="scroll-mt-24">
+        <Stack />
+      </div>
+      <div id="contact" className="scroll-mt-24">
+        <Contact />
       </div>
     </main>
   );
