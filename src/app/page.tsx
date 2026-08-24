@@ -1,15 +1,61 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
+
+const themeListeners = new Set<() => void>();
+
+function subscribeToThemeChange(callback: () => void) {
+  themeListeners.add(callback);
+  return () => themeListeners.delete(callback);
+}
+
+function notifyThemeChange() {
+  themeListeners.forEach((cb) => cb());
+}
+
 import Hero from "@/components/sections/Hero";
 import About from "@/components/sections/About";
 import Works from "@/components/sections/Works";
 import Stack from "@/components/sections/Stack";
 import Contact from "@/components/sections/Contact";
 import PillNav from "@/components/ui/PillNav";
+import ThemeToggle from "@/components/ui/ThemeToggle";
 
 export default function Home() {
   const [pastHero, setPastHero] = useState(false);
+  const isDark = useSyncExternalStore(
+    subscribeToThemeChange,
+    () => document.documentElement.classList.contains("dark"),
+    () => false
+  );
+
+    const toggleTheme = (e?: React.MouseEvent) => {
+    const next = !isDark;
+
+    document.documentElement.style.setProperty(
+      "--theme-x",
+      `${e?.clientX ?? window.innerWidth / 2}px`
+    );
+    document.documentElement.style.setProperty(
+      "--theme-y",
+      `${e?.clientY ?? window.innerHeight / 2}px`
+    );
+
+    const applyTheme = () => {
+      document.documentElement.classList.toggle("dark", next);
+      localStorage.setItem("theme", next ? "dark" : "light");
+      notifyThemeChange();
+    };
+
+    if (
+      "startViewTransition" in document &&
+      typeof document.startViewTransition === "function"
+    ) {
+      document.startViewTransition(applyTheme);
+    } else {
+      applyTheme();
+    }
+  };
 
   useEffect(() => {
     const heroEl = document.getElementById("hero-nav-row");
@@ -30,6 +76,8 @@ export default function Home() {
     <main className="min-h-screen bg-bg text-ink">
       <PillNav
         visible={pastHero}
+        isDark={isDark}
+        onToggleTheme={toggleTheme}
         items={[
           { label: "Home", href: "#hero" },
           { label: "About", href: "#about" },
@@ -37,6 +85,11 @@ export default function Home() {
           { label: "Stack", href: "#stack" },
           { label: "Contact", href: "#contact" },
         ]}
+      />
+      <ThemeToggle
+        visible={!pastHero}
+        isDark={isDark}
+        onToggleTheme={toggleTheme}
       />
       <div id="hero">
         <Hero />

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { archivo, inter, danfo, audiowide } from "@/lib/fonts";
 import ClickSpark from "@/components/ui/ClickSpark";
 import "./globals.css";
@@ -16,11 +17,22 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${archivo.variable} ${inter.variable} ${danfo.variable} ${audiowide.variable}`}
     >
       <body className="font-sans antialiased">
+        <Script id="theme-init" strategy="beforeInteractive">
+          {`
+            (function () {
+              var stored = localStorage.getItem("theme");
+              var theme = stored === "dark" ? "dark" : "light";
+              if (theme === "dark") {
+                document.documentElement.classList.add("dark");
+              }
+            })();
+          `}
+        </Script>
         <ClickSpark
-          sparkColor="#222222"
           sparkSize={10}
           sparkRadius={18}
           sparkCount={8}

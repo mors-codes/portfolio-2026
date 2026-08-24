@@ -10,6 +10,11 @@
   --font-mono-label: var(--font-audiowide);
 }
 
+.dark {
+  --color-bg: #222222;
+  --color-ink: #efefef;
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -17,4 +22,29 @@ html {
 body {
   background-color: var(--color-bg);
   color: var(--color-ink);
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-new(root) {
+  clip-path: polygon(
+    var(--theme-x, 50%) var(--theme-y, 0%),
+    var(--theme-x, 50%) var(--theme-y, 0%),
+    var(--theme-x, 50%) var(--theme-y, 0%)
+  );
+  animation: theme-reveal 0.8s ease-in-out forwards;
+}
+
+@keyframes theme-reveal {
+  to {
+    clip-path: polygon(
+      -50% -50%,
+      150% -50%,
+      150% 150%
+    );
+  }
 }

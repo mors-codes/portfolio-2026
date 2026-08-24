@@ -11,6 +11,10 @@
   --logo: 36px;
   --pill-pad-x: 18px;
   --pill-gap: 3px;
+  --base: var(--color-ink);
+  --pill-bg: var(--color-bg);
+  --pill-text: var(--color-ink);
+  --hover-text: var(--color-bg);
   width: max-content;
   display: flex;
   align-items: center;

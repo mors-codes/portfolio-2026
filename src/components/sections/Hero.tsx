@@ -95,7 +95,7 @@ export default function Hero() {
         2.1
       );
     }
-  }, []);
+    }, []);
 
   return (
     <section className="relative min-h-screen px-8 py-10 md:px-16 md:py-12">
@@ -104,6 +104,7 @@ export default function Hero() {
         <p
           ref={eyebrowRef}
           className="max-w-[160px] font-medium leading-snug"
+          style={{ opacity: 0, transform: "translateY(-12px)" }}
         >
           Open for work and collaborations
         </p>
@@ -111,11 +112,16 @@ export default function Hero() {
         <p
           ref={logoRef}
           className="absolute left-1/2 -translate-x-1/2 font-logo text-2xl"
+          style={{ opacity: 0 }}
         >
           MORS.
         </p>
 
-        <div ref={folioRef} className="ml-auto font-medium leading-tight">
+        <div
+          ref={folioRef}
+          className="ml-auto font-medium leading-tight"
+          style={{ opacity: 0, transform: "translateY(-12px)" }}
+        >
           <p className="pl-[30px]">-FOLIO</p>
           <p>PORTO</p>
         </div>
@@ -127,6 +133,7 @@ export default function Hero() {
           <p
             ref={roleLabelsRef}
             className="mb-2 ml-2 flex items-center gap-5 font-sans text-sm"
+            style={{ opacity: 0, transform: "translateX(-24px)" }}
           >
             <span>Full Stack Developer</span>
             <span>/</span>
@@ -138,6 +145,7 @@ export default function Hero() {
           <p
             ref={yearRef}
             className="-mt-4 text-right font-sans text-sm font-bold"
+            style={{ opacity: 0, transform: "translateX(24px)" }}
           >
             2026
           </p>
@@ -146,7 +154,11 @@ export default function Hero() {
 
       {/* Illustration + Numbered nav row, nav vertically centered on illustration */}
       <div className="relative mt-8">
-        <div ref={illustrationRef} className="flex justify-center"> 
+        <div
+          ref={illustrationRef}
+          className="flex justify-center"
+          style={{ opacity: 0, transform: "translateY(24px)" }}
+        >
           <Image
             src="/illustrations/hero-desk.svg"
             alt="Illustration of Moriss at his desk, working at a computer with his cat nearby"
@@ -161,6 +173,7 @@ export default function Hero() {
           ref={navWrapRef}
           id="hero-nav-row"
           className="absolute inset-y-0 left-0 right-0 flex items-center"
+          style={{ opacity: 0, transform: "translateY(16px)" }}
         >
           <NavRow />
         </div>

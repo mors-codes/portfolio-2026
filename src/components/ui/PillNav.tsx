@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import "./PillNav.css";
 
@@ -12,12 +12,21 @@ type PillNavItem = {
 type PillNavProps = {
   items: PillNavItem[];
   visible: boolean;
+  isDark: boolean;
+  onToggleTheme: (e?: React.MouseEvent) => void;
 };
 
-export default function PillNav({ items, visible }: PillNavProps) {
-  const circleRefs = useRef<(HTMLSpanElement | null)[]>([]);
+export default function PillNav({
+  items,
+  visible,
+  isDark,
+  onToggleTheme,
+}: PillNavProps) {
+const circleRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const tlRefs = useRef<(gsap.core.Timeline | null)[]>([]);
   const activeTweenRefs = useRef<(gsap.core.Tween | null)[]>([]);
+  const sunRef = useRef<SVGSVGElement>(null);
+  const moonRef = useRef<SVGSVGElement>(null);
   const ease = "power3.out";
 
   useEffect(() => {
@@ -89,6 +98,32 @@ export default function PillNav({ items, visible }: PillNavProps) {
     return () => window.removeEventListener("resize", layout);
   }, [items]);
 
+  useEffect(() => {
+    if (!sunRef.current || !moonRef.current) return;
+
+    const showing = isDark ? sunRef.current : moonRef.current;
+    const hiding = isDark ? moonRef.current : sunRef.current;
+
+    gsap.to(hiding, {
+      opacity: 0,
+      rotate: -90,
+      duration: 0.3,
+      ease: "power2.in",
+      overwrite: "auto",
+    });
+    gsap.fromTo(
+      showing,
+      { opacity: 0, rotate: 90 },
+      {
+        opacity: 1,
+        rotate: 0,
+        duration: 0.3,
+        ease: "power2.out",
+        overwrite: "auto",
+      }
+    );
+  }, [isDark]);
+
   const handleEnter = (i: number) => {
     const tl = tlRefs.current[i];
     if (!tl) return;
@@ -153,15 +188,42 @@ export default function PillNav({ items, visible }: PillNavProps) {
 
         <button
           type="button"
-          className="pill-logo"
+          className="pill-logo cursor-pointer"
           aria-label="Toggle dark mode"
+          onClick={onToggleTheme}
+          style={{ position: "relative" }}
         >
           <svg
+            ref={sunRef}
             width="18"
             height="18"
             viewBox="0 0 24 24"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
+            style={{
+              position: "absolute",
+              opacity: isDark ? 1 : 0,
+            }}
+          >
+            <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="2" />
+            <path
+              d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+          </svg>
+          <svg
+            ref={moonRef}
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            style={{
+              position: "absolute",
+              opacity: isDark ? 0 : 1,
+            }}
           >
             <path
               d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"

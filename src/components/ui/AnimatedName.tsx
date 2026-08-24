@@ -14,7 +14,12 @@ const AnimatedName = forwardRef<HTMLHeadingElement>(
           aria-label={NAME}
         >
           {NAME.split("").map((char, i) => (
-            <span key={i} className="letter inline-block" aria-hidden="true">
+            <span
+              key={i}
+              className="letter inline-block"
+              aria-hidden="true"
+              style={{ opacity: 0, transform: "translateY(100%)" }}
+            >
               {char}
             </span>
           ))}

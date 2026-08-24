@@ -21,7 +21,7 @@ type Spark = {
 };
 
 export default function ClickSpark({
-  sparkColor = "#222222",
+  sparkColor,
   sparkSize = 10,
   sparkRadius = 15,
   sparkCount = 8,
@@ -33,6 +33,7 @@ export default function ClickSpark({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const sparksRef = useRef<Spark[]>([]);
   const startTimeRef = useRef<number | null>(null);
+  const activeColorRef = useRef("#222222");
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -110,7 +111,7 @@ export default function ClickSpark({
         const x2 = spark.x + (distance + lineLength) * Math.cos(spark.angle);
         const y2 = spark.y + (distance + lineLength) * Math.sin(spark.angle);
 
-        ctx.strokeStyle = sparkColor;
+        ctx.strokeStyle = activeColorRef.current;
         ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.moveTo(x1, y1);
@@ -146,6 +147,11 @@ export default function ClickSpark({
     }));
 
     sparksRef.current.push(...newSparks);
+    activeColorRef.current =
+      sparkColor ??
+      getComputedStyle(document.documentElement)
+        .getPropertyValue("--color-ink")
+        .trim();
   };
 
   return (
