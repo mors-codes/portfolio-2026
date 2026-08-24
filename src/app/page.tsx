@@ -29,17 +29,8 @@ export default function Home() {
     () => false
   );
 
-    const toggleTheme = (e?: React.MouseEvent) => {
+    const toggleTheme = () => {
     const next = !isDark;
-
-    document.documentElement.style.setProperty(
-      "--theme-x",
-      `${e?.clientX ?? window.innerWidth / 2}px`
-    );
-    document.documentElement.style.setProperty(
-      "--theme-y",
-      `${e?.clientY ?? window.innerHeight / 2}px`
-    );
 
     const applyTheme = () => {
       document.documentElement.classList.toggle("dark", next);
@@ -51,6 +42,10 @@ export default function Home() {
       "startViewTransition" in document &&
       typeof document.startViewTransition === "function"
     ) {
+      const glint = document.createElement("div");
+      glint.className = "sword-glint slicing";
+      document.body.appendChild(glint);
+      setTimeout(() => glint.remove(), 1000);
       document.startViewTransition(applyTheme);
     } else {
       applyTheme();

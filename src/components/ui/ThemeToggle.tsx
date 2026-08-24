@@ -5,7 +5,7 @@ import { gsap } from "gsap";
 
 type ThemeToggleProps = {
   isDark: boolean;
-  onToggleTheme: (e?: React.MouseEvent) => void;
+  onToggleTheme: () => void;
   visible: boolean;
 };
 

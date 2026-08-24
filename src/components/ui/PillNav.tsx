@@ -13,7 +13,7 @@ type PillNavProps = {
   items: PillNavItem[];
   visible: boolean;
   isDark: boolean;
-  onToggleTheme: (e?: React.MouseEvent) => void;
+  onToggleTheme: () => void;
 };
 
 export default function PillNav({

@@ -24,27 +24,45 @@ body {
   color: var(--color-ink);
 }
 
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation: none;
-  mix-blend-mode: normal;
-}
-
-::view-transition-new(root) {
-  clip-path: polygon(
-    var(--theme-x, 50%) var(--theme-y, 0%),
-    var(--theme-x, 50%) var(--theme-y, 0%),
-    var(--theme-x, 50%) var(--theme-y, 0%)
-  );
-  animation: theme-reveal 0.8s ease-in-out forwards;
+@supports (view-transition-name: root) {
+  ::view-transition-old(root) {
+    animation: none;
+  }
+  ::view-transition-new(root) {
+    animation: 0.95s cubic-bezier(0.65, 0, 0.35, 1) theme-reveal;
+  }
 }
 
 @keyframes theme-reveal {
-  to {
-    clip-path: polygon(
-      -50% -50%,
-      150% -50%,
-      150% 150%
-    );
+  0% {
+    clip-path: polygon(-45% -20%, -15% -20%, -60% 120%, -90% 120%);
   }
+  to {
+    clip-path: polygon(-45% -20%, 145% -20%, 110% 120%, -90% 120%);
+  }
+}
+
+.sword-glint {
+  z-index: 99999;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(transparent, rgba(255,255,255,0.95) 45% 55%, transparent);
+  width: 8px;
+  height: 140%;
+  position: fixed;
+  top: -20%;
+  left: -10%;
+  transform: rotate(12deg);
+  box-shadow: 0 0 20px 4px rgba(255,255,255,0.65), 0 0 44px 12px rgba(255,255,255,0.3);
+}
+
+.sword-glint.slicing {
+  animation: 0.95s cubic-bezier(0.65,0,0.35,1) forwards sword-glint-move;
+}
+
+@keyframes sword-glint-move {
+  0% { opacity: 0; left: -10%; }
+  8% { opacity: 1; }
+  85% { opacity: 1; }
+  to { opacity: 0; left: 110%; }
 }
