@@ -103,7 +103,7 @@ export default function Hero() {
       <div className="relative flex items-start font-sans text-xs">
         <p
           ref={eyebrowRef}
-          className="max-w-[160px] font-medium leading-snug"
+          className="max-w-40 font-medium leading-snug"
           style={{ opacity: 0, transform: "translateY(-12px)" }}
         >
           Open for work and collaborations
@@ -122,7 +122,7 @@ export default function Hero() {
           className="ml-auto font-medium leading-tight"
           style={{ opacity: 0, transform: "translateY(-12px)" }}
         >
-          <p className="pl-[30px]">-FOLIO</p>
+          <p className="pl-7.5">-FOLIO</p>
           <p>PORTO</p>
         </div>
       </div>
@@ -165,7 +165,7 @@ export default function Hero() {
             width={480}
             height={480}
             priority
-            className="h-auto w-full max-w-[300px]"
+            className="h-auto w-full max-w-75"
           />
         </div>
 

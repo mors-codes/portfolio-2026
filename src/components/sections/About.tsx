@@ -104,7 +104,7 @@ export default function About() {
       >
         <span className="font-mono-label">01</span>
         <span className="font-sans font-thin">—</span>
-        <span className="font-display font-black tracking-[-0.1em]">
+        <span className="font-display font-black -tracking-widest">
           AboutMe
         </span>
       </p>
@@ -116,7 +116,7 @@ export default function About() {
         <span className="tracking-[-0.07em]">
           {"Hello! ".slice(0, typedCount)}
         </span>
-        <span className="font-sans font-extralight tracking-[-0.05em]">
+        <span className="font-sans font-extralight tracking-tighter">
           {"I'm Mors.".slice(0, Math.max(0, typedCount - 7))}
         </span>
         <span
@@ -134,7 +134,7 @@ export default function About() {
           <div className="flex flex-col gap-8 md:flex-row md:items-start">
             <div
               ref={illustrationColRef}
-              className="flex w-full max-w-[280px] shrink-0 flex-col gap-3"
+              className="flex w-full max-w-70 shrink-0 flex-col gap-3"
             >
               <div className="relative aspect-square overflow-hidden rounded-2xl border-3 border-ink">
                 <PixelTransition
@@ -192,7 +192,7 @@ export default function About() {
           </div>
 
           <div ref={contactRef} className="mt-12">
-            <p className="font-display text-base font-black lowercase tracking-[-0.05em] text-ink">
+            <p className="font-display text-base font-black lowercase tracking-tighter text-ink">
               Contact
             </p>
             <p className="mt-2 font-sans text-base text-ink">
@@ -204,7 +204,7 @@ export default function About() {
         {/* Right: education + experience */}
         <div ref={timelineRef} className="flex flex-col gap-12">
           <div>
-            <p className="font-display text-base font-black lowercase tracking-[-0.05em] text-ink">
+            <p className="font-display text-base font-black lowercase tracking-tighter text-ink">
               Education
             </p>
             <div className="mt-6">
@@ -217,7 +217,7 @@ export default function About() {
           </div>
 
           <div>
-            <p className="font-display text-base font-black lowercase tracking-[-0.05em] text-ink">
+            <p className="font-display text-base font-black lowercase tracking-tighter text-ink">
               Experience
             </p>
             <div className="mt-6 flex flex-col gap-10">

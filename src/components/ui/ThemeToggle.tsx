@@ -69,7 +69,7 @@ export default function ThemeToggle({
         visibility: visible ? "visible" : "hidden",
       }}
     >
-      <span className="relative block h-[18px] w-[18px]">
+      <span className="relative block h-4.5 w-4.5">
         <svg
           ref={sunRef}
           width="18"

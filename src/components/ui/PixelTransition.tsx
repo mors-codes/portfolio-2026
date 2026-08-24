@@ -100,14 +100,14 @@ export default function PixelTransition({
         {firstContent}
       </div>
       <div
-        className="absolute inset-0 z-[2] hidden"
+        className="absolute inset-0 z-2 hidden"
         ref={activeRef}
         aria-hidden={!isActive}
       >
         {secondContent}
       </div>
       <div
-        className="pointer-events-none absolute inset-0 z-[3]"
+        className="pointer-events-none absolute inset-0 z-3"
         ref={pixelGridRef}
       />
     </div>

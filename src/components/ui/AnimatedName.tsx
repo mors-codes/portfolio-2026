@@ -10,7 +10,7 @@ const AnimatedName = forwardRef<HTMLHeadingElement>(
       <div className="group relative inline-block">
         <h1
           ref={ref}
-          className="overflow-hidden pt-4 pb-4 pr-4 font-display text-[16vw] font-black leading-[0.8] tracking-[-0.1em] md:text-[12vw]"
+          className="overflow-hidden pt-4 pb-4 pr-4 font-display text-[16vw] font-black leading-[0.8] -tracking-widest md:text-[12vw]"
           aria-label={NAME}
         >
           {NAME.split("").map((char, i) => (
@@ -31,10 +31,10 @@ const AnimatedName = forwardRef<HTMLHeadingElement>(
           background-clip: text. Swept across on hover via CSS only. */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 overflow-hidden pt-4 pb-4 pr-4 font-display text-[16vw] font-black leading-[0.8] tracking-[-0.1em] text-transparent md:text-[12vw]"
+          className="pointer-events-none absolute inset-0 overflow-hidden pt-4 pb-4 pr-4 font-display text-[16vw] font-black leading-[0.8] -tracking-widest text-transparent md:text-[12vw]"
         >
           <span
-            className="inline-block h-full w-full transition-[background-position] duration-[1100ms] ease-out group-hover:![background-position:-50%_0]"
+            className="inline-block h-full w-full transition-[background-position] duration-1100 ease-out group-hover:bg-position-[-50%_0]!"
             style={{
               backgroundImage:
                 "linear-gradient(115deg, transparent 40%, rgba(255,255,255,0.75) 50%, transparent 60%)",
