@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import CardSwap, { Card } from "@/components/ui/CardSwap";
+import { useRef, useState } from "react";
+import CardSwap, { Card, type CardSwapHandle } from "@/components/ui/CardSwap";
 
 interface WorkItem {
   title: string;
@@ -17,6 +17,7 @@ const WORKS: WorkItem[] = [
 export default function Works() {
   const [frontIdx, setFrontIdx] = useState(0);
   const active = WORKS[frontIdx];
+  const cardSwapRef = useRef<CardSwapHandle>(null);
 
   return (
     <section className="min-h-screen px-8 py-24 md:px-16">
@@ -28,25 +29,25 @@ export default function Works() {
             FeaturedWorks
           </span>
         </p>
-        <a href="/works" className="font-mono-label text-sm text-ink/50 hover:text-ink">
-          View all →
+        <a href="/works" className="font-sans text-sm font-medium text-ink/50 hover:text-ink">
+          View More Works →
         </a>
       </div>
 
-      <div className="grid gap-12 md:grid-cols-2 md:items-center">
+      <div className="grid -gap-5 md:grid-cols-2 md:items-center">
         <div>
           <h3 className="font-display text-3xl font-semibold">{active.title}</h3>
           <p className="mt-2 font-sans text-base text-ink/60">{active.description}</p>
         </div>
 
-        <div className="relative mx-auto mt-16 h-110 w-full overflow-hidden rounded-2xl bg-ink p-8">
+        <div className="relative mx-auto mt-10 h-125 w-full overflow-hidden rounded-2xl bg-ink p-8">
           <CardSwap
-            width={500}
-            height={350}
+            ref={cardSwapRef}
+            width={520}
+            height={420}
             cardDistance={60}
             verticalDistance={70}
             delay={3000}
-            pauseOnHover={true}
             onFrontChange={setFrontIdx}
           >
             {WORKS.map((work) => (
@@ -62,6 +63,66 @@ export default function Works() {
               </Card>
             ))}
           </CardSwap>
+
+          <div className="absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 items-center gap-4 rounded-full bg-ink px-4 py-2">
+            <button
+              type="button"
+              aria-label="Previous project"
+              onClick={() => cardSwapRef.current?.prev()}
+              className="text-bg/60 hover:text-bg"
+            >
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+              >
+                <path
+                  d="M16 5L8 12L16 19"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </button>
+            {WORKS.map((work, i) => (
+              <button
+                key={work.title}
+                type="button"
+                aria-label={`Show ${work.title}`}
+                onClick={() => cardSwapRef.current?.goTo(i)}
+                className={`h-2 w-2 rounded-full transition-colors ${
+                  frontIdx === i ? "bg-bg" : "bg-bg/30"
+                }`}
+              />
+            ))}
+            <button
+              type="button"
+              aria-label="Next project"
+              onClick={() => cardSwapRef.current?.next()}
+              className="text-bg/60 hover:text-bg"
+            >
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+              >
+                <path
+                  d="M8 5L16 12L8 19"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
     </section>
