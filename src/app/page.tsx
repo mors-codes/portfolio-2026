@@ -92,7 +92,7 @@ export default function Home() {
       <div id="about" className="scroll-mt-5">
         <About />
       </div>
-      <div id="works" className="scroll-mt-10">
+      <div id="works" className="-scroll-mt-5">
         <Works />
       </div>
       <div id="stack" className="scroll-mt-24">
