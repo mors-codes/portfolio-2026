@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
 import "./PillNav.css";
 
@@ -27,7 +27,44 @@ const circleRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const activeTweenRefs = useRef<(gsap.core.Tween | null)[]>([]);
   const sunRef = useRef<SVGSVGElement>(null);
   const moonRef = useRef<SVGSVGElement>(null);
+  const logoButtonRef = useRef<HTMLButtonElement>(null);
+  const listRef = useRef<HTMLUListElement>(null);
   const ease = "power3.out";
+
+  useLayoutEffect(() => {
+    if (!logoButtonRef.current || !listRef.current) return;
+    gsap.set(logoButtonRef.current, { scale: 0 });
+    gsap.set(listRef.current, { width: 0, overflow: "hidden" });
+  }, []);
+
+  useEffect(() => {
+    if (!logoButtonRef.current || !listRef.current) return;
+
+    if (visible) {
+      gsap.to(logoButtonRef.current, {
+        scale: 1,
+        duration: 0.6,
+        ease: "power2.out",
+      });
+      gsap.set(listRef.current, { overflow: "hidden" });
+      gsap.to(listRef.current, {
+        width: "auto",
+        duration: 0.6,
+        ease: "power2.out",
+      });
+    } else {
+      gsap.to(logoButtonRef.current, {
+        scale: 0,
+        duration: 0.6,
+        ease: "power2.out",
+      });
+      gsap.to(listRef.current, {
+        width: 0,
+        duration: 0.6,
+        ease: "power2.out",
+      });
+    }
+  }, [visible]);
 
   useEffect(() => {
     const layout = () => {
@@ -148,7 +185,7 @@ const circleRefs = useRef<(HTMLSpanElement | null)[]>([]);
 
   return (
     <div
-      className="pill-nav-container transition-all duration-300"
+      className="pill-nav-container transition-all duration-600"
       style={{
         opacity: visible ? 1 : 0,
         pointerEvents: visible ? "auto" : "none",
@@ -157,7 +194,7 @@ const circleRefs = useRef<(HTMLSpanElement | null)[]>([]);
     >
       <nav className="pill-nav" aria-label="Primary">
         <div className="pill-nav-items">
-          <ul className="pill-list" role="menubar">
+          <ul ref={listRef} className="pill-list" role="menubar">
             {items.map((item, i) => (
               <li key={item.href}>
                 <a
@@ -187,6 +224,7 @@ const circleRefs = useRef<(HTMLSpanElement | null)[]>([]);
         </div>
 
         <button
+          ref={logoButtonRef}
           type="button"
           className="pill-logo cursor-pointer"
           aria-label="Toggle dark mode"

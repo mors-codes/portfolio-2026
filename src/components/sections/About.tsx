@@ -172,7 +172,23 @@ export default function About() {
                 className="flex items-center justify-center gap-2 rounded-xl border-3 border-ink bg-ink py-3 font-sans text-sm font-medium text-bg transition-opacity hover:opacity-80"
               >
                 View Resume
-                <span aria-hidden="true">→</span>
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true"
+                  style={{ transform: "rotate(0deg)" }}
+                >
+                  <path
+                    d="M8 5L16 12L8 19"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
               </a>
             </div>
 
