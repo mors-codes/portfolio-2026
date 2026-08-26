@@ -8,18 +8,16 @@
   z-index: 9999;
   mix-blend-mode: difference;
   transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.target-cursor-wrapper[data-visible="true"] {
+  opacity: 1;
 }
 
 .target-cursor-dot {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 4px;
-  height: 4px;
-  background: #fff;
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  will-change: transform;
+  display: none;
 }
 
 .target-cursor-corner {

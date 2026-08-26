@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useCallback, useMemo } from "react";
+import { useEffect, useRef, useCallback, useMemo, useState } from "react";
 import { gsap } from "gsap";
 import "./TargetCursor.css";
 
@@ -42,6 +42,8 @@ interface TargetCursorProps {
   parallaxOn?: boolean;
   cursorColor?: string;
   cursorColorOnTarget?: string;
+  /** Only show the cursor visuals while hovering a target — hidden the rest of the time. */
+  showOnlyOnTarget?: boolean;
 }
 
 const TargetCursor = ({
@@ -52,6 +54,7 @@ const TargetCursor = ({
   parallaxOn = true,
   cursorColor = "#ffffff",
   cursorColorOnTarget,
+  showOnlyOnTarget = false,
 }: TargetCursorProps) => {
   const cursorRef = useRef<HTMLDivElement>(null);
   const cornersRef = useRef<NodeListOf<HTMLDivElement> | null>(null);
@@ -63,6 +66,8 @@ const TargetCursor = ({
   const targetCornerPositionsRef = useRef<{ x: number; y: number }[] | null>(null);
   const tickerFnRef = useRef<(() => void) | null>(null);
   const activeStrengthRef = useRef({ current: 0 });
+
+  const [isOverTarget, setIsOverTarget] = useState(false);
 
   const isMobile = useMemo(() => {
     if (typeof window === "undefined") return false;
@@ -231,6 +236,7 @@ const TargetCursor = ({
       }
 
       activeTarget = target;
+      setIsOverTarget(true);
       const corners = Array.from(cornersRef.current);
       corners.forEach((corner) => gsap.killTweensOf(corner, "x,y"));
 
@@ -294,6 +300,7 @@ const TargetCursor = ({
         targetCornerPositionsRef.current = null;
         gsap.set(activeStrengthRef.current, { current: 0, overwrite: true });
         activeTarget = null;
+        setIsOverTarget(false);
 
         if (cursorColorOnTarget && cornersRef.current) {
           gsap.to(Array.from(cornersRef.current), {
@@ -420,7 +427,11 @@ const TargetCursor = ({
   }
 
   return (
-    <div ref={cursorRef} className="target-cursor-wrapper">
+    <div
+      ref={cursorRef}
+      className="target-cursor-wrapper"
+      data-visible={!showOnlyOnTarget || isOverTarget}
+    >
       <div ref={dotRef} className="target-cursor-dot" style={{ backgroundColor: cursorColor }} />
       <div className="target-cursor-corner corner-tl" style={{ borderColor: cursorColor }} />
       <div className="target-cursor-corner corner-tr" style={{ borderColor: cursorColor }} />

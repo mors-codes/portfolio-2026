@@ -82,7 +82,7 @@ export default function StackScatter({ categories, viewAllHref = "/works" }: Sta
 
   return (
     <div className="stack-scatter-container">
-      <TargetCursor targetSelector=".cursor-target" />
+      <TargetCursor targetSelector=".cursor-target" showOnlyOnTarget />
 
       <div className="stack-scatter-icon-layer">
         {activeIcons.map((icon, i) => (
