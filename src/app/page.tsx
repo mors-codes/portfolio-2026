@@ -95,10 +95,10 @@ export default function Home() {
       <div id="works" className="-scroll-mt-5">
         <Works />
       </div>
-      <div id="stack" className="scroll-mt-24">
+      <div id="stack" className="-scroll-mt-5">
         <Stack />
       </div>
-      <div id="contact" className="scroll-mt-24">
+      <div id="contact" className="-scroll-mt-5">
         <Contact />
       </div>
     </main>
