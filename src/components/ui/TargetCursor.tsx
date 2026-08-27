@@ -102,6 +102,7 @@ const TargetCursor = ({
     if (isMobile || !cursorRef.current) return;
 
     const cursor = cursorRef.current;
+    const activeStrength = activeStrengthRef.current;
     cornersRef.current = cursor.querySelectorAll(".target-cursor-corner");
 
     containingBlockRef.current = getContainingBlock(cursor);
@@ -391,7 +392,7 @@ const TargetCursor = ({
 
       isActiveRef.current = false;
       targetCornerPositionsRef.current = null;
-      activeStrengthRef.current.current = 0;
+      activeStrength.current = 0;
     };
   }, [
     targetSelector,
