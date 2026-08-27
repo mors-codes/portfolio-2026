@@ -3,6 +3,7 @@
 @theme {
   --color-bg: #efefef;
   --color-ink: #222222;
+  --color-echo: #e2e2e2;
 
   --font-sans: var(--font-archivo);
   --font-display: var(--font-inter);
@@ -13,6 +14,7 @@
 .dark {
   --color-bg: #222222;
   --color-ink: #efefef;
+  --color-echo: #2e2e2e;
 }
 
 html {

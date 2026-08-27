@@ -41,14 +41,14 @@ export default function Contact() {
 
           <button
             onClick={handleCopy}
-            className="group mt-8 inline-flex items-center gap-2 whitespace-nowrap rounded-xl bg-ink px-5 py-3 font-sans text-sm font-semibold text-white transition-colors duration-300 hover:bg-ink/90"
+            className="group mt-8 inline-flex items-center gap-2 whitespace-nowrap rounded-xl border-3 border-ink bg-ink px-5 py-3 font-sans text-sm font-semibold text-bg transition-opacity hover:opacity-80"
           >
             {copied ? (
-              <Check className="h-4 w-4 shrink-0 text-white" />
+              <Check className="h-4 w-4 shrink-0 text-bg" />
             ) : (
               <>
-                <Mail className="h-4 w-4 shrink-0 text-white group-hover:hidden" />
-                <Copy className="hidden h-4 w-4 shrink-0 text-white group-hover:block" />
+                <Mail className="h-4 w-4 shrink-0 text-bg group-hover:hidden" />
+                <Copy className="hidden h-4 w-4 shrink-0 text-bg group-hover:block" />
               </>
             )}
             <span className="grid grid-cols-1 grid-rows-1 items-center">
@@ -89,7 +89,7 @@ export default function Contact() {
       </div>
 
       <div className="-mx-8 -mb-8 mt-20 h-[18vw] overflow-hidden md:-mx-16 md:mt-32 md:h-[13.5vw]">
-        <p className="font-display select-none text-center whitespace-nowrap text-[22vw] font-black leading-none -tracking-widest text-[#E2E2E2] md:text-[16.5vw]">
+        <p className="font-display select-none text-center whitespace-nowrap text-[22vw] font-black leading-none -tracking-widest text-echo md:text-[16.5vw]">
           MorissMatias
         </p>
       </div>
