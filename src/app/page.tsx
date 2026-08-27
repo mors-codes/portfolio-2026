@@ -98,7 +98,7 @@ export default function Home() {
       <div id="stack" className="-scroll-mt-5">
         <Stack />
       </div>
-      <div id="contact" className="-scroll-mt-5">
+      <div id="contact" className="-scroll-mt-30">
         <Contact />
       </div>
     </main>
