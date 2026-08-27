@@ -1,4 +1,18 @@
+"use client";
+
+import { useState } from "react";
+import { Mail, Copy, Check } from "lucide-react";
+
 export default function Contact() {
+  const [copied, setCopied] = useState(false);
+  const email = "morsmatias15@gmail.com"; // TODO: swap real email
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(email);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
+
   return (
     <section
       id="contact"
@@ -21,16 +35,33 @@ export default function Contact() {
           </p>
 
           <p className="mt-4 max-w-md font-sans text-base text-ink/60 md:text-lg">
-            Open to roles and projects where I can keep growing as a
-            developer while building things that actually matter.
+            Open to roles and projects where I can keep growing as a developer
+            while building things that actually matter.
           </p>
 
-          <a
-            href="mailto:hello@example.com" // TODO: swap real email
-            className="mt-8 inline-block sans text-xl underline underline-offset-4 md:text-3xl"
+          <button
+            onClick={handleCopy}
+            className="group mt-8 inline-flex items-center gap-2 whitespace-nowrap rounded-xl bg-ink px-5 py-3 font-sans text-sm font-semibold text-white transition-colors duration-300 hover:bg-ink/90"
           >
-            hello@example.com
-          </a>
+            {copied ? (
+              <Check className="h-4 w-4 shrink-0 text-white" />
+            ) : (
+              <>
+                <Mail className="h-4 w-4 shrink-0 text-white group-hover:hidden" />
+                <Copy className="hidden h-4 w-4 shrink-0 text-white group-hover:block" />
+              </>
+            )}
+            <span className="grid grid-cols-1 grid-rows-1 items-center">
+              <span className="col-start-1 row-start-1 whitespace-nowrap opacity-100 blur-none transition-[opacity,filter] duration-300 ease-out group-hover:opacity-0 group-hover:blur-sm">
+                Contact
+              </span>
+              <span className="col-start-1 row-start-1 grid grid-cols-[0fr] overflow-hidden transition-[grid-template-columns] duration-300 ease-out group-hover:grid-cols-[1fr]">
+                <span className="min-w-0 overflow-hidden whitespace-nowrap opacity-0 blur-sm transition-[opacity,filter] delay-100 duration-300 ease-out group-hover:opacity-100 group-hover:blur-none">
+                  {email}
+                </span>
+              </span>
+            </span>
+          </button>
         </div>
 
         <div className="flex gap-6 font-sans text-sm uppercase tracking-widest">
