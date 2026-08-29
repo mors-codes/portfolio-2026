@@ -13,8 +13,6 @@
 
 .stack-scatter-icon {
   position: absolute;
-  width: 52px;
-  height: 52px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -39,11 +37,6 @@
 .stack-scatter-icon[data-state="active"] {
   opacity: 1;
   transform: scale(1.05);
-}
-
-.stack-scatter-icon[data-state="active"] svg,
-.stack-scatter-icon[data-state="active"] img {
-  filter: invert(1);
 }
 
 .stack-scatter-icon-tooltip {

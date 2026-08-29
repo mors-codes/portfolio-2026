@@ -80,6 +80,8 @@ export default function StackScatter({
             style={{
               left: `${icon.x}%`,
               top: `${icon.y}%`,
+              width: icon.size ?? 36,
+              height: icon.size ?? 36,
               transform: "translate(-50%, -50%)",
               transitionDelay: `${i * 60}ms`,
             }}
