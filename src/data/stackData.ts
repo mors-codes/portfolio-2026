@@ -64,7 +64,7 @@ export const stackCategories: StackCategory[] = [
       },
       { name: "Slack", icon: "/icons/stack/ai-automation/slack.svg", x: 12, y: 30, size: 65, rotation: 18 },
       { name: "Gemini", icon: "/icons/stack/ai-automation/gemini.svg", x: 31, y: 83, size: 50, rotation: -20 },
-      { name: "Gmail", icon: "/icons/stack/ai-automation/gmail.svg", x: 75, y: 63, size: 50, rotation: 16 },
+      { name: "Gmail", icon: "/icons/stack/ai-automation/gmail.svg", x: 75, y: 63, size: 60, rotation: 16 },
       { name: "Google Sheets", icon: "/icons/stack/ai-automation/sheets.svg", x: 25, y: 5, size: 55, rotation: -12 },
       { name: "Claude", icon: "/icons/stack/ai-automation/claude.svg", x: 20, y: 60, size: 55, rotation: 22 },
       { name: "HubSpot", icon: "/icons/stack/ai-automation/hubspot.svg", x: 83, y: 95, size: 60, rotation: -18 },

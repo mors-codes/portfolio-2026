@@ -11,32 +11,17 @@
   pointer-events: none;
 }
 
-.stack-scatter-icon {
+.stack-scatter-icon-wrapper {
   position: absolute;
+}
+
+.stack-scatter-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 0;
-  transform: scale(0.6);
-  transition:
-    left 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-    top 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 0.4s ease,
-    background 0.3s ease;
   cursor: pointer;
   pointer-events: auto;
   will-change: transform, opacity;
-}
-
-.stack-scatter-icon[data-state="preview"] {
-  opacity: 0.85;
-  transform: scale(0.95);
-}
-
-.stack-scatter-icon[data-state="active"] {
-  opacity: 1;
-  transform: scale(1.05);
 }
 
 .stack-scatter-icon-tooltip {

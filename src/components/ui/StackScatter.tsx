@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
 import TargetCursor from "@/components/ui/TargetCursor";
 import "./StackScatter.css";
 
@@ -50,6 +51,39 @@ export default function StackScatter({
   const activeCategory = categories.find((c) => c.key === activeKey);
   const activeIcons = activeCategory ? activeCategory.icons : [];
 
+  const iconRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+
+  useEffect(() => {
+    const els = activeIcons
+      .map((icon) => iconRefs.current.get(icon.name))
+      .filter((el): el is HTMLDivElement => Boolean(el));
+
+    if (els.length === 0) return;
+
+    gsap.killTweensOf(els);
+    gsap.set(els, {
+      scale: 0,
+      opacity: 0,
+      transformOrigin: "50% 50%",
+    });
+
+    const targetScale = isLocked ? 1.05 : 0.95;
+    const targetOpacity = isLocked ? 1 : 0.85;
+
+    gsap.to(els, {
+      scale: targetScale,
+      opacity: targetOpacity,
+      duration: 0.35,
+      ease: "back.out(1.5)",
+      stagger: {
+        each: 0.03,
+        from: "random",
+      },
+      delay: () => Math.random() * 0.06 - 0.03,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeKey, isLocked]);
+
   function handleCategoryEnter(key: string) {
     if (!isLocked) setHovered(key);
   }
@@ -72,32 +106,41 @@ export default function StackScatter({
       <TargetCursor targetSelector=".cursor-target" showOnlyOnTarget />
 
       <div className="stack-scatter-icon-layer">
-        {activeIcons.map((icon, i) => (
+        {activeIcons.map((icon) => (
           <div
             key={icon.name}
-            className="stack-scatter-icon"
-            data-state={isLocked ? "active" : "preview"}
+            className="stack-scatter-icon-wrapper"
             style={{
               left: `${icon.x}%`,
               top: `${icon.y}%`,
-              width: icon.size ?? 36,
-              height: icon.size ?? 36,
               transform: "translate(-50%, -50%)",
-              transitionDelay: `${i * 60}ms`,
             }}
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={resolveIcon(icon.icon, isDark)}
-              alt={icon.name}
-              width={icon.size ?? 36}
-              height={icon.size ?? 36}
-              draggable={false}
-              style={{ transform: `rotate(${icon.rotation ?? 0}deg)` }}
-            />
-            {isLocked && (
-              <span className="stack-scatter-icon-tooltip">{icon.name}</span>
-            )}
+            <div
+              ref={(el) => {
+                if (el) iconRefs.current.set(icon.name, el);
+                else iconRefs.current.delete(icon.name);
+              }}
+              className="stack-scatter-icon"
+              data-state={isLocked ? "active" : "preview"}
+              style={{
+                width: icon.size ?? 36,
+                height: icon.size ?? 36,
+              }}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={resolveIcon(icon.icon, isDark)}
+                alt={icon.name}
+                width={icon.size ?? 36}
+                height={icon.size ?? 36}
+                draggable={false}
+                style={{ transform: `rotate(${icon.rotation ?? 0}deg)` }}
+              />
+              {isLocked && (
+                <span className="stack-scatter-icon-tooltip">{icon.name}</span>
+              )}
+            </div>
           </div>
         ))}
       </div>
