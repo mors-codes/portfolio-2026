@@ -15,9 +15,6 @@
   position: absolute;
   width: 52px;
   height: 52px;
-  border-radius: 50%;
-  background: var(--color-bg);
-  border: 1px solid var(--color-ink);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -42,7 +39,6 @@
 .stack-scatter-icon[data-state="active"] {
   opacity: 1;
   transform: scale(1.05);
-  background: var(--color-ink);
 }
 
 .stack-scatter-icon[data-state="active"] svg,

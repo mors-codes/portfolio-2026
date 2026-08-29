@@ -1,13 +1,20 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import TargetCursor from "@/components/ui/TargetCursor";
 import "./StackScatter.css";
 
 export interface StackIcon {
   name: string;
-  /** Path under /public, or an imported SVG/React component — swap in your own asset here. */
-  icon: string;
+  /** Path under /public. Object form is for icons with separate light/dark assets. */
+  icon: string | { light: string; dark: string };
+  /** Fixed position as % of the scatter container (0–100). */
+  x: number;
+  y: number;
+  /** Icon width/height in px. Defaults to 36 if omitted. */
+  size?: number;
+  /** Rotation in degrees. Defaults to 0 if omitted. */
+  rotation?: number;
 }
 
 export interface StackCategory {
@@ -20,48 +27,28 @@ interface StackScatterProps {
   categories: StackCategory[];
   /** Href for the "view all tech stack" button. */
   viewAllHref?: string;
+  /** Current theme, needed to resolve light/dark icon variants. */
+  isDark: boolean;
 }
 
-interface Placement {
-  x: number;
-  y: number;
+function resolveIcon(icon: StackIcon["icon"], isDark: boolean): string {
+  if (typeof icon === "string") return icon;
+  return isDark ? icon.dark : icon.light;
 }
 
-function placementsFor(count: number, seed: number): Placement[] {
-  // Category block sits dead-center now (no offset pill cluster),
-  // so icons just need to clear a radius around the center block.
-  const exclusionRadius = 30; // % of container to keep clear around center
-
-  const placements: Placement[] = [];
-  for (let i = 0; i < count; i++) {
-    const rand1 = ((seed * (i + 1) * 9301 + 49297) % 233280) / 233280;
-    const rand2 = ((seed * (i + 3) * 4111 + 12345) % 233280) / 233280;
-
-    const angle = rand1 * Math.PI * 2;
-    const dist = exclusionRadius + rand2 * 20; // just outside the exclusion zone out to the edges
-
-    const x = Math.min(94, Math.max(6, 50 + Math.cos(angle) * dist));
-    const y = Math.min(94, Math.max(6, 50 + Math.sin(angle) * dist));
-
-    placements.push({ x, y });
-  }
-  return placements;
-}
-
-export default function StackScatter({ categories, viewAllHref = "/works" }: StackScatterProps) {
+export default function StackScatter({
+  categories,
+  viewAllHref = "/works",
+  isDark,
+}: StackScatterProps) {
   const [hovered, setHovered] = useState<string | null>(null);
   const [locked, setLocked] = useState<string | null>(null);
 
   const activeKey = locked ?? hovered;
   const isLocked = locked !== null;
 
-  const activeIcons = useMemo(() => {
-    if (!activeKey) return [];
-    const cat = categories.find((c) => c.key === activeKey);
-    if (!cat) return [];
-    const placements = placementsFor(cat.icons.length, cat.icons.length);
-    return cat.icons.map((icon, i) => ({ ...icon, placement: placements[i] }));
-  }, [activeKey, categories]);
+  const activeCategory = categories.find((c) => c.key === activeKey);
+  const activeIcons = activeCategory ? activeCategory.icons : [];
 
   function handleCategoryEnter(key: string) {
     if (!isLocked) setHovered(key);
@@ -91,16 +78,21 @@ export default function StackScatter({ categories, viewAllHref = "/works" }: Sta
             className="stack-scatter-icon"
             data-state={isLocked ? "active" : "preview"}
             style={{
-              left: `${icon.placement.x}%`,
-              top: `${icon.placement.y}%`,
+              left: `${icon.x}%`,
+              top: `${icon.y}%`,
               transform: "translate(-50%, -50%)",
               transitionDelay: `${i * 60}ms`,
             }}
           >
-            {/* Swap this for <img src={icon.icon} /> or an imported SVG component once real assets are in. */}
-            <span aria-hidden="true" style={{ fontSize: "1.1rem" }}>
-              {icon.name.charAt(0)}
-            </span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={resolveIcon(icon.icon, isDark)}
+              alt={icon.name}
+              width={icon.size ?? 36}
+              height={icon.size ?? 36}
+              draggable={false}
+              style={{ transform: `rotate(${icon.rotation ?? 0}deg)` }}
+            />
             {isLocked && (
               <span className="stack-scatter-icon-tooltip">{icon.name}</span>
             )}

@@ -96,7 +96,7 @@ export default function Home() {
         <Works />
       </div>
       <div id="stack" className="-scroll-mt-5">
-        <Stack />
+        <Stack isDark={isDark} />
       </div>
       <div id="contact" className="-scroll-mt-5">
         <Contact />
