@@ -21,7 +21,7 @@ export const stackCategories: StackCategory[] = [
     key: "backend",
     label: "Backend",
     icons: [
-      { name: "Java", icon: "/icons/stack/backend/java.svg", x: 65, y: 40, size: 85, rotation: -18 },
+      { name: "Java", icon: "/icons/stack/backend/java.svg", x: 65, y: 40, size: 80, rotation: -18 },
       { name: "Node.js", icon: "/icons/stack/backend/nodejs.svg", x: 75, y: 70, size: 70, rotation: 14 },
       { name: "PHP", icon: "/icons/stack/backend/php.svg", x: 63, y: 100, size: 75, rotation: -12 },
       { name: "MySQL", icon: "/icons/stack/backend/mysql.svg", x: 40, y: 105, size: 75, rotation: 16 },
@@ -38,7 +38,7 @@ export const stackCategories: StackCategory[] = [
         size: 55,
         rotation: -20,
       },
-      { name: "MongoDB", icon: "/icons/stack/backend/mongodb.svg", x: 40, y: 20, size: 70, rotation: 20 },
+      { name: "MongoDB", icon: "/icons/stack/backend/mongodb.svg", x: 40, y: 20, size: 65, rotation: 20 },
       { name: "OAuth", icon: "/icons/stack/backend/oauth.svg", x: 55, y: 10, size: 60, rotation: -10 },
       { name: "JWT", icon: "/icons/stack/backend/jwt.svg", x: 78, y: 20, size: 50, rotation: 12 },
     ],

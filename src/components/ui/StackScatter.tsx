@@ -48,11 +48,52 @@ export default function StackScatter({
   const activeKey = locked ?? hovered;
   const isLocked = locked !== null;
 
-  const activeCategory = categories.find((c) => c.key === activeKey);
-  const activeIcons = activeCategory ? activeCategory.icons : [];
+  // displayedKey is what's actually rendered — lags activeKey until the
+  // exit animation on the previous category's icons finishes.
+  const [displayedKey, setDisplayedKey] = useState<string | null>(null);
+  const [displayedLocked, setDisplayedLocked] = useState(false);
+
+  const displayedCategory = categories.find((c) => c.key === displayedKey);
+  const activeIcons = displayedCategory ? displayedCategory.icons : [];
 
   const iconRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+  const transitionTokenRef = useRef(0);
 
+  // Drives the swap: whenever the requested activeKey changes, exit the
+  // currently-displayed icons first, then flip displayedKey once the
+  // exit tween completes.
+  useEffect(() => {
+    const token = ++transitionTokenRef.current;
+
+    const currentEls = Array.from(iconRefs.current.values());
+
+    if (currentEls.length === 0) {
+      // Nothing displayed yet (first activation, or leaving all
+      // categories with nothing rendered) — just flip immediately.
+      setDisplayedKey(activeKey);
+      setDisplayedLocked(isLocked);
+      return;
+    }
+
+    gsap.killTweensOf(currentEls);
+    gsap.to(currentEls, {
+      scale: 0,
+      opacity: 0,
+      duration: 0.2,
+      ease: "power3.in",
+      onComplete: () => {
+        // Guard against a rapid second hover firing before this
+        // exit finished — only the latest transition may commit.
+        if (transitionTokenRef.current !== token) return;
+        setDisplayedKey(activeKey);
+        setDisplayedLocked(isLocked);
+      },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeKey]);
+
+  // Entrance: fires once the new category's icons have mounted
+  // (displayedKey updated, refs point at the new elements).
   useEffect(() => {
     const els = activeIcons
       .map((icon) => iconRefs.current.get(icon.name))
@@ -67,13 +108,13 @@ export default function StackScatter({
       transformOrigin: "50% 50%",
     });
 
-    const targetScale = isLocked ? 1.05 : 0.95;
-    const targetOpacity = isLocked ? 1 : 0.85;
+    const targetScale = displayedLocked ? 1.05 : 0.95;
+    const targetOpacity = displayedLocked ? 1 : 0.85;
 
     gsap.to(els, {
       scale: targetScale,
       opacity: targetOpacity,
-      duration: 0.35,
+      duration: 0.5,
       ease: "back.out(1.5)",
       stagger: {
         each: 0.03,
@@ -82,7 +123,7 @@ export default function StackScatter({
       delay: () => Math.random() * 0.06 - 0.03,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeKey, isLocked]);
+  }, [displayedKey, displayedLocked]);
 
   function handleCategoryEnter(key: string) {
     if (!isLocked) setHovered(key);
@@ -122,7 +163,7 @@ export default function StackScatter({
                 else iconRefs.current.delete(icon.name);
               }}
               className="stack-scatter-icon"
-              data-state={isLocked ? "active" : "preview"}
+              data-state={displayedLocked ? "active" : "preview"}
               style={{
                 width: icon.size ?? 36,
                 height: icon.size ?? 36,
@@ -137,7 +178,7 @@ export default function StackScatter({
                 draggable={false}
                 style={{ transform: `rotate(${icon.rotation ?? 0}deg)` }}
               />
-              {isLocked && (
+              {displayedLocked && (
                 <span className="stack-scatter-icon-tooltip">{icon.name}</span>
               )}
             </div>
