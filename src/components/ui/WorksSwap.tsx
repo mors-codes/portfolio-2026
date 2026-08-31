@@ -12,7 +12,7 @@ interface WorksSwapProps {
   works: WorkItem[];
 }
 
-const PANEL_WIDTH_PCT = 45;
+const PANEL_WIDTH_PCT = 47;
 const RIGHT_POSITION_PCT = 100 - PANEL_WIDTH_PCT;
 
 export default function WorksSwap({ works }: WorksSwapProps) {
@@ -21,17 +21,18 @@ export default function WorksSwap({ works }: WorksSwapProps) {
   const [infoOnLeft, setInfoOnLeft] = useState(true);
 
   const infoRef = useRef<HTMLDivElement>(null);
-  const cardRef = useRef<HTMLDivElement>(null);
+  const cardARef = useRef<HTMLDivElement>(null);
+  const cardBRef = useRef<HTMLDivElement>(null);
+  const [activeSlot, setActiveSlot] = useState<"A" | "B">("A");
 
   const active = works[index];
+  const [displayedWork, setDisplayedWork] = useState<{ A: WorkItem; B: WorkItem }>({
+    A: works[0],
+    B: works[0],
+  });
 
   const goTo = (target: number) => {
-    if (
-      target === index ||
-      isTransitioning ||
-      !infoRef.current ||
-      !cardRef.current
-    ) {
+    if (target === index || isTransitioning || !infoRef.current || !cardARef.current || !cardBRef.current) {
       return;
     }
 
@@ -40,167 +41,59 @@ export default function WorksSwap({ works }: WorksSwapProps) {
     const nextInfoOnLeft = !infoOnLeft;
     const nextCardOnLeft = !nextInfoOnLeft;
 
-    const currentCardOnLeft = !infoOnLeft;
+    const outgoingSlot = activeSlot;
+    const incomingSlot = outgoingSlot === "A" ? "B" : "A";
+    const outgoingRef = outgoingSlot === "A" ? cardARef : cardBRef;
+    const incomingRef = incomingSlot === "A" ? cardARef : cardBRef;
+
+    setDisplayedWork((prev) => ({ ...prev, [incomingSlot]: works[target] }));
+
+    gsap.set(incomingRef.current, { left: "50%", width: "0%" });
 
     const tl = gsap.timeline({
-      defaults: {
-        overwrite: "auto",
-      },
+      defaults: { overwrite: "auto" },
       onComplete: () => {
+        setActiveSlot(incomingSlot);
+        setIndex(target);
+        setInfoOnLeft(nextInfoOnLeft);
         setIsTransitioning(false);
       },
     });
 
-    /*
-     * ----------------------------------------
-     * PHASE 1
-     * Remove the current content
-     * ----------------------------------------
-     *
-     * Current card collapses toward the center.
-     * Current project info fades out.
-     */
+    tl.to(infoRef.current, { opacity: 0, y: 12, duration: 0.3, ease: "power2.out" }, 0);
 
     tl.to(
-      cardRef.current,
+      outgoingRef.current,
+      { left: "50%", width: "0%", duration: 0.8, ease: "power3.inOut" },
+      0,
+    );
+
+    tl.to(
+      incomingRef.current,
       {
-        left: "50%",
-        width: "0%",
-        duration: 0.55,
+        left: nextCardOnLeft ? "0%" : `${RIGHT_POSITION_PCT}%`,
+        width: `${PANEL_WIDTH_PCT}%`,
+        duration: 0.8,
         ease: "power3.inOut",
       },
       0,
     );
 
-    tl.to(
-      infoRef.current,
-      {
-        opacity: 0,
-        y: 12,
-        duration: 0.3,
-        ease: "power2.out",
-      },
-      0.15,
-    );
-
-    /*
-     * ----------------------------------------
-     * PHASE 2
-     * Swap React content while invisible
-     * ----------------------------------------
-     */
-
-    tl.add(() => {
-      setIndex(target);
-    }, 0.5);
-
-    /*
-     * ----------------------------------------
-     * PHASE 3
-     * Move invisible info to its new side
-     * ----------------------------------------
-     */
-
     tl.set(
       infoRef.current,
-      {
-        left: nextInfoOnLeft
-          ? "0%"
-          : `${RIGHT_POSITION_PCT}%`,
-        width: `${PANEL_WIDTH_PCT}%`,
-        y: 12,
-      },
-      0.55,
+      { left: nextInfoOnLeft ? "0%" : `${RIGHT_POSITION_PCT}%`, y: 12 },
+      0.8,
     );
-
-    /*
-     * ----------------------------------------
-     * PHASE 4
-     * Prepare the incoming card
-     * ----------------------------------------
-     *
-     * Both incoming cards begin at the center.
-     *
-     * LEFT CARD:
-     * center -> left
-     *
-     * RIGHT CARD:
-     * center -> right
-     */
-
-    tl.set(
-      cardRef.current,
-      {
-        left: "50%",
-        width: "0%",
-      },
-      0.55,
-    );
-
-    /*
-     * ----------------------------------------
-     * PHASE 5
-     * Expand new card into opposite column
-     * ----------------------------------------
-     */
-
-    tl.to(
-      cardRef.current,
-      {
-        left: nextCardOnLeft
-          ? "0%"
-          : `${RIGHT_POSITION_PCT}%`,
-        width: `${PANEL_WIDTH_PCT}%`,
-        duration: 0.6,
-        ease: "power3.out",
-      },
-      0.55,
-    );
-
-    /*
-     * ----------------------------------------
-     * PHASE 6
-     * Reveal the new project info
-     * ----------------------------------------
-     */
-
-    tl.to(
-      infoRef.current,
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.4,
-        ease: "power2.out",
-      },
-      0.78,
-    );
-
-    /*
-     * ----------------------------------------
-     * PHASE 7
-     * Update layout state
-     * ----------------------------------------
-     */
-
-    tl.add(() => {
-      setInfoOnLeft(nextInfoOnLeft);
-    }, 1.15);
+    tl.to(infoRef.current, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, 0.85);
   };
 
-  const next = () => {
-    goTo((index + 1) % works.length);
-  };
-
-  const prev = () => {
-    goTo((index - 1 + works.length) % works.length);
-  };
+  const next = () => goTo((index + 1) % works.length);
+  const prev = () => goTo((index - 1 + works.length) % works.length);
 
   return (
     <div className="relative mt-10 h-160">
-      {/* Center divider */}
       <div className="pointer-events-none absolute top-0 bottom-0 left-1/2 z-30 w-px -translate-x-1/2 bg-ink/10 dark:bg-bg/10" />
 
-      {/* Previous */}
       <button
         type="button"
         aria-label="Previous project"
@@ -208,25 +101,11 @@ export default function WorksSwap({ works }: WorksSwapProps) {
         disabled={isTransitioning}
         className="absolute top-1/2 left-0 z-40 -translate-x-4 -translate-y-1/2 text-ink/40 transition-colors hover:text-ink disabled:pointer-events-none disabled:opacity-30"
       >
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
-        >
-          <path
-            d="M16 5L8 12L16 19"
-            stroke="currentColor"
-            strokeWidth="3"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M16 5L8 12L16 19" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
 
-      {/* Project info */}
       <div
         ref={infoRef}
         className="absolute top-1/2 z-20 -translate-y-1/2 overflow-hidden px-10"
@@ -236,41 +115,53 @@ export default function WorksSwap({ works }: WorksSwapProps) {
         }}
       >
         <div className="overflow-hidden">
-          <h3 className="font-display whitespace-nowrap text-3xl font-semibold">
-            {active.title}
-          </h3>
-
-          <p className="mt-2 whitespace-nowrap font-sans text-base text-ink/60">
-            {active.description}
-          </p>
+          <h3 className="font-display text-3xl font-semibold whitespace-nowrap">{active.title}</h3>
+          <p className="mt-2 font-sans text-base whitespace-nowrap text-ink/60">{active.description}</p>
         </div>
       </div>
 
-      {/* Card panel */}
+      {/* Card A */}
       <div
-        ref={cardRef}
+        ref={cardARef}
         className="absolute top-1/2 z-10 -translate-y-1/2 overflow-hidden"
-        style={{
-          left: infoOnLeft
-            ? `${RIGHT_POSITION_PCT}%`
-            : "0%",
-          width: `${PANEL_WIDTH_PCT}%`,
-        }}
+        style={
+          activeSlot === "A"
+            ? { left: infoOnLeft ? `${RIGHT_POSITION_PCT}%` : "0%", width: `${PANEL_WIDTH_PCT}%` }
+            : { left: "50%", width: "0%" }
+        }
       >
-        <div className="h-[640px] w-full px-10">
-          <div className="relative mx-auto h-full w-full max-w-140 overflow-hidden rounded-2xl bg-white p-6">
-            {/* CARD CONTENT */}
-
+        <div className="h-160 w-full px-10">
+          <div className="relative mx-auto h-full w-full max-w-140 overflow-hidden rounded-4xl bg-white p-6">
             <div className="flex h-full items-center justify-center">
               <span className="font-display text-2xl font-semibold text-black/20">
-                {active.title}
+                {displayedWork.A.title}
               </span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Next */}
+      {/* Card B */}
+      <div
+        ref={cardBRef}
+        className="absolute top-1/2 z-10 -translate-y-1/2 overflow-hidden"
+        style={
+          activeSlot === "B"
+            ? { left: infoOnLeft ? `${RIGHT_POSITION_PCT}%` : "0%", width: `${PANEL_WIDTH_PCT}%` }
+            : { left: "50%", width: "0%" }
+        }
+      >
+        <div className="h-160 w-full px-10">
+          <div className="relative mx-auto h-full w-full max-w-140 overflow-hidden rounded-4xl bg-white p-6">
+            <div className="flex h-full items-center justify-center">
+              <span className="font-display text-2xl font-semibold text-black/20">
+                {displayedWork.B.title}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <button
         type="button"
         aria-label="Next project"
@@ -278,21 +169,8 @@ export default function WorksSwap({ works }: WorksSwapProps) {
         disabled={isTransitioning}
         className="absolute top-1/2 right-0 z-40 translate-x-4 -translate-y-1/2 text-ink/40 transition-colors hover:text-ink disabled:pointer-events-none disabled:opacity-30"
       >
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
-        >
-          <path
-            d="M8 5L16 12L8 19"
-            stroke="currentColor"
-            strokeWidth="3"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M8 5L16 12L8 19" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
     </div>
