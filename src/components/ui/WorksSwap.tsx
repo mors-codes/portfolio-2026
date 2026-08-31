@@ -13,7 +13,9 @@ interface WorksSwapProps {
 }
 
 const PANEL_WIDTH_PCT = 47;
-const RIGHT_POSITION_PCT = 100 - PANEL_WIDTH_PCT;
+const OUTER_MARGIN_PCT = 1.5;
+const LEFT_REST_PCT = OUTER_MARGIN_PCT;
+const RIGHT_REST_PCT = 100 - PANEL_WIDTH_PCT - OUTER_MARGIN_PCT;
 
 export default function WorksSwap({ works }: WorksSwapProps) {
   const [index, setIndex] = useState(0);
@@ -71,7 +73,7 @@ export default function WorksSwap({ works }: WorksSwapProps) {
     tl.to(
       incomingRef.current,
       {
-        left: nextCardOnLeft ? "0%" : `${RIGHT_POSITION_PCT}%`,
+        left: nextCardOnLeft ? `${LEFT_REST_PCT}%` : `${RIGHT_REST_PCT}%`,
         width: `${PANEL_WIDTH_PCT}%`,
         duration: 0.8,
         ease: "power3.inOut",
@@ -81,7 +83,7 @@ export default function WorksSwap({ works }: WorksSwapProps) {
 
     tl.set(
       infoRef.current,
-      { left: nextInfoOnLeft ? "0%" : `${RIGHT_POSITION_PCT}%`, y: 12 },
+      { left: nextInfoOnLeft ? `${LEFT_REST_PCT}%` : `${RIGHT_REST_PCT}%`, y: 12 },
       0.8,
     );
     tl.to(infoRef.current, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, 0.85);
@@ -110,7 +112,7 @@ export default function WorksSwap({ works }: WorksSwapProps) {
         ref={infoRef}
         className="absolute top-1/2 z-20 -translate-y-1/2 overflow-hidden px-10"
         style={{
-          left: infoOnLeft ? "0%" : `${RIGHT_POSITION_PCT}%`,
+          left: infoOnLeft ? `${LEFT_REST_PCT}%` : `${RIGHT_REST_PCT}%`,
           width: `${PANEL_WIDTH_PCT}%`,
         }}
       >
@@ -126,7 +128,7 @@ export default function WorksSwap({ works }: WorksSwapProps) {
         className="absolute top-1/2 z-10 -translate-y-1/2 overflow-hidden"
         style={
           activeSlot === "A"
-            ? { left: infoOnLeft ? `${RIGHT_POSITION_PCT}%` : "0%", width: `${PANEL_WIDTH_PCT}%` }
+            ? { left: infoOnLeft ? `${RIGHT_REST_PCT}%` : `${LEFT_REST_PCT}%`, width: `${PANEL_WIDTH_PCT}%` }
             : { left: "50%", width: "0%" }
         }
       >
@@ -147,7 +149,7 @@ export default function WorksSwap({ works }: WorksSwapProps) {
         className="absolute top-1/2 z-10 -translate-y-1/2 overflow-hidden"
         style={
           activeSlot === "B"
-            ? { left: infoOnLeft ? `${RIGHT_POSITION_PCT}%` : "0%", width: `${PANEL_WIDTH_PCT}%` }
+            ? { left: infoOnLeft ? `${RIGHT_REST_PCT}%` : `${LEFT_REST_PCT}%`, width: `${PANEL_WIDTH_PCT}%` }
             : { left: "50%", width: "0%" }
         }
       >
