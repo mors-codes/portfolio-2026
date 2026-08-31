@@ -6,7 +6,6 @@ import gsap from "gsap";
 export interface WorkItem {
   title: string;
   description: string;
-  image: string;
 }
 
 interface WorksSwapProps {
@@ -18,19 +17,13 @@ const RIGHT_POSITION_PCT = 100 - PANEL_WIDTH_PCT;
 
 export default function WorksSwap({ works }: WorksSwapProps) {
   const [index, setIndex] = useState(0);
-  const [outgoing, setOutgoing] = useState<{
-    image: string;
-    dir: number;
-  } | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [infoOnLeft, setInfoOnLeft] = useState(true);
 
   const infoRef = useRef<HTMLDivElement>(null);
-  const imageRef = useRef<HTMLDivElement>(null);
-  const incomingImgRef = useRef<HTMLDivElement>(null);
-  const outgoingImgRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const [infoOnLeft, setInfoOnLeft] = useState(true);
   const active = works[index];
 
   const goTo = (target: number) => {
@@ -38,76 +31,72 @@ export default function WorksSwap({ works }: WorksSwapProps) {
       target === index ||
       isTransitioning ||
       !infoRef.current ||
-      !imageRef.current ||
+      !cardRef.current ||
       !containerRef.current
     )
       return;
 
     setIsTransitioning(true);
-    const dir =
-      target > index || (target === 0 && index === works.length - 1) ? 1 : -1;
-    const currentImage = active.image;
     const nextInfoOnLeft = !infoOnLeft;
 
-    const imgSlotWidth = imageRef.current.offsetWidth;
-
-    const leftPct = 0;
-    const rightPct = RIGHT_POSITION_PCT;
-    const infoToPct = nextInfoOnLeft ? leftPct : rightPct;
-    const imageToPct = nextInfoOnLeft ? rightPct : leftPct;
+    // The info-slot element and the card-slot element each independently
+    // travel through center. Whichever one is currently on the LEFT is
+    // heading toward center then out to the RIGHT this transition (and
+    // vice versa) — so each element's own path is: current-side -> 50%
+    // (shrinking) -> opposite-side (growing), content swapping the
+    // instant it passes through center.
+    const infoTravelsToRight = infoOnLeft; // info is left now, will end up right
+    const cardTravelsToRight = !infoOnLeft; // card takes whichever side info vacates
 
     const tl = gsap.timeline({
       onComplete: () => setIsTransitioning(false),
     });
 
-    tl.to(infoRef.current, {
-      opacity: 0,
-      duration: 0.25,
-      ease: "power2.in",
-    });
-
+    // --- INFO element's path ---
+    // Shrink to 0 at center (0.5s), then grow back out (0.5s) — but the
+    // grow tween starts BEFORE shrink finishes (pass+=0.3, not pass+=0.5)
+    // so there's a real overlap window where both are moving at once.
+    // That overlap is what makes this read as one continuous pass instead
+    // of a shrink-then-stop-then-grow sequence.
     tl.to(
       infoRef.current,
-      { left: `${infoToPct}%`, duration: 0.6, ease: "power2.inOut" },
-      "swap",
+      { left: "50%", width: "0%", duration: 0.5, ease: "power2.in" },
+      "pass",
+    );
+    tl.add(() => {
+      setIndex(target);
+    }, "pass+=0.25"); // fires before grow starts (pass+=0.3), width still near 0
+    tl.to(
+      infoRef.current,
+      {
+        left: infoTravelsToRight ? `${RIGHT_POSITION_PCT}%` : "0%",
+        width: `${PANEL_WIDTH_PCT}%`,
+        duration: 0.5,
+        ease: "power2.out",
+      },
+      "pass+=0.3",
+    );
+
+    // --- CARD element's path (mirrors info, opposite side) ---
+    tl.to(
+      cardRef.current,
+      { left: "50%", width: "0%", duration: 0.5, ease: "power2.in" },
+      "pass",
     );
     tl.to(
-      imageRef.current,
-      { left: `${imageToPct}%`, duration: 0.6, ease: "power2.inOut" },
-      "swap",
+      cardRef.current,
+      {
+        left: cardTravelsToRight ? `${RIGHT_POSITION_PCT}%` : "0%",
+        width: `${PANEL_WIDTH_PCT}%`,
+        duration: 0.5,
+        ease: "power2.out",
+      },
+      "pass+=0.3",
     );
 
     tl.add(() => {
-      setOutgoing({ image: currentImage, dir });
-      setIndex(target);
       setInfoOnLeft(nextInfoOnLeft);
-
-      if (incomingImgRef.current) {
-        const enterFrom = dir > 0 ? imgSlotWidth : -imgSlotWidth;
-        gsap.killTweensOf(incomingImgRef.current);
-        gsap.fromTo(
-          incomingImgRef.current,
-          { x: enterFrom, opacity: 1 },
-          { x: 0, opacity: 1, duration: 0.5, ease: "power2.inOut" },
-        );
-      }
-      if (outgoingImgRef.current) {
-        gsap.killTweensOf(outgoingImgRef.current);
-        gsap.to(outgoingImgRef.current, {
-          x: dir > 0 ? -imgSlotWidth : imgSlotWidth,
-          duration: 0.5,
-          ease: "power2.inOut",
-          onComplete: () => setOutgoing(null),
-        });
-      }
-    }, "swap+=0.15");
-
-    tl.fromTo(
-      infoRef.current,
-      { y: 24, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.4, ease: "power3.out" },
-      "swap+=0.35",
-    );
+    }, "pass+=0.8"); // after both fully settled (0.3 + 0.5)
   };
 
   const next = () => goTo((index + 1) % works.length);
@@ -115,7 +104,7 @@ export default function WorksSwap({ works }: WorksSwapProps) {
 
   return (
     <div ref={containerRef} className="relative mt-10 h-160">
-      <div className="pointer-events-none absolute top-0 bottom-0 left-1/2 z-[25] w-px -translate-x-1/2 bg-ink/10 dark:bg-bg/10" />
+      <div className="pointer-events-none absolute top-0 bottom-0 left-1/2 z-25 w-px -translate-x-1/2 bg-ink/10 dark:bg-bg/10" />
 
       <button
         type="button"
@@ -123,69 +112,32 @@ export default function WorksSwap({ works }: WorksSwapProps) {
         onClick={prev}
         className="absolute top-1/2 left-0 z-30 -translate-x-4 -translate-y-1/2 text-ink/40 hover:text-ink"
       >
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
-        >
-          <path
-            d="M16 5L8 12L16 19"
-            stroke="currentColor"
-            strokeWidth="3"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M16 5L8 12L16 19" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
 
       <div
         ref={infoRef}
-        className="absolute top-1/2 z-20 -translate-y-1/2 px-10"
+        className="absolute top-1/2 z-20 -translate-y-1/2 overflow-hidden px-10"
         style={{
           left: infoOnLeft ? "0%" : `${RIGHT_POSITION_PCT}%`,
           width: `${PANEL_WIDTH_PCT}%`,
         }}
       >
-        <h3 className="font-display text-3xl font-semibold">{active.title}</h3>
-        <p className="mt-2 font-sans text-base text-ink/60">
-          {active.description}
-        </p>
+        <h3 className="font-display text-3xl font-semibold whitespace-nowrap">{active.title}</h3>
+        <p className="mt-2 font-sans text-base whitespace-nowrap text-ink/60">{active.description}</p>
       </div>
 
       <div
-        ref={imageRef}
-        className="absolute top-1/2 z-0 -translate-y-1/2 px-10"
+        ref={cardRef}
+        className="absolute top-1/2 z-0 -translate-y-1/2 overflow-hidden px-10"
         style={{
           left: infoOnLeft ? `${RIGHT_POSITION_PCT}%` : "0%",
           width: `${PANEL_WIDTH_PCT}%`,
         }}
       >
-        <div className="relative mx-auto h-160 w-full max-w-140 overflow-hidden rounded-2xl bg-white pt-6 pr-6 pl-6">
-          {outgoing && (
-            <div
-              ref={outgoingImgRef}
-              className="absolute inset-0 h-full w-full overflow-hidden pt-6 pr-6 pl-6"
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={outgoing.image}
-                alt=""
-                className="h-full w-full object-cover object-top"
-              />
-            </div>
-          )}
-          <div ref={incomingImgRef} className="h-full w-full overflow-hidden">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={active.image}
-              alt={active.title}
-              className="h-full w-full object-cover object-top"
-            />
-          </div>
-        </div>
+        <div className="relative mx-auto h-160 w-full max-w-140 overflow-hidden rounded-2xl bg-white pt-6 pr-6 pl-6" />
       </div>
 
       <button
@@ -194,21 +146,8 @@ export default function WorksSwap({ works }: WorksSwapProps) {
         onClick={next}
         className="absolute top-1/2 right-0 z-30 translate-x-4 -translate-y-1/2 text-ink/40 hover:text-ink"
       >
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
-        >
-          <path
-            d="M8 5L16 12L8 19"
-            stroke="currentColor"
-            strokeWidth="3"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M8 5L16 12L8 19" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
     </div>

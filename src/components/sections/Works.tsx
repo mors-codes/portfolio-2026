@@ -6,17 +6,14 @@ const WORKS: WorkItem[] = [
   {
     title: "Project One",
     description: "Full-stack web app",
-    image: "/images/works/project-1.png",
   },
   {
     title: "Project Two",
     description: "Automation workflow",
-    image: "/images/works/project-2.png",
   },
   {
     title: "Project Three",
     description: "UI/UX design system",
-    image: "/images/works/project-3.png",
   },
 ];
 
