@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 
 export interface WorkItem {
@@ -35,6 +35,43 @@ export default function WorksSwap({ works }: WorksSwapProps) {
     A: works[0],
     B: works[0],
   });
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const hasPlayedEntranceRef = useRef(false);
+
+  useEffect(() => {
+    const node = containerRef.current;
+    if (!node) return;
+
+    const playEntrance = () => {
+      if (hasPlayedEntranceRef.current || !infoRef.current || !cardARef.current) return;
+      hasPlayedEntranceRef.current = true;
+
+      gsap.set(cardARef.current, { left: `${COLLAPSE_RIGHT_PCT}%`, width: "0%" });
+      gsap.set(infoRef.current, { opacity: 0, y: 30 });
+
+      const tl = gsap.timeline();
+      tl.to(
+        cardARef.current,
+        { left: `${RIGHT_REST_PCT}%`, width: `${PANEL_WIDTH_PCT}%`, duration: 1.2, ease: "power3.inOut" },
+        0,
+      );
+      tl.to(infoRef.current, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 0.3);
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          playEntrance();
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.2 },
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
 
   const goTo = (target: number) => {
     if (target === index || isTransitioning || !infoRef.current || !cardARef.current || !cardBRef.current) {
@@ -100,7 +137,7 @@ export default function WorksSwap({ works }: WorksSwapProps) {
   const prev = () => goTo((index - 1 + works.length) % works.length);
 
   return (
-    <div className="relative mt-10 h-160">
+    <div ref={containerRef} className="relative mt-10 h-160">
       <div className="pointer-events-none absolute top-0 bottom-0 left-1/2 z-30 w-px -translate-x-1/2 bg-ink/10 dark:bg-bg/10" />
 
       <button
