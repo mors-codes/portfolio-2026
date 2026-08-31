@@ -13,9 +13,12 @@ interface WorksSwapProps {
 }
 
 const PANEL_WIDTH_PCT = 47;
-const OUTER_MARGIN_PCT = 1.5;
+const OUTER_MARGIN_PCT = 4;
 const LEFT_REST_PCT = OUTER_MARGIN_PCT;
 const RIGHT_REST_PCT = 100 - PANEL_WIDTH_PCT - OUTER_MARGIN_PCT;
+const REST_GAP_PCT = RIGHT_REST_PCT - LEFT_REST_PCT - PANEL_WIDTH_PCT;
+const COLLAPSE_LEFT_PCT = 50 - REST_GAP_PCT / 2;
+const COLLAPSE_RIGHT_PCT = 50 + REST_GAP_PCT / 2;
 
 export default function WorksSwap({ works }: WorksSwapProps) {
   const [index, setIndex] = useState(0);
@@ -48,9 +51,13 @@ export default function WorksSwap({ works }: WorksSwapProps) {
     const outgoingRef = outgoingSlot === "A" ? cardARef : cardBRef;
     const incomingRef = incomingSlot === "A" ? cardARef : cardBRef;
 
+    const outgoingWasOnLeft = !nextCardOnLeft;
+    const outgoingCollapsePct = outgoingWasOnLeft ? COLLAPSE_LEFT_PCT : COLLAPSE_RIGHT_PCT;
+    const incomingStartPct = outgoingWasOnLeft ? COLLAPSE_RIGHT_PCT : COLLAPSE_LEFT_PCT;
+
     setDisplayedWork((prev) => ({ ...prev, [incomingSlot]: works[target] }));
 
-    gsap.set(incomingRef.current, { left: "50%", width: "0%" });
+    gsap.set(incomingRef.current, { left: `${incomingStartPct}%`, width: "0%" });
 
     const tl = gsap.timeline({
       defaults: { overwrite: "auto" },
@@ -66,7 +73,7 @@ export default function WorksSwap({ works }: WorksSwapProps) {
 
     tl.to(
       outgoingRef.current,
-      { left: "50%", width: "0%", duration: 0.8, ease: "power3.inOut" },
+      { left: `${outgoingCollapsePct}%`, width: "0%", duration: 1.2, ease: "power3.inOut" },
       0,
     );
 
@@ -75,7 +82,7 @@ export default function WorksSwap({ works }: WorksSwapProps) {
       {
         left: nextCardOnLeft ? `${LEFT_REST_PCT}%` : `${RIGHT_REST_PCT}%`,
         width: `${PANEL_WIDTH_PCT}%`,
-        duration: 0.8,
+        duration: 1.2,
         ease: "power3.inOut",
       },
       0,
@@ -84,9 +91,9 @@ export default function WorksSwap({ works }: WorksSwapProps) {
     tl.set(
       infoRef.current,
       { left: nextInfoOnLeft ? `${LEFT_REST_PCT}%` : `${RIGHT_REST_PCT}%`, y: 12 },
-      0.8,
+      1.2,
     );
-    tl.to(infoRef.current, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, 0.85);
+    tl.to(infoRef.current, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, 1.25);
   };
 
   const next = () => goTo((index + 1) % works.length);
