@@ -1,11 +1,14 @@
 "use client";
 
 import { useLayoutEffect, useRef, useState } from "react";
+import { flushSync } from "react-dom";
+import Image from "next/image";
 import gsap from "gsap";
 
 export interface WorkItem {
   title: string;
   description: string;
+  image: string;
 }
 
 interface WorksSwapProps {
@@ -19,6 +22,7 @@ const RIGHT_REST_PCT = 100 - PANEL_WIDTH_PCT - OUTER_MARGIN_PCT;
 const REST_GAP_PCT = RIGHT_REST_PCT - LEFT_REST_PCT - PANEL_WIDTH_PCT;
 const COLLAPSE_LEFT_PCT = 50 - REST_GAP_PCT / 2;
 const COLLAPSE_RIGHT_PCT = 50 + REST_GAP_PCT / 2;
+const CARD_FRAME_MAX_WIDTH = 640;
 
 export default function WorksSwap({ works }: WorksSwapProps) {
   const [index, setIndex] = useState(0);
@@ -38,6 +42,25 @@ export default function WorksSwap({ works }: WorksSwapProps) {
 
   const containerRef = useRef<HTMLDivElement>(null);
   const hasPlayedEntranceRef = useRef(false);
+  // Start at the fully-rendered desktop frame width so the image never falls
+  // back to its narrow intrinsic width before the first measurement arrives.
+  const [cardFrameWidth, setCardFrameWidth] = useState(CARD_FRAME_MAX_WIDTH);
+  const imageWidth = Math.max(Math.min(cardFrameWidth - 80, 560) - 32, 0);
+
+  useLayoutEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const updateCardFrameWidth = () => {
+      setCardFrameWidth(container.clientWidth * (PANEL_WIDTH_PCT / 100));
+    };
+
+    updateCardFrameWidth();
+    const resizeObserver = new ResizeObserver(updateCardFrameWidth);
+    resizeObserver.observe(container);
+
+    return () => resizeObserver.disconnect();
+  }, []);
 
   useLayoutEffect(() => {
     if (!infoRef.current || !cardARef.current) return;
@@ -95,8 +118,16 @@ export default function WorksSwap({ works }: WorksSwapProps) {
     const outgoingCollapsePct = outgoingWasOnLeft ? COLLAPSE_LEFT_PCT : COLLAPSE_RIGHT_PCT;
     const incomingStartPct = outgoingWasOnLeft ? COLLAPSE_RIGHT_PCT : COLLAPSE_LEFT_PCT;
 
-    setDisplayedWork((prev) => ({ ...prev, [incomingSlot]: works[target] }));
+    // Commit the new image before GSAP exposes the incoming slot. Without this,
+    // the first swap can reveal one frame of that slot's stale collapsed content.
+    flushSync(() => {
+      setDisplayedWork((prev) => ({ ...prev, [incomingSlot]: works[target] }));
+    });
 
+    // The DOM order would otherwise put Card B above Card A during B -> A swaps,
+    // allowing the collapsing panel to briefly peek over the incoming one.
+    gsap.set(outgoingRef.current, { zIndex: 10 });
+    gsap.set(incomingRef.current, { zIndex: 11 });
     gsap.set(incomingRef.current, { left: `${incomingStartPct}%`, width: "0%" });
 
     const tl = gsap.timeline({
@@ -172,7 +203,7 @@ export default function WorksSwap({ works }: WorksSwapProps) {
       {/* Card A */}
       <div
         ref={cardARef}
-        className="absolute top-1/2 z-10 -translate-y-1/2 overflow-hidden"
+        className="absolute top-1/2 z-10 -translate-y-1/2 overflow-hidden isolate [clip-path:inset(0)]"
         style={
           activeSlot === "A"
             ? { left: infoOnLeft ? `${RIGHT_REST_PCT}%` : `${LEFT_REST_PCT}%`, width: `${PANEL_WIDTH_PCT}%` }
@@ -180,11 +211,15 @@ export default function WorksSwap({ works }: WorksSwapProps) {
         }
       >
         <div className="h-160 w-full px-10">
-          <div className="relative mx-auto h-full w-full max-w-140 overflow-hidden rounded-4xl bg-white p-6">
-            <div className="flex h-full items-center justify-center">
-              <span className="font-display text-2xl font-semibold text-black/20">
-                {displayedWork.A.title}
-              </span>
+          <div className="relative mx-auto h-full w-full max-w-140 overflow-hidden rounded-4xl bg-white pt-4 pr-4 pl-4">
+            <div className="relative h-full" style={{ width: imageWidth }}>
+              <Image
+                src={displayedWork.A.image}
+                alt={displayedWork.A.title}
+                fill
+                sizes="(max-width: 680px) calc(47vw - 7rem), 528px"
+                className="object-cover object-top"
+              />
             </div>
           </div>
         </div>
@@ -193,7 +228,7 @@ export default function WorksSwap({ works }: WorksSwapProps) {
       {/* Card B */}
       <div
         ref={cardBRef}
-        className="absolute top-1/2 z-10 -translate-y-1/2 overflow-hidden"
+        className="absolute top-1/2 z-10 -translate-y-1/2 overflow-hidden isolate [clip-path:inset(0)]"
         style={
           activeSlot === "B"
             ? { left: infoOnLeft ? `${RIGHT_REST_PCT}%` : `${LEFT_REST_PCT}%`, width: `${PANEL_WIDTH_PCT}%` }
@@ -201,11 +236,15 @@ export default function WorksSwap({ works }: WorksSwapProps) {
         }
       >
         <div className="h-160 w-full px-10">
-          <div className="relative mx-auto h-full w-full max-w-140 overflow-hidden rounded-4xl bg-white p-6">
-            <div className="flex h-full items-center justify-center">
-              <span className="font-display text-2xl font-semibold text-black/20">
-                {displayedWork.B.title}
-              </span>
+          <div className="relative mx-auto h-full w-full max-w-140 overflow-hidden rounded-4xl bg-white pt-4 pr-4 pl-4">
+            <div className="relative h-full" style={{ width: imageWidth }}>
+              <Image
+                src={displayedWork.B.image}
+                alt={displayedWork.B.title}
+                fill
+                sizes="(max-width: 680px) calc(47vw - 7rem), 528px"
+                className="object-cover object-top"
+              />
             </div>
           </div>
         </div>
