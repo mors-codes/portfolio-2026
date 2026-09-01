@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
 
 export interface WorkItem {
@@ -39,16 +39,19 @@ export default function WorksSwap({ works }: WorksSwapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const hasPlayedEntranceRef = useRef(false);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    if (!infoRef.current || !cardARef.current) return;
+    gsap.set(cardARef.current, { left: `${COLLAPSE_RIGHT_PCT}%`, width: "0%" });
+    gsap.set(infoRef.current, { opacity: 0, y: 30 });
+  }, []);
+
+  useLayoutEffect(() => {
     const node = containerRef.current;
     if (!node) return;
 
     const playEntrance = () => {
       if (hasPlayedEntranceRef.current || !infoRef.current || !cardARef.current) return;
       hasPlayedEntranceRef.current = true;
-
-      gsap.set(cardARef.current, { left: `${COLLAPSE_RIGHT_PCT}%`, width: "0%" });
-      gsap.set(infoRef.current, { opacity: 0, y: 30 });
 
       const tl = gsap.timeline();
       tl.to(
