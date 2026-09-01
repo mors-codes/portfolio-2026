@@ -45,7 +45,7 @@ export default function WorksSwap({ works }: WorksSwapProps) {
   // Start at the fully-rendered desktop frame width so the image never falls
   // back to its narrow intrinsic width before the first measurement arrives.
   const [cardFrameWidth, setCardFrameWidth] = useState(CARD_FRAME_MAX_WIDTH);
-  const imageWidth = Math.max(Math.min(cardFrameWidth - 80, 560) - 32, 0);
+  const imageWidth = Math.max(Math.min(cardFrameWidth - 80, 560) - 56, 0);
 
   useLayoutEffect(() => {
     const container = containerRef.current;
@@ -211,8 +211,11 @@ export default function WorksSwap({ works }: WorksSwapProps) {
         }
       >
         <div className="h-160 w-full px-10">
-          <div className="relative mx-auto h-full w-full max-w-140 overflow-hidden rounded-4xl bg-white pt-4 pr-4 pl-4">
-            <div className="relative h-full" style={{ width: imageWidth }}>
+          <div className="relative mx-auto h-full w-full max-w-140 overflow-hidden rounded-4xl bg-white pt-7 pr-7 pl-7">
+            <div
+              className="relative h-full overflow-hidden shadow-[0_0_22px_rgba(0,0,0,0.48)]"
+              style={{ width: imageWidth }}
+            >
               <Image
                 src={displayedWork.A.image}
                 alt={displayedWork.A.title}
@@ -236,8 +239,11 @@ export default function WorksSwap({ works }: WorksSwapProps) {
         }
       >
         <div className="h-160 w-full px-10">
-          <div className="relative mx-auto h-full w-full max-w-140 overflow-hidden rounded-4xl bg-white pt-4 pr-4 pl-4">
-            <div className="relative h-full" style={{ width: imageWidth }}>
+          <div className="relative mx-auto h-full w-full max-w-140 overflow-hidden rounded-4xl bg-white pt-7 pr-7 pl-7">
+            <div
+              className="relative h-full overflow-hidden shadow-[0_0_22px_rgba(0,0,0,0.48)]"
+              style={{ width: imageWidth }}
+            >
               <Image
                 src={displayedWork.B.image}
                 alt={displayedWork.B.title}
