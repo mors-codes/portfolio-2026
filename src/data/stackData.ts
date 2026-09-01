@@ -7,7 +7,7 @@ export const stackCategories: StackCategory[] = [
     icons: [
       { name: "HTML", icon: "/icons/stack/frontend/html.svg", x: 65, y: 50, size: 50, rotation: 15 },
       { name: "CSS", icon: "/icons/stack/frontend/css.svg", x: 74, y: 80, size: 55, rotation: -18 },
-      { name: "JavaScript", icon: "/icons/stack/frontend/javascript.svg", x: 55, y: 105, size: 45, rotation: -8 },
+      { name: "JavaScript", icon: "/icons/stack/frontend/javascript.svg", x: 55, y: 110, size: 50, rotation: -8 },
       { name: "React", icon: "/icons/stack/frontend/react.svg", x: 35, y: 88, size: 55, rotation: 22 },
       { name: "TypeScript", icon: "/icons/stack/frontend/typescript.svg", x: 20, y: 75, size: 60, rotation: 20 },
       { name: "Tailwind CSS", icon: "/icons/stack/frontend/tailwindcss.svg", x: 30, y: 46, size: 65, rotation: 10 },
@@ -47,10 +47,10 @@ export const stackCategories: StackCategory[] = [
     key: "automation",
     label: "AI Automation",
     icons: [
-      { name: "n8n", icon: "/icons/stack/ai-automation/n8n.svg", x: 62, y: 41, size: 70, rotation: -16 },
+      { name: "n8n", icon: "/icons/stack/ai-automation/n8n.svg", x: 62, y: 45, size: 70, rotation: -16 },
       { name: "Make.com", icon: "/icons/stack/ai-automation/make.svg", x: 65, y: 95, size: 50, rotation: 24 },
-      { name: "Zapier", icon: "/icons/stack/ai-automation/zapier.svg", x: 35, y: 31, size: 50, rotation: -9 },
-      { name: "GoHighLevel", icon: "/icons/stack/ai-automation/gohighlevel.svg", x: 50, y: 15, size: 65, rotation: 19 },
+      { name: "Zapier", icon: "/icons/stack/ai-automation/zapier.svg", x: 35, y: 35, size: 50, rotation: -9 },
+      { name: "GoHighLevel", icon: "/icons/stack/ai-automation/gohighlevel.svg", x: 50, y: 18, size: 65, rotation: 19 },
       {
         name: "OpenAI",
         icon: {
@@ -59,16 +59,16 @@ export const stackCategories: StackCategory[] = [
         },
         x: 85,
         y: 30,
-        size: 60,
+        size: 65,
         rotation: -14,
       },
       { name: "Slack", icon: "/icons/stack/ai-automation/slack.svg", x: 12, y: 30, size: 65, rotation: 18 },
       { name: "Gemini", icon: "/icons/stack/ai-automation/gemini.svg", x: 31, y: 83, size: 50, rotation: -20 },
       { name: "Gmail", icon: "/icons/stack/ai-automation/gmail.svg", x: 75, y: 63, size: 60, rotation: 16 },
-      { name: "Google Sheets", icon: "/icons/stack/ai-automation/sheets.svg", x: 25, y: 5, size: 55, rotation: -12 },
+      { name: "Google Sheets", icon: "/icons/stack/ai-automation/sheets.svg", x: 25, y: 10, size: 55, rotation: -12 },
       { name: "Claude", icon: "/icons/stack/ai-automation/claude.svg", x: 20, y: 60, size: 55, rotation: 22 },
       { name: "HubSpot", icon: "/icons/stack/ai-automation/hubspot.svg", x: 83, y: 95, size: 60, rotation: -18 },
-      { name: "Airtable", icon: "/icons/stack/ai-automation/airtable.svg", x: 68, y: 8, size: 65, rotation: 14 },
+      { name: "Airtable", icon: "/icons/stack/ai-automation/airtable.svg", x: 68, y: 10, size: 65, rotation: 14 },
       {
         name: "Notion",
         icon: {
@@ -80,7 +80,7 @@ export const stackCategories: StackCategory[] = [
         size: 60,
         rotation: -10,
       },
-      { name: "ClickUp", icon: "/icons/stack/ai-automation/clickup.svg", x: 45, y: 105, size: 55, rotation: -20 },
+      { name: "ClickUp", icon: "/icons/stack/ai-automation/clickup.svg", x: 45, y: 110, size: 55, rotation: -20 },
     ],
   },
 ];

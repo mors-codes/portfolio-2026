@@ -29,9 +29,9 @@ export default function Contact() {
       <div className="mt-16 flex flex-col gap-16 md:mt-24 md:flex-row md:items-end md:justify-between">
         <div>
           <p className="font-sans text-5xl font-black leading-[1.1] md:text-7xl">
-            Let&apos;s build
+            Let&apos;s work
             <br />
-            something.
+            together!
           </p>
 
           <p className="mt-4 max-w-md font-sans text-base text-ink/60 md:text-lg">
@@ -41,7 +41,7 @@ export default function Contact() {
 
           <button
             onClick={handleCopy}
-            className="group mt-8 inline-flex items-center gap-2 whitespace-nowrap rounded-xl border-3 border-ink bg-ink px-5 py-3 font-sans text-sm font-semibold text-bg transition-opacity hover:opacity-80"
+            className="group mt-8 inline-flex cursor-pointer items-center gap-2 whitespace-nowrap rounded-xl border-3 border-ink bg-ink px-5 py-3 font-sans text-sm font-semibold text-bg"
           >
             {copied ? (
               <Check className="h-4 w-4 shrink-0 text-bg" />
