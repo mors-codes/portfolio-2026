@@ -5,10 +5,17 @@ import { flushSync } from "react-dom";
 import Image from "next/image";
 import gsap from "gsap";
 
+export interface WorkStackItem {
+  name: string;
+  icon: string;
+}
+
 export interface WorkItem {
   title: string;
   description: string;
   image: string;
+  stack?: WorkStackItem[];
+  link?: string;
 }
 
 interface WorksSwapProps {
@@ -35,7 +42,10 @@ export default function WorksSwap({ works }: WorksSwapProps) {
   const [activeSlot, setActiveSlot] = useState<"A" | "B">("A");
 
   const active = works[index];
-  const [displayedWork, setDisplayedWork] = useState<{ A: WorkItem; B: WorkItem }>({
+  const [displayedWork, setDisplayedWork] = useState<{
+    A: WorkItem;
+    B: WorkItem;
+  }>({
     A: works[0],
     B: works[0],
   });
@@ -73,16 +83,26 @@ export default function WorksSwap({ works }: WorksSwapProps) {
     if (!node) return;
 
     const playEntrance = () => {
-      if (hasPlayedEntranceRef.current || !infoRef.current || !cardARef.current) return;
+      if (hasPlayedEntranceRef.current || !infoRef.current || !cardARef.current)
+        return;
       hasPlayedEntranceRef.current = true;
 
       const tl = gsap.timeline();
       tl.to(
         cardARef.current,
-        { left: `${RIGHT_REST_PCT}%`, width: `${PANEL_WIDTH_PCT}%`, duration: 1.2, ease: "power3.inOut" },
+        {
+          left: `${RIGHT_REST_PCT}%`,
+          width: `${PANEL_WIDTH_PCT}%`,
+          duration: 1.2,
+          ease: "power3.inOut",
+        },
         0,
       );
-      tl.to(infoRef.current, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 0.3);
+      tl.to(
+        infoRef.current,
+        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
+        0.3,
+      );
     };
 
     const observer = new IntersectionObserver(
@@ -100,7 +120,13 @@ export default function WorksSwap({ works }: WorksSwapProps) {
   }, []);
 
   const goTo = (target: number) => {
-    if (target === index || isTransitioning || !infoRef.current || !cardARef.current || !cardBRef.current) {
+    if (
+      target === index ||
+      isTransitioning ||
+      !infoRef.current ||
+      !cardARef.current ||
+      !cardBRef.current
+    ) {
       return;
     }
 
@@ -115,8 +141,12 @@ export default function WorksSwap({ works }: WorksSwapProps) {
     const incomingRef = incomingSlot === "A" ? cardARef : cardBRef;
 
     const outgoingWasOnLeft = !nextCardOnLeft;
-    const outgoingCollapsePct = outgoingWasOnLeft ? COLLAPSE_LEFT_PCT : COLLAPSE_RIGHT_PCT;
-    const incomingStartPct = outgoingWasOnLeft ? COLLAPSE_RIGHT_PCT : COLLAPSE_LEFT_PCT;
+    const outgoingCollapsePct = outgoingWasOnLeft
+      ? COLLAPSE_LEFT_PCT
+      : COLLAPSE_RIGHT_PCT;
+    const incomingStartPct = outgoingWasOnLeft
+      ? COLLAPSE_RIGHT_PCT
+      : COLLAPSE_LEFT_PCT;
 
     // Commit the new image before GSAP exposes the incoming slot. Without this,
     // the first swap can reveal one frame of that slot's stale collapsed content.
@@ -128,7 +158,10 @@ export default function WorksSwap({ works }: WorksSwapProps) {
     // allowing the collapsing panel to briefly peek over the incoming one.
     gsap.set(outgoingRef.current, { zIndex: 10 });
     gsap.set(incomingRef.current, { zIndex: 11 });
-    gsap.set(incomingRef.current, { left: `${incomingStartPct}%`, width: "0%" });
+    gsap.set(incomingRef.current, {
+      left: `${incomingStartPct}%`,
+      width: "0%",
+    });
 
     const tl = gsap.timeline({
       defaults: { overwrite: "auto" },
@@ -140,11 +173,20 @@ export default function WorksSwap({ works }: WorksSwapProps) {
       },
     });
 
-    tl.to(infoRef.current, { opacity: 0, y: 12, duration: 0.3, ease: "power2.out" }, 0);
+    tl.to(
+      infoRef.current,
+      { opacity: 0, y: 12, duration: 0.3, ease: "power2.out" },
+      0,
+    );
 
     tl.to(
       outgoingRef.current,
-      { left: `${outgoingCollapsePct}%`, width: "0%", duration: 1.2, ease: "power3.inOut" },
+      {
+        left: `${outgoingCollapsePct}%`,
+        width: "0%",
+        duration: 1.2,
+        ease: "power3.inOut",
+      },
       0,
     );
 
@@ -161,10 +203,17 @@ export default function WorksSwap({ works }: WorksSwapProps) {
 
     tl.set(
       infoRef.current,
-      { left: nextInfoOnLeft ? `${LEFT_REST_PCT}%` : `${RIGHT_REST_PCT}%`, y: 12 },
+      {
+        left: nextInfoOnLeft ? `${LEFT_REST_PCT}%` : `${RIGHT_REST_PCT}%`,
+        y: 12,
+      },
       1.2,
     );
-    tl.to(infoRef.current, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, 1.25);
+    tl.to(
+      infoRef.current,
+      { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" },
+      1.25,
+    );
   };
 
   const next = () => goTo((index + 1) % works.length);
@@ -181,22 +230,61 @@ export default function WorksSwap({ works }: WorksSwapProps) {
         disabled={isTransitioning}
         className="absolute top-1/2 left-0 z-40 -translate-x-4 -translate-y-1/2 text-ink/40 transition-colors hover:text-ink disabled:pointer-events-none disabled:opacity-30"
       >
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <path d="M16 5L8 12L16 19" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+        >
+          <path
+            d="M16 5L8 12L16 19"
+            stroke="currentColor"
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
         </svg>
       </button>
 
       <div
         ref={infoRef}
-        className="absolute top-1/2 z-20 -translate-y-1/2 overflow-hidden px-10"
+        className="absolute top-[calc(50%-10rem)] z-20 -translate-y-1/2 overflow-hidden px-10"
         style={{
           left: infoOnLeft ? `${LEFT_REST_PCT}%` : `${RIGHT_REST_PCT}%`,
           width: `${PANEL_WIDTH_PCT}%`,
         }}
       >
         <div className="overflow-hidden">
-          <h3 className="font-display text-3xl font-semibold whitespace-nowrap">{active.title}</h3>
-          <p className="mt-2 font-sans text-base whitespace-nowrap text-ink/60">{active.description}</p>
+          <h3 className="font-display text-3xl font-semibold whitespace-nowrap">
+            {active.title}
+          </h3>
+
+          {active.stack && active.stack.length > 0 && (
+            <div className="mt-3 flex flex-wrap gap-2">
+              {active.stack.map((item) => (
+                <span
+                  key={item.name}
+                  className="flex h-9 w-9 items-center justify-center rounded-lg bg-ink"
+                  title={item.name}
+                >
+                  <Image src={item.icon} alt={item.name} width={20} height={20} className="h-5 w-5" />
+                </span>
+              ))}
+            </div>
+          )}
+
+          {active.link && (
+            <a
+              href={active.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 inline-block font-sans text-sm font-medium text-ink/60 underline underline-offset-4 transition-colors hover:text-ink"
+            >
+              Visit Site →
+            </a>
+          )}
         </div>
       </div>
 
@@ -206,7 +294,10 @@ export default function WorksSwap({ works }: WorksSwapProps) {
         className="absolute top-1/2 z-10 -translate-y-1/2 overflow-hidden isolate [clip-path:inset(0)]"
         style={
           activeSlot === "A"
-            ? { left: infoOnLeft ? `${RIGHT_REST_PCT}%` : `${LEFT_REST_PCT}%`, width: `${PANEL_WIDTH_PCT}%` }
+            ? {
+                left: infoOnLeft ? `${RIGHT_REST_PCT}%` : `${LEFT_REST_PCT}%`,
+                width: `${PANEL_WIDTH_PCT}%`,
+              }
             : { left: "50%", width: "0%" }
         }
       >
@@ -234,7 +325,10 @@ export default function WorksSwap({ works }: WorksSwapProps) {
         className="absolute top-1/2 z-10 -translate-y-1/2 overflow-hidden isolate [clip-path:inset(0)]"
         style={
           activeSlot === "B"
-            ? { left: infoOnLeft ? `${RIGHT_REST_PCT}%` : `${LEFT_REST_PCT}%`, width: `${PANEL_WIDTH_PCT}%` }
+            ? {
+                left: infoOnLeft ? `${RIGHT_REST_PCT}%` : `${LEFT_REST_PCT}%`,
+                width: `${PANEL_WIDTH_PCT}%`,
+              }
             : { left: "50%", width: "0%" }
         }
       >
@@ -263,8 +357,21 @@ export default function WorksSwap({ works }: WorksSwapProps) {
         disabled={isTransitioning}
         className="absolute top-1/2 right-0 z-40 translate-x-4 -translate-y-1/2 text-ink/40 transition-colors hover:text-ink disabled:pointer-events-none disabled:opacity-30"
       >
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <path d="M8 5L16 12L8 19" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+        >
+          <path
+            d="M8 5L16 12L8 19"
+            stroke="currentColor"
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
         </svg>
       </button>
     </div>
