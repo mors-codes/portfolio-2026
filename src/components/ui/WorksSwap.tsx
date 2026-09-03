@@ -258,7 +258,7 @@ export default function WorksSwap({ works }: WorksSwapProps) {
         }}
       >
         <div className="overflow-hidden">
-          <h3 className="font-display text-3xl font-semibold whitespace-nowrap">
+          <h3 className="font-sans text-6xl font-medium tracking-tighter whitespace-nowrap">
             {active.title}
           </h3>
 
