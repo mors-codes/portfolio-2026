@@ -3,6 +3,7 @@
 import WorksSwap, {
   type WorkItem,
 } from "@/components/ui/WorksSwap";
+import { ArrowRight } from "lucide-react";
 
 const WORKS: WorkItem[] = [
   {
@@ -54,7 +55,8 @@ export default function Works() {
           href="/works"
           className="font-sans text-sm font-medium text-ink/50 transition-colors hover:text-ink"
         >
-          View More Works →
+          View More Works
+          <ArrowRight size={12} className="inline-block ml-1" />
         </a>
       </div>
 

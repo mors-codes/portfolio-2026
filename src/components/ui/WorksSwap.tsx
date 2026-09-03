@@ -258,7 +258,7 @@ export default function WorksSwap({ works }: WorksSwapProps) {
         }}
       >
         <div className="overflow-hidden">
-          <h3 className="font-sans text-6xl font-medium tracking-tighter whitespace-nowrap">
+          <h3 className="font-sans text-7xl font-medium tracking-tighter whitespace-nowrap">
             {active.title}
           </h3>
 
@@ -267,7 +267,7 @@ export default function WorksSwap({ works }: WorksSwapProps) {
               {active.stack.map((item) => (
                 <span
                   key={item.name}
-                  className="flex h-9 w-9 items-center justify-center rounded-lg bg-ink"
+                  className="flex h-10 w-10 items-center justify-center rounded-lg bg-ink"
                   title={item.name}
                 >
                   <Image
@@ -287,10 +287,13 @@ export default function WorksSwap({ works }: WorksSwapProps) {
               href={active.link}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-3 inline-block font-sans text-sm font-medium text-ink/60 underline underline-offset-4 transition-colors hover:text-ink"
+              className="group relative mt-3 inline-block font-sans text-lg font-normal text-ink/60 transition-colors hover:text-ink"
             >
-              Visit Site
-              <ArrowUpRight size={12} className="inline-block ml-1" />
+              <span className="relative italic">
+                Visit Site
+                <span className="absolute bottom-0 left-0 h-[1.5px] w-0 bg-current transition-all duration-300 group-hover:w-full" />
+              </span>
+              <ArrowUpRight size={16} className="inline-block ml-1" />
             </a>
           )}
         </div>
