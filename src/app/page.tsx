@@ -89,16 +89,16 @@ export default function Home() {
       <div id="hero">
         <Hero />
       </div>
-      <div id="about" className="scroll-mt-5">
+      <div id="about" className="-scroll-mt-7">
         <About />
       </div>
-      <div id="works" className="-scroll-mt-5">
+      <div id="works" className="-scroll-mt-17">
         <Works />
       </div>
-      <div id="stack" className="-scroll-mt-5">
+      <div id="stack" className="-scroll-mt-17">
         <Stack isDark={isDark} />
       </div>
-      <div id="contact" className="-scroll-mt-5">
+      <div id="contact" className="-scroll-mt-17">
         <Contact />
       </div>
     </main>
