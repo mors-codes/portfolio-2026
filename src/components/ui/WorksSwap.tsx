@@ -2,6 +2,7 @@
 
 import { useLayoutEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
+import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 import gsap from "gsap";
 
@@ -269,7 +270,13 @@ export default function WorksSwap({ works }: WorksSwapProps) {
                   className="flex h-9 w-9 items-center justify-center rounded-lg bg-ink"
                   title={item.name}
                 >
-                  <Image src={item.icon} alt={item.name} width={20} height={20} className="h-5 w-5" />
+                  <Image
+                    src={item.icon}
+                    alt={item.name}
+                    width={20}
+                    height={20}
+                    className="h-5 w-5"
+                  />
                 </span>
               ))}
             </div>
@@ -282,7 +289,8 @@ export default function WorksSwap({ works }: WorksSwapProps) {
               rel="noopener noreferrer"
               className="mt-3 inline-block font-sans text-sm font-medium text-ink/60 underline underline-offset-4 transition-colors hover:text-ink"
             >
-              Visit Site →
+              Visit Site
+              <ArrowUpRight size={12} className="inline-block ml-1" />
             </a>
           )}
         </div>
