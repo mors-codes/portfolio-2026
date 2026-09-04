@@ -221,7 +221,7 @@ export default function WorksSwap({ works }: WorksSwapProps) {
   const prev = () => goTo((index - 1 + works.length) % works.length);
 
   return (
-    <div ref={containerRef} className="relative mt-10 h-160">
+    <div ref={containerRef} className="relative mt-7 h-160">
       <div className="pointer-events-none absolute top-0 bottom-0 left-1/2 z-30 w-px -translate-x-1/2 bg-ink/10 dark:bg-bg/10" />
 
       <button
