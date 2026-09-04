@@ -287,7 +287,7 @@ export default function WorksSwap({ works }: WorksSwapProps) {
               href={active.link}
               target="_blank"
               rel="noopener noreferrer"
-              className="group relative mt-3 inline-block font-sans text-lg font-normal text-ink/60 transition-colors hover:text-ink"
+              className="group relative mt-3 inline-block font-sans text-base font-normal text-ink/60 transition-colors hover:text-ink"
             >
               <span className="relative italic">
                 Visit Site
