@@ -3,23 +3,25 @@ import type { StackCategory } from "@/components/ui/StackScatter";
 export const stackCategories: StackCategory[] = [
   {
     key: "frontend",
-    label: "Frontend",
+    label: "Frontend & Design",
     icons: [
-      { name: "HTML", icon: "/icons/stack/frontend/html.svg", x: 65, y: 50, size: 50, rotation: 15 },
-      { name: "CSS", icon: "/icons/stack/frontend/css.svg", x: 74, y: 80, size: 55, rotation: -18 },
-      { name: "JavaScript", icon: "/icons/stack/frontend/javascript.svg", x: 55, y: 110, size: 50, rotation: -8 },
+      { name: "HTML", icon: "/icons/stack/frontend/html.svg", x: 69, y: 53, size: 50, rotation: 15 },
+      { name: "CSS", icon: "/icons/stack/frontend/css.svg", x: 65, y: 95, size: 55, rotation: -18 },
+      { name: "Figma", icon: "/icons/stack/frontend/figma.svg", x: 83, y: 75, size: 60, rotation: -16 },
+      { name: "JavaScript", icon: "/icons/stack/frontend/javascript.svg", x: 78, y: 117, size: 50, rotation: -8 },
       { name: "React", icon: "/icons/stack/frontend/react.svg", x: 35, y: 88, size: 55, rotation: 22 },
-      { name: "TypeScript", icon: "/icons/stack/frontend/typescript.svg", x: 20, y: 75, size: 60, rotation: 20 },
+      { name: "Canva", icon: "/icons/stack/frontend/canva.svg", x: 23, y: 112, size: 60, rotation: 22 },
+      { name: "TypeScript", icon: "/icons/stack/frontend/typescript.svg", x: 15, y: 75, size: 60, rotation: 20 },
       { name: "Tailwind CSS", icon: "/icons/stack/frontend/tailwindcss.svg", x: 30, y: 46, size: 65, rotation: 10 },
       { name: "Bootstrap", icon: "/icons/stack/frontend/bootstrap.svg", x: 20, y: 20, size: 55, rotation: -15 },
-      { name: "Vite", icon: "/icons/stack/frontend/vite.svg", x: 40, y: 10, size: 60, rotation: 20 },
-      { name: "Angular", icon: "/icons/stack/frontend/angular.svg", x: 58, y: 15, size: 50, rotation: -15 },
+      { name: "Vite", icon: "/icons/stack/frontend/vite.svg", x: 40, y: 17, size: 60, rotation: 20 },
+      { name: "Angular", icon: "/icons/stack/frontend/angular.svg", x: 57, y: 27, size: 50, rotation: -15 },
       { name: "Next.js", icon: "/icons/stack/frontend/nextjs.svg", x: 78, y: 22, size: 70, rotation: 14 },
     ],
   },
   {
     key: "backend",
-    label: "Backend",
+    label: "Backend & Database",
     icons: [
       { name: "Java", icon: "/icons/stack/backend/java.svg", x: 65, y: 40, size: 80, rotation: -18 },
       { name: "Node.js", icon: "/icons/stack/backend/nodejs.svg", x: 75, y: 70, size: 70, rotation: 14 },
