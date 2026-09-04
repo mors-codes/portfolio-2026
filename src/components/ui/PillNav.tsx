@@ -138,8 +138,8 @@ const circleRefs = useRef<(HTMLSpanElement | null)[]>([]);
   useEffect(() => {
     if (!sunRef.current || !moonRef.current) return;
 
-    const showing = isDark ? sunRef.current : moonRef.current;
-    const hiding = isDark ? moonRef.current : sunRef.current;
+    const showing = isDark ? moonRef.current : sunRef.current;
+    const hiding = isDark ? sunRef.current : moonRef.current;
 
     gsap.to(hiding, {
       opacity: 0,
@@ -228,8 +228,8 @@ const circleRefs = useRef<(HTMLSpanElement | null)[]>([]);
           type="button"
           className={`pill-logo cursor-pointer border-[3.5px] ${
             isDark
-              ? "border-white bg-black text-white"
-              : "border-black bg-white text-black"
+              ? "border-white bg-bg text-white"
+              : "border-black bg-bg text-black"
           }`}
           aria-label="Toggle dark mode"
           onClick={onToggleTheme}
