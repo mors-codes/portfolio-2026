@@ -27,6 +27,7 @@
   align-items: center;
   height: var(--nav-h);
   background: var(--base, #222222);
+  border: 3.5px solid var(--base, #222222);
   border-radius: 9999px;
 }
 
@@ -34,13 +35,16 @@
   width: var(--nav-h);
   height: var(--nav-h);
   border-radius: 50%;
-  background: var(--base, #222222);
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
+
   overflow: hidden;
   text-decoration: none;
-  color: var(--pill-bg, #efefef);
+
+  cursor: pointer;
+
   font-family: var(--font-danfo);
   font-size: 15px;
 }
@@ -51,7 +55,7 @@
   align-items: stretch;
   gap: var(--pill-gap);
   margin: 0;
-  padding: 3px;
+  padding: 0;
   height: 100%;
 }
 

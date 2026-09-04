@@ -226,7 +226,11 @@ const circleRefs = useRef<(HTMLSpanElement | null)[]>([]);
         <button
           ref={logoButtonRef}
           type="button"
-          className="pill-logo cursor-pointer"
+          className={`pill-logo cursor-pointer border-[3.5px] ${
+            isDark
+              ? "border-white bg-black text-white"
+              : "border-black bg-white text-black"
+          }`}
           aria-label="Toggle dark mode"
           onClick={onToggleTheme}
           style={{ position: "relative" }}

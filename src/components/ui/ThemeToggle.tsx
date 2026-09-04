@@ -32,8 +32,8 @@ export default function ThemeToggle({
   useEffect(() => {
     if (!sunRef.current || !moonRef.current) return;
 
-    const showing = isDark ? sunRef.current : moonRef.current;
-    const hiding = isDark ? moonRef.current : sunRef.current;
+    const showing = isDark ? moonRef.current : sunRef.current;
+    const hiding = isDark ? sunRef.current : moonRef.current;
 
     gsap.to(hiding, {
       opacity: 0,
@@ -56,19 +56,23 @@ export default function ThemeToggle({
   }, [isDark]);
 
   return (
-    <button
-      ref={buttonRef}
-      type="button"
-      onClick={onToggleTheme}
-      aria-label="Toggle dark mode"
-      className="fixed bottom-6 left-6 z-50 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full bg-ink text-bg transition-opacity duration-300"
-      style={{
-        opacity: 0,
-        scale: 0,
-        pointerEvents: visible ? "auto" : "none",
-        visibility: visible ? "visible" : "hidden",
-      }}
-    >
+<button
+  ref={buttonRef}
+  type="button"
+  onClick={onToggleTheme}
+  aria-label="Toggle dark mode"
+  className={`fixed bottom-6 left-6 z-50 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full transition-colors duration-300 ${
+    isDark
+      ? "border-white bg-black text-white"
+      : "border-black bg-white text-black"
+  }`}
+  style={{
+    opacity: 0,
+    scale: 0,
+    pointerEvents: visible ? "auto" : "none",
+    visibility: visible ? "visible" : "hidden",
+  }}
+>
       <span className="relative block h-4.5 w-4.5">
         <svg
           ref={sunRef}
@@ -78,7 +82,7 @@ export default function ThemeToggle({
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
           className="absolute inset-0"
-          style={{ opacity: isDark ? 1 : 0 }}
+          style={{ opacity: isDark ? 0 : 1 }}
         >
           <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="2" />
           <path
@@ -96,7 +100,7 @@ export default function ThemeToggle({
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
           className="absolute inset-0"
-          style={{ opacity: isDark ? 0 : 1 }}
+          style={{ opacity: isDark ? 1 : 0 }}
         >
           <path
             d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"
