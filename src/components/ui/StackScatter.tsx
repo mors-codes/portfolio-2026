@@ -188,7 +188,7 @@ export default function StackScatter({
 
       <div className="stack-scatter-center">
         <span className="stack-scatter-badge">
-          Hover a category to view its tools
+          The tools and platforms that shaped how I build.
         </span>
 
         <div className="stack-scatter-category-list">

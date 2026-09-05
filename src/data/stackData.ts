@@ -5,7 +5,7 @@ export const stackCategories: StackCategory[] = [
     key: "frontend",
     label: "Frontend & Design",
     icons: [
-      { name: "HTML", icon: "/icons/stack/frontend/html.svg", x: 69, y: 53, size: 50, rotation: 15 },
+      { name: "HTML", icon: "/icons/stack/frontend/html.svg", x: 69, y: 53, size: 55, rotation: 15 },
       { name: "CSS", icon: "/icons/stack/frontend/css.svg", x: 65, y: 95, size: 55, rotation: -18 },
       { name: "Figma", icon: "/icons/stack/frontend/figma.svg", x: 83, y: 75, size: 60, rotation: -16 },
       { name: "JavaScript", icon: "/icons/stack/frontend/javascript.svg", x: 78, y: 117, size: 50, rotation: -8 },
