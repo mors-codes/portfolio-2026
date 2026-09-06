@@ -13,7 +13,7 @@ export const stackCategories: StackCategory[] = [
       { name: "Canva", icon: "/icons/stack/frontend/canva.svg", x: 23, y: 112, size: 60, rotation: 22 },
       { name: "TypeScript", icon: "/icons/stack/frontend/typescript.svg", x: 15, y: 75, size: 60, rotation: 20 },
       { name: "Tailwind CSS", icon: "/icons/stack/frontend/tailwindcss.svg", x: 30, y: 46, size: 65, rotation: 10 },
-      { name: "Bootstrap", icon: "/icons/stack/frontend/bootstrap.svg", x: 20, y: 20, size: 55, rotation: -15 },
+      { name: "Bootstrap", icon: "/icons/stack/frontend/bootstrap.svg", x: 19, y: 20, size: 65, rotation: -15 },
       { name: "Vite", icon: "/icons/stack/frontend/vite.svg", x: 40, y: 17, size: 60, rotation: 20 },
       { name: "Angular", icon: "/icons/stack/frontend/angular.svg", x: 57, y: 27, size: 50, rotation: -15 },
       { name: "Next.js", icon: "/icons/stack/frontend/nextjs.svg", x: 78, y: 22, size: 70, rotation: 14 },
