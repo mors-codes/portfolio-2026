@@ -119,7 +119,7 @@ export default function StackScatter({
     gsap.killTweensOf([scatterEl, blockEl]);
 
     if (view === "block") {
-      gsap.set(blockEl, { display: "flex" });
+      gsap.set(blockEl, { display: "grid" });
       gsap.fromTo(
         blockEl,
         { opacity: 0, y: 12 },
