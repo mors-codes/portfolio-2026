@@ -1,14 +1,64 @@
+"use client";
+
+import { useLayoutEffect, useRef } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import StackScatter from "@/components/ui/StackScatter";
 import { stackCategories } from "@/data/stackData";
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface StackProps {
   isDark: boolean;
 }
 
 export default function Stack({ isDark }: StackProps) {
+  const sectionRef = useRef<HTMLElement>(null);
+  const eyebrowRef = useRef<HTMLParagraphElement>(null);
+  const scatterWrapRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    if (!sectionRef.current) return;
+
+    const targets = [eyebrowRef.current, scatterWrapRef.current].filter(
+      Boolean,
+    );
+
+    gsap.set(targets, { y: 32, opacity: 0 });
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: "top 75%",
+      },
+    });
+
+    tl.to(eyebrowRef.current, {
+      y: 0,
+      opacity: 1,
+      duration: 0.6,
+      ease: "power3.out",
+    }).to(
+      scatterWrapRef.current,
+      { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" },
+      0.2,
+    );
+
+    return () => {
+      tl.scrollTrigger?.kill();
+      tl.kill();
+    };
+  }, []);
+
   return (
-    <section className="min-h-screen px-8 py-24 md:px-16">
-      <p className="flex items-center gap-2 text-4xl text-[#B5B5B5]">
+    <section
+      ref={sectionRef}
+      className="min-h-screen px-8 py-24 md:px-16"
+    >
+      <p
+        ref={eyebrowRef}
+        className="flex items-center gap-2 text-4xl text-[#B5B5B5]"
+      >
         <span className="font-mono-label">03</span>
         <span className="font-sans font-thin">—</span>
         <span className="font-display font-black -tracking-widest">
@@ -16,7 +66,9 @@ export default function Stack({ isDark }: StackProps) {
         </span>
       </p>
 
-      <StackScatter categories={stackCategories} isDark={isDark} />
+      <div ref={scatterWrapRef}>
+        <StackScatter categories={stackCategories} isDark={isDark} />
+      </div>
     </section>
   );
 }

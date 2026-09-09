@@ -167,7 +167,11 @@ export default function StackScatter({
 
   return (
     <div className="stack-scatter-container">
-      <TargetCursor targetSelector=".cursor-target" showOnlyOnTarget />
+      <TargetCursor
+        targetSelector=".cursor-target"
+        showOnlyOnTarget
+        cursorColor={isDark ? "#efefef" : "#222222"}
+      />
 
       <div ref={scatterRootRef} style={{ display: "block" }}>
         <div className="stack-scatter-icon-layer">
@@ -242,7 +246,7 @@ export default function StackScatter({
 
           <button
             type="button"
-            className="stack-scatter-view-all cursor-target"
+            className="stack-scatter-view-all"
             onClick={() => setView("block")}
           >
             View all tech stack
