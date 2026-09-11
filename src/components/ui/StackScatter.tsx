@@ -126,27 +126,42 @@ export default function StackScatter({
 
     if (initialTargets.length === 0) return;
 
-    gsap.set(initialTargets, { scale: 0, opacity: 0 });
+    gsap.set(orderedButtons, { scale: 0 });
+    gsap.set(badgeRef.current, {
+      opacity: 0,
+    });
+    gsap.set(viewAllRef.current, { scale: 0 });
 
     const handleEyebrowDone = () => {
       const tl = gsap.timeline();
 
+      const badgeNaturalWidth = badgeRef.current
+        ? badgeRef.current.scrollWidth
+        : 0;
+
+      gsap.set(badgeRef.current, {
+        width: 0,
+        paddingLeft: 0,
+        paddingRight: 0,
+        overflow: "hidden",
+      });
+
       tl.to(orderedButtons, {
         scale: 1,
-        opacity: 1,
         duration: 0.5,
         ease: "back.out(1.5)",
         stagger: 0.15,
       })
         .to(badgeRef.current, {
-          scale: 1,
+          width: badgeNaturalWidth,
+          paddingLeft: 16,
+          paddingRight: 16,
           opacity: 0.6,
-          duration: 0.4,
-          ease: "back.out(1.5)",
+          duration: 0.6,
+          ease: "power2.out",
         })
         .to(viewAllRef.current, {
           scale: 1,
-          opacity: 1,
           duration: 0.4,
           ease: "back.out(1.5)",
         });
