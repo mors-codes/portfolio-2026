@@ -20,11 +20,7 @@ export default function Stack({ isDark }: StackProps) {
   useLayoutEffect(() => {
     if (!sectionRef.current) return;
 
-    const targets = [eyebrowRef.current, scatterWrapRef.current].filter(
-      Boolean,
-    );
-
-    gsap.set(targets, { y: 32, opacity: 0 });
+    gsap.set(eyebrowRef.current, { y: 32, opacity: 0 });
 
     const tl = gsap.timeline({
       scrollTrigger: {
@@ -33,16 +29,17 @@ export default function Stack({ isDark }: StackProps) {
       },
     });
 
+    gsap.set(scatterWrapRef.current, { opacity: 1 });
+
     tl.to(eyebrowRef.current, {
       y: 0,
       opacity: 1,
       duration: 0.6,
       ease: "power3.out",
-    }).to(
-      scatterWrapRef.current,
-      { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" },
-      0.2,
-    );
+      onComplete: () => {
+        window.dispatchEvent(new CustomEvent("stack-eyebrow-done"));
+      },
+    });
 
     return () => {
       tl.scrollTrigger?.kill();

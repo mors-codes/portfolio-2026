@@ -53,6 +53,9 @@ export default function StackScatter({
 
   const scatterRootRef = useRef<HTMLDivElement>(null);
   const blockRootRef = useRef<HTMLDivElement>(null);
+  const badgeRef = useRef<HTMLSpanElement>(null);
+  const viewAllRef = useRef<HTMLButtonElement>(null);
+  const categoryButtonRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
 
   useEffect(() => {
     const token = ++transitionTokenRef.current;
@@ -109,6 +112,51 @@ export default function StackScatter({
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [displayedKey, displayedLocked]);
+
+  useEffect(() => {
+    const orderedButtons = categories
+      .map((cat) => categoryButtonRefs.current.get(cat.key))
+      .filter((el): el is HTMLButtonElement => Boolean(el));
+
+    const initialTargets = [
+      ...orderedButtons,
+      badgeRef.current,
+      viewAllRef.current,
+    ].filter(Boolean);
+
+    if (initialTargets.length === 0) return;
+
+    gsap.set(initialTargets, { scale: 0, opacity: 0 });
+
+    const handleEyebrowDone = () => {
+      const tl = gsap.timeline();
+
+      tl.to(orderedButtons, {
+        scale: 1,
+        opacity: 1,
+        duration: 0.5,
+        ease: "back.out(1.5)",
+        stagger: 0.15,
+      })
+        .to(badgeRef.current, {
+          scale: 1,
+          opacity: 0.6,
+          duration: 0.4,
+          ease: "back.out(1.5)",
+        })
+        .to(viewAllRef.current, {
+          scale: 1,
+          opacity: 1,
+          duration: 0.4,
+          ease: "back.out(1.5)",
+        });
+    };
+
+    window.addEventListener("stack-eyebrow-done", handleEyebrowDone);
+    return () => {
+      window.removeEventListener("stack-eyebrow-done", handleEyebrowDone);
+    };
+  }, [categories]);
 
   // Toggle between scatter and block view with a crossfade.
   useEffect(() => {
@@ -215,7 +263,7 @@ export default function StackScatter({
         </div>
 
         <div className="stack-scatter-center">
-          <span className="stack-scatter-badge">
+          <span ref={badgeRef} className="stack-scatter-badge">
             The tools and platforms that shaped how I build.
           </span>
 
@@ -230,6 +278,10 @@ export default function StackScatter({
               return (
                 <button
                   key={cat.key}
+                  ref={(el) => {
+                    if (el) categoryButtonRefs.current.set(cat.key, el);
+                    else categoryButtonRefs.current.delete(cat.key);
+                  }}
                   type="button"
                   className="stack-scatter-category cursor-target"
                   data-state={state}
@@ -245,6 +297,7 @@ export default function StackScatter({
           </div>
 
           <button
+            ref={viewAllRef}
             type="button"
             className="stack-scatter-view-all"
             onClick={() => setView("block")}
