@@ -199,7 +199,7 @@ export default function StackScatter({
       gsap.fromTo(
         scatterEl,
         { opacity: 0 },
-        { opacity: 1, duration: 0.4, ease: "power3.out" }
+        { opacity: 1, duration: 0.4, ease: "power3.out", delay: 0.5 }
       );
       gsap.to(blockEl, {
         opacity: 0,
@@ -329,7 +329,7 @@ export default function StackScatter({
       >
         <button
           type="button"
-          className="stack-block-back cursor-target"
+          className="stack-block-back"
           onClick={() => setView("scatter")}
         >
           ← Back

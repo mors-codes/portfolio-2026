@@ -128,10 +128,7 @@
 
 .stack-block-back {
   grid-column: 1 / -1;
-}
-
-.stack-block-back {
-  align-self: flex-start;
+  justify-self: start;
   background: none;
   border: none;
   padding: 6px 0;
