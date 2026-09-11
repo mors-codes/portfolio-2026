@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore, useRef } from "react";
 
 const themeListeners = new Set<() => void>();
 
@@ -20,16 +20,22 @@ import Stack from "@/components/sections/Stack";
 import Contact from "@/components/sections/Contact";
 import PillNav from "@/components/ui/PillNav";
 import ThemeToggle from "@/components/ui/ThemeToggle";
+import MobileNav from "@/components/ui/MobileNav";
+import StaggeredMenu, {
+  type StaggeredMenuHandle,
+} from "@/components/ui/StaggeredMenu";
 
 export default function Home() {
   const [pastHero, setPastHero] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<StaggeredMenuHandle>(null);
   const isDark = useSyncExternalStore(
     subscribeToThemeChange,
     () => document.documentElement.classList.contains("dark"),
     () => false
   );
 
-    const toggleTheme = () => {
+  const toggleTheme = () => {
     const next = !isDark;
 
     const applyTheme = () => {
@@ -52,6 +58,10 @@ export default function Home() {
     }
   };
 
+  const handleMenuToggle = () => {
+    menuRef.current?.toggle();
+  };
+
   useEffect(() => {
     const heroEl = document.getElementById("hero-nav-row");
     if (!heroEl) return;
@@ -69,18 +79,21 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-bg text-ink">
-      <PillNav
-        visible={pastHero}
-        isDark={isDark}
-        onToggleTheme={toggleTheme}
-        items={[
-          { label: "Home", href: "#hero" },
-          { label: "About", href: "#about" },
-          { label: "Works", href: "#works" },
-          { label: "Stack", href: "#stack" },
-          { label: "Contact", href: "#contact" },
-        ]}
-      />
+      <div className="hidden md:block">
+        <PillNav
+          visible={pastHero}
+          isDark={isDark}
+          onToggleTheme={toggleTheme}
+          items={[
+            { label: "Home", href: "#hero" },
+            { label: "About", href: "#about" },
+            { label: "Works", href: "#works" },
+            { label: "Stack", href: "#stack" },
+            { label: "Contact", href: "#contact" },
+          ]}
+        />
+      </div>
+      <MobileNav hidden={menuOpen} onMenuToggle={handleMenuToggle} />
       <ThemeToggle
         visible={!pastHero}
         isDark={isDark}
@@ -101,6 +114,28 @@ export default function Home() {
       <div id="contact" className="-scroll-mt-17">
         <Contact />
       </div>
+      <StaggeredMenu
+        ref={menuRef}
+        onOpenChange={setMenuOpen}
+        colors={["#3a3a3a", "#2a2a2a"]}
+        items={[
+          { label: "About", ariaLabel: "Go to About section", link: "#about" },
+          { label: "Works", ariaLabel: "Go to Works section", link: "#works" },
+          { label: "Stack", ariaLabel: "Go to Stack section", link: "#stack" },
+          {
+            label: "Contact",
+            ariaLabel: "Go to Contact section",
+            link: "#contact",
+          },
+        ]}
+        socialItems={[
+          { label: "GitHub", link: "https://github.com/mors-codes" },
+          { label: "LinkedIn", link: "#" },
+          { label: "Twitter", link: "#" },
+        ]}
+        displaySocials
+        displayItemNumbering
+      />
     </main>
   );
 }

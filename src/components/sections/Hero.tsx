@@ -34,7 +34,8 @@ export default function Hero() {
     if (yearRef.current) {
       gsap.set(yearRef.current, { x: 24, opacity: 0 });
     }
-    if (eyebrowRef.current) gsap.set(eyebrowRef.current, { y: -12, opacity: 0 });
+    if (eyebrowRef.current)
+      gsap.set(eyebrowRef.current, { y: -12, opacity: 0 });
     if (logoRef.current) gsap.set(logoRef.current, { y: -12, opacity: 0 });
     if (folioRef.current) gsap.set(folioRef.current, { y: -12, opacity: 0 });
     if (illustrationRef.current) {
@@ -55,14 +56,14 @@ export default function Hero() {
         ease: "back.out(1.7)",
         stagger: 0.035,
       },
-      0.1
+      0.1,
     );
 
     if (roleLabelsRef.current) {
       tl.to(
         roleLabelsRef.current,
         { x: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
-        0.9
+        0.9,
       );
     }
 
@@ -70,21 +71,23 @@ export default function Hero() {
       tl.to(
         yearRef.current,
         { x: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
-        1.3
+        1.3,
       );
     }
 
     tl.to(
-      [eyebrowRef.current, logoRef.current, folioRef.current].filter(Boolean),
+      [eyebrowRef.current, logoRef.current, folioRef.current].filter(
+        Boolean,
+      ),
       { y: 0, opacity: 1, duration: 0.6, ease: "power3.out", stagger: 0.08 },
-      1.5
+      1.5,
     );
 
     if (illustrationRef.current) {
       tl.to(
         illustrationRef.current,
         { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" },
-        1.8
+        1.8,
       );
     }
 
@@ -92,10 +95,10 @@ export default function Hero() {
       tl.to(
         navWrapRef.current,
         { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
-        2.1
+        2.1,
       );
     }
-    }, []);
+  }, []);
 
   return (
     <section className="relative min-h-screen px-8 py-10 md:px-16 md:py-12">
@@ -103,7 +106,7 @@ export default function Hero() {
       <div className="relative flex items-start font-sans text-xs">
         <p
           ref={eyebrowRef}
-          className="max-w-40 font-medium leading-snug"
+          className="max-w-40 hidden font-medium leading-snug md:block"
           style={{ opacity: 0, transform: "translateY(-12px)" }}
         >
           Open for work and collaborations
@@ -111,7 +114,7 @@ export default function Hero() {
 
         <p
           ref={logoRef}
-          className="absolute left-1/2 -translate-x-1/2 font-logo text-2xl"
+          className="absolute left-1/2 hidden -translate-x-1/2 font-logo text-2xl md:block"
           style={{ opacity: 0 }}
         >
           MORS.
@@ -119,7 +122,7 @@ export default function Hero() {
 
         <div
           ref={folioRef}
-          className="ml-auto font-medium leading-tight"
+          className="ml-auto hidden font-medium leading-tight md:block"
           style={{ opacity: 0, transform: "translateY(-12px)" }}
         >
           <p className="pl-7.5">-FOLIO</p>
@@ -178,6 +181,7 @@ export default function Hero() {
           <NavRow />
         </div>
       </div>
+
     </section>
   );
 }
