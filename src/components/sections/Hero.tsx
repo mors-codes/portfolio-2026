@@ -135,7 +135,7 @@ export default function Hero() {
         <div className="inline-block text-left">
           <p
             ref={roleLabelsRef}
-            className="mb-2 ml-2 flex items-center gap-5 font-sans text-sm"
+            className="mb-2 ml-2 flex items-center gap-5 font-sans text-xs md:text-sm"
             style={{ opacity: 0, transform: "translateX(-24px)" }}
           >
             <span>Full Stack Developer</span>
@@ -147,7 +147,7 @@ export default function Hero() {
           <AnimatedName ref={nameRef} />
           <p
             ref={yearRef}
-            className="-mt-4 text-right font-sans text-sm font-bold"
+            className="-mt-4 text-right font-sans text-xs font-bold md:text-sm"
             style={{ opacity: 0, transform: "translateX(24px)" }}
           >
             2026
