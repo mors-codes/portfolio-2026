@@ -135,7 +135,7 @@ export default function Hero() {
         <div className="inline-block text-left">
           <p
             ref={roleLabelsRef}
-            className="mb-2 ml-2 flex items-center gap-5 font-sans text-xs md:text-sm"
+            className="mb-2 ml-2 flex flex-nowrap items-center gap-2 whitespace-nowrap font-sans text-[2.4vw] md:gap-5 md:text-sm"
             style={{ opacity: 0, transform: "translateX(-24px)" }}
           >
             <span>Full Stack Developer</span>
