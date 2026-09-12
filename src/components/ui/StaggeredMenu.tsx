@@ -409,6 +409,10 @@ const StaggeredMenu = forwardRef<StaggeredMenuHandle, StaggeredMenuProps>(
               ))}
             </ul>
 
+            <p className="sm-availability-text font-sans">
+              Open for work and collaborations
+            </p>
+
             {displaySocials && socialItems.length > 0 && (
               <div className="sm-socials" aria-label="Social links">
                 <h3 className="sm-socials-title font-sans">Socials</h3>

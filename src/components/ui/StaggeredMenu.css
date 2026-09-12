@@ -78,6 +78,15 @@
   padding: 0;
 }
 
+.sm-availability-text {
+  margin-top: auto;
+  padding-top: 2rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.375;
+  color: var(--color-bg);
+}
+
 .sm-panel-inner {
   flex: 1;
   display: flex;
@@ -124,8 +133,7 @@
 }
 
 .sm-socials {
-  margin-top: auto;
-  padding-top: 2rem;
+  padding-top: 0.75rem;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
