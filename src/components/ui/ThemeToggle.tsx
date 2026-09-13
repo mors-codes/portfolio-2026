@@ -21,17 +21,6 @@ export default function ThemeToggle({
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    if (!buttonRef.current) return;
-    gsap.to(buttonRef.current, {
-      opacity: 1,
-      scale: 1,
-      duration: 0.5,
-      ease: "back.out(1.7)",
-      delay: 2.7,
-    });
-  }, []);
-
-  useEffect(() => {
     if (!sunRef.current || !moonRef.current) return;
 
     const showing = isDark ? moonRef.current : sunRef.current;
@@ -65,8 +54,6 @@ export default function ThemeToggle({
       aria-label="Toggle dark mode"
       className="group flex h-7 w-7 cursor-pointer items-center justify-center transition-colors duration-300"
       style={{
-        opacity: 0,
-        scale: 0,
         pointerEvents: visible ? "auto" : "none",
         visibility: visible ? "visible" : "hidden",
         color: iconColor ?? (isDark ? "#ffffff" : "#000000"),
