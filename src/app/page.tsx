@@ -19,7 +19,6 @@ import Works from "@/components/sections/Works";
 import Stack from "@/components/sections/Stack";
 import Contact from "@/components/sections/Contact";
 import PillNav from "@/components/ui/PillNav";
-import ThemeToggle from "@/components/ui/ThemeToggle";
 import MobileNav from "@/components/ui/MobileNav";
 import StaggeredMenu, {
   type StaggeredMenuHandle,
@@ -94,13 +93,8 @@ export default function Home() {
         />
       </div>
       <MobileNav hidden={menuOpen} onMenuToggle={handleMenuToggle} />
-      <ThemeToggle
-        visible={!pastHero}
-        isDark={isDark}
-        onToggleTheme={toggleTheme}
-      />
       <div id="hero">
-        <Hero />
+        <Hero isDark={isDark} onToggleTheme={toggleTheme} />
       </div>
       <div id="about" className="-scroll-mt-7">
         <About />

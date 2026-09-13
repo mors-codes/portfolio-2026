@@ -5,11 +5,16 @@ import { gsap } from "gsap";
 import Image from "next/image";
 import NavRow from "@/components/ui/NavRow";
 import AnimatedName from "@/components/ui/AnimatedName";
+import ThemeToggle from "@/components/ui/ThemeToggle";
 
-export default function Hero() {
-  const eyebrowRef = useRef<HTMLParagraphElement>(null);
+type HeroProps = {
+  isDark: boolean;
+  onToggleTheme: () => void;
+};
+
+export default function Hero({ isDark, onToggleTheme }: HeroProps) {
+  const eyebrowRef = useRef<HTMLDivElement>(null);
   const logoRef = useRef<HTMLParagraphElement>(null);
-  const folioRef = useRef<HTMLDivElement>(null);
   const roleLabelsRef = useRef<HTMLParagraphElement>(null);
   const nameRef = useRef<HTMLHeadingElement>(null);
   const yearRef = useRef<HTMLParagraphElement>(null);
@@ -37,7 +42,6 @@ export default function Hero() {
     if (eyebrowRef.current)
       gsap.set(eyebrowRef.current, { y: -12, opacity: 0 });
     if (logoRef.current) gsap.set(logoRef.current, { y: -12, opacity: 0 });
-    if (folioRef.current) gsap.set(folioRef.current, { y: -12, opacity: 0 });
     if (illustrationRef.current) {
       gsap.set(illustrationRef.current, { y: 24, opacity: 0 });
     }
@@ -76,9 +80,7 @@ export default function Hero() {
     }
 
     tl.to(
-      [eyebrowRef.current, logoRef.current, folioRef.current].filter(
-        Boolean,
-      ),
+      [eyebrowRef.current, logoRef.current].filter(Boolean),
       { y: 0, opacity: 1, duration: 0.6, ease: "power3.out", stagger: 0.08 },
       1.5,
     );
@@ -102,31 +104,39 @@ export default function Hero() {
 
   return (
     <section className="relative min-h-screen px-8 py-10 md:px-16 md:py-12">
-      {/* Top row: eyebrow / logo / folio label */}
+      {/* Top row: logo / eyebrow */}
       <div className="relative flex items-start font-sans text-xs">
         <p
-          ref={eyebrowRef}
-          className="max-w-40 hidden font-medium leading-snug md:block"
-          style={{ opacity: 0, transform: "translateY(-12px)" }}
-        >
-          Open for work and collaborations
-        </p>
-
-        <p
           ref={logoRef}
-          className="absolute left-1/2 hidden -translate-x-1/2 font-logo text-2xl md:block"
+          className="hidden font-logo text-2xl md:block"
           style={{ opacity: 0 }}
         >
           MORS.
         </p>
 
         <div
-          ref={folioRef}
-          className="ml-auto hidden font-medium leading-tight md:block"
+          ref={eyebrowRef}
+          className="ml-auto hidden items-center gap-4 md:flex"
           style={{ opacity: 0, transform: "translateY(-12px)" }}
         >
-          <p className="pl-7.5">-FOLIO</p>
-          <p>PORTO</p>
+          <p
+            className="mr-3 max-w-40 text-right font-normal leading-tight"
+            style={{ color: isDark ? "#a0a0a0" : "#8a8a8a" }}
+          >
+            Open for work and collaborations
+          </p>
+          <div
+            className="h-6 w-0.5 shrink-0"
+            style={{ backgroundColor: isDark ? "#3a3a3a" : "#dcdcdc" }}
+          />
+          <div className="flex shrink-0 items-center -translate-y-1">
+            <ThemeToggle
+              isDark={isDark}
+              onToggleTheme={onToggleTheme}
+              visible
+              iconColor={isDark ? "#b8b8b8" : "#6a6a6a"}
+            />
+          </div>
         </div>
       </div>
 

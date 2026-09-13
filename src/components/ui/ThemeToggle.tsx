@@ -7,12 +7,14 @@ type ThemeToggleProps = {
   isDark: boolean;
   onToggleTheme: () => void;
   visible: boolean;
+  iconColor?: string;
 };
 
 export default function ThemeToggle({
   isDark,
   onToggleTheme,
   visible,
+  iconColor,
 }: ThemeToggleProps) {
   const sunRef = useRef<SVGSVGElement>(null);
   const moonRef = useRef<SVGSVGElement>(null);
@@ -51,40 +53,44 @@ export default function ThemeToggle({
         duration: 0.3,
         ease: "power2.out",
         overwrite: "auto",
-      }
+      },
     );
   }, [isDark]);
 
   return (
-<button
-  ref={buttonRef}
-  type="button"
-  onClick={onToggleTheme}
-  aria-label="Toggle dark mode"
-  className={`fixed bottom-6 left-6 z-50 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full transition-colors duration-300 ${
-    isDark
-      ? "border-white bg-black text-white"
-      : "border-black bg-white text-black"
-  }`}
-  style={{
-    opacity: 0,
-    scale: 0,
-    pointerEvents: visible ? "auto" : "none",
-    visibility: visible ? "visible" : "hidden",
-  }}
->
-      <span className="relative block h-4.5 w-4.5">
-        <svg
+    <button
+      ref={buttonRef}
+      type="button"
+      onClick={onToggleTheme}
+      aria-label="Toggle dark mode"
+      className="group flex h-7 w-7 cursor-pointer items-center justify-center transition-colors duration-300"
+      style={{
+        opacity: 0,
+        scale: 0,
+        pointerEvents: visible ? "auto" : "none",
+        visibility: visible ? "visible" : "hidden",
+        color: iconColor ?? (isDark ? "#ffffff" : "#000000"),
+      }}
+    >
+      <span
+        className="relative block h-3 w-3 transition-colors duration-300"
+        style={{ color: "inherit" }}
+        onMouseEnter={(e) =>
+          (e.currentTarget.style.color = isDark ? "#efefef" : "#222222")
+        }
+        onMouseLeave={(e) => (e.currentTarget.style.color = "")}
+      >
+         <svg
           ref={sunRef}
           width="18"
           height="18"
           viewBox="0 0 24 24"
-          fill="none"
+          fill="currentColor"
           xmlns="http://www.w3.org/2000/svg"
           className="absolute inset-0"
           style={{ opacity: isDark ? 0 : 1 }}
         >
-          <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="2" />
+          <circle cx="12" cy="12" r="4" />
           <path
             d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
             stroke="currentColor"
@@ -97,17 +103,13 @@ export default function ThemeToggle({
           width="18"
           height="18"
           viewBox="0 0 24 24"
-          fill="none"
+          fill="currentColor"
           xmlns="http://www.w3.org/2000/svg"
           className="absolute inset-0"
           style={{ opacity: isDark ? 1 : 0 }}
         >
           <path
             d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
           />
         </svg>
       </span>
