@@ -141,11 +141,11 @@ export default function Hero({ isDark, onToggleTheme }: HeroProps) {
       </div>
 
       {/* Role labels + Name lockup + year, sharing one centered block */}
-      <div className="mt-16 flex justify-center md:mt-20">
-        <div className="inline-block text-left">
+      <div className="mt-16 flex md:justify-center md:mt-20">
+        <div className="w-full text-left md:w-auto md:inline-block">
           <p
             ref={roleLabelsRef}
-            className="mb-2 ml-2 flex flex-nowrap items-center gap-2 whitespace-nowrap font-sans text-[2.4vw] md:gap-5 md:text-sm"
+            className="mb-2 flex flex-nowrap items-center gap-2 whitespace-nowrap font-sans text-[2.4vw] md:ml-2 md:gap-5 md:text-sm"
             style={{ opacity: 0, transform: "translateX(-24px)" }}
           >
             <span>Full Stack Developer</span>
