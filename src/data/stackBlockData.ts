@@ -91,9 +91,20 @@ export const stackBlockCategories: StackBlockCategory[] = [
     label: "Developer Tools & AI",
     tools: [
       { name: "Git", icon: "/icons/stack/devtools/git.svg" },
-      { name: "GitHub", icon: "/icons/stack/devtools/github.svg" },
-      { name: "VS Code", icon: "/icons/stack/devtools/vscode.svg" },
-      { name: "Vercel", icon: "/icons/stack/devtools/vercel.svg" },
+      {
+        name: "Github",
+        icon: {
+          light: "/icons/stack/devtools/github-light.svg",
+          dark: "/icons/stack/devtools/github-dark.svg",
+        },
+      },
+      {
+        name: "Vercel",
+        icon: {
+          light: "/icons/stack/devtools/vercel-light.svg",
+          dark: "/icons/stack/devtools/vercel-dark.svg",
+        },
+      },
       {
         name: "OpenAI",
         icon: {
