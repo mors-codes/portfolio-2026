@@ -47,12 +47,12 @@ export default function MobileNav({ hidden, onMenuToggle }: MobileNavProps) {
         type="button"
         onClick={onMenuToggle}
         aria-label="Open menu"
-        className="flex flex-col items-end gap-1.5"
+        className="flex flex-col items-end gap-2"
       >
         <span
           style={{
             display: "block",
-            height: "4px",
+            height: "2px",
             width: "60px",
             backgroundColor: "#222222",
             borderRadius: "9999px",
@@ -61,7 +61,7 @@ export default function MobileNav({ hidden, onMenuToggle }: MobileNavProps) {
         <span
           style={{
             display: "block",
-            height: "4px",
+            height: "2px",
             width: "60px",
             backgroundColor: "#222222",
             borderRadius: "9999px",
