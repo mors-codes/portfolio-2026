@@ -194,7 +194,7 @@ export default function Hero({ isDark, onToggleTheme }: HeroProps) {
         </div>
       </div>
 
-      {/* Illustration + Numbered nav row, nav vertically centered on illustration */}
+      {/* Illustration + Numbered nav row */}
       <div className="relative mt-8">
         <div
           ref={illustrationRef}
@@ -207,14 +207,14 @@ export default function Hero({ isDark, onToggleTheme }: HeroProps) {
             width={480}
             height={480}
             priority
-            className="h-auto w-full max-w-75"
+            className="h-auto w-full max-w-85 md:max-w-75"
           />
         </div>
 
         <div
           ref={navWrapRef}
           id="hero-nav-row"
-          className="absolute inset-y-0 left-0 right-0 flex items-center"
+          className="mb-4 md:absolute md:inset-y-0 md:left-0 md:right-0 md:mb-0 md:flex md:items-center"
           style={{ opacity: 0, transform: "translateY(16px)" }}
         >
           <NavRow />

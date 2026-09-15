@@ -23,11 +23,11 @@ export default function NavLink({
       <span className="font-mono-label block text-xs opacity-50">
         {number}
       </span>
-      <span className="inline-flex items-center gap-1 font-semibold">
+      <span className="inline-flex items-center gap-1 font-semibold opacity-85 transition-opacity hover:opacity-100">
         {label}
         <svg
-          width="10"
-          height="10"
+          width="12"
+          height="12"
           viewBox="0 0 24 24"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"

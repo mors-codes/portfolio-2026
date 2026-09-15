@@ -49,10 +49,10 @@ export default function NavRow() {
 
   return (
     <div className="relative w-full py-4" onMouseLeave={closeBar}>
-      {/* Bar: grows from vertical center, sits behind the nav links */}
+      {/* Bar: grows from vertical center, sits behind the nav links. Desktop only — no hover on touch. */}
       <div
         ref={barRef}
-        className="pointer-events-none absolute inset-y-0 -left-8 -right-8 z-10 flex items-center justify-center overflow-hidden bg-ink md:-left-16 md:-right-16"
+        className="pointer-events-none absolute inset-y-0 -left-8 -right-8 z-10 hidden items-center justify-center overflow-hidden bg-ink md:-left-16 md:-right-16 md:flex"
         style={{ transform: "scaleY(0)", transformOrigin: "center" }}
       >
         <div
@@ -68,15 +68,15 @@ export default function NavRow() {
         </div>
       </div>
 
-      {/* Nav links: always visible, always on top of the bar */}
+      {/* Nav links: 2x2 grid on mobile, single row on desktop */}
       <nav
-        className={`relative z-20 flex items-center justify-between font-sans text-sm transition-colors duration-300 ${
-          isOpen ? "text-bg" : "text-ink"
+        className={`relative z-20 grid grid-cols-2 gap-y-6 font-sans text-base transition-colors duration-300 md:flex md:items-center md:justify-between md:gap-y-0 md:text-lg ${
+          isOpen ? "md:text-bg" : "text-ink"
         }`}
       >
         <NavLink {...items[0]} onItemHover={handleItemHover} />
         <NavLink {...items[1]} onItemHover={handleItemHover} />
-        <span aria-hidden="true" className="invisible">
+        <span aria-hidden="true" className="hidden md:invisible md:inline">
           spacer
         </span>
         <NavLink {...items[2]} onItemHover={handleItemHover} />
