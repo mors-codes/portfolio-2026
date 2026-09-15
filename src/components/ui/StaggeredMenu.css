@@ -68,8 +68,8 @@
 
 .sm-close-button {
   position: absolute;
-  top: 2em;
-  right: 2em;
+  top: 1em;
+  right: 1em;
   width: 60px;
   height: 60px;
   background: none;
@@ -102,9 +102,10 @@
 
 .sm-panel-item {
   position: relative;
-  display: flex;
+  display: grid;
+  grid-template-columns: 2.5rem 1fr;
   align-items: baseline;
-  gap: 0.6em;
+  gap: 0.2em;
   color: var(--color-bg);
   font-weight: 600;
   font-size: 3rem;
@@ -122,6 +123,9 @@
 
 .sm-panel-number {
   display: inline-block;
+  align-self: flex-start;
+  position: relative;
+  top: 0.5em;
   font-size: 0.9rem;
   opacity: 0.5;
 }
