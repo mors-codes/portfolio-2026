@@ -170,7 +170,7 @@ export default function Hero({ isDark, onToggleTheme }: HeroProps) {
       </div>
 
       {/* Role labels + Name lockup + year, sharing one centered block */}
-      <div className="mt-16 flex justify-center md:mt-20">
+      <div className="mt-24 flex justify-center md:mt-20">
         <div ref={nameBlockRef} className="relative w-auto text-center md:inline-block">
           <p
             ref={roleLabelsRef}
@@ -195,7 +195,7 @@ export default function Hero({ isDark, onToggleTheme }: HeroProps) {
       </div>
 
       {/* Illustration + Numbered nav row */}
-      <div className="relative mt-8">
+      <div className="relative mt-4">
         <div
           ref={illustrationRef}
           className="flex justify-center"
@@ -214,7 +214,7 @@ export default function Hero({ isDark, onToggleTheme }: HeroProps) {
         <div
           ref={navWrapRef}
           id="hero-nav-row"
-          className="mb-4 md:absolute md:inset-y-0 md:left-0 md:right-0 md:mb-0 md:flex md:items-center"
+          className="mt-8 mb-6 md:absolute md:inset-y-0 md:left-0 md:right-0 md:mb-0 md:flex md:items-center"
           style={{ opacity: 0, transform: "translateY(16px)" }}
         >
           <NavRow />

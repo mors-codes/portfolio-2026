@@ -7,7 +7,7 @@ const NAME = "MorissMatias";
 const AnimatedName = forwardRef<HTMLHeadingElement>(
   function AnimatedName(_props, ref) {
     return (
-      <div className="group relative inline-block whitespace-nowrap text-[15vw] md:text-[12vw]">
+      <div className="group relative inline-block whitespace-nowrap text-[16.5vw] md:text-[12vw]">
           <h1
             ref={ref}
             className="overflow-hidden whitespace-nowrap px-4 pt-4 pb-4 font-display text-[1em] font-black leading-[0.8] -tracking-widest"
@@ -31,7 +31,7 @@ const AnimatedName = forwardRef<HTMLHeadingElement>(
           background-clip: text. Swept across on hover via CSS only. */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 overflow-hidden px-4 pt-4 pb-4 font-display text-[15vw] font-black leading-[0.8] -tracking-widest text-transparent md:text-[12vw]"
+          className="pointer-events-none absolute inset-0 overflow-hidden px-4 pt-4 pb-4 font-display text-[16.5vw] font-black leading-[0.8] -tracking-widest text-transparent md:text-[12vw]"
         >
           <span
             className="name-glare inline-block h-full w-full transition-[background-position] duration-1100 ease-out group-hover:bg-position-[-50%_0]!"

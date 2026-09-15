@@ -33,7 +33,7 @@ export default function MobileNav({ hidden, onMenuToggle }: MobileNavProps) {
   return (
     <div
       ref={navRef}
-      className={`fixed inset-x-0 top-0 z-50 flex items-center justify-between bg-bg/70 px-8 py-5 font-sans text-xs backdrop-blur-md transition-opacity duration-200 md:hidden ${
+      className={`fixed inset-x-0 top-0 z-50 flex items-center justify-between bg-bg/70 px-5 py-5 font-sans text-xs backdrop-blur-md transition-opacity duration-200 md:hidden ${
         hidden
           ? "pointer-events-none opacity-0 delay-0"
           : "opacity-100 delay-250"
