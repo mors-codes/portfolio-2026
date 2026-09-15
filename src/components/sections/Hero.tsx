@@ -18,6 +18,7 @@ export default function Hero({ isDark, onToggleTheme }: HeroProps) {
   const roleLabelsRef = useRef<HTMLParagraphElement>(null);
   const nameRef = useRef<HTMLHeadingElement>(null);
   const yearRef = useRef<HTMLParagraphElement>(null);
+  const nameBlockRef = useRef<HTMLDivElement>(null);
   const illustrationRef = useRef<HTMLDivElement>(null);
   const navWrapRef = useRef<HTMLDivElement>(null);
 
@@ -102,6 +103,34 @@ export default function Hero({ isDark, onToggleTheme }: HeroProps) {
     }
   }, []);
 
+  useLayoutEffect(() => {
+    const applyNameStretch = () => {
+    const h1 = nameRef.current;
+    const wrapper = h1?.parentElement as HTMLElement | null;
+    const container = nameBlockRef.current;
+    if (!h1 || !wrapper || !container) return;
+
+    wrapper.style.transform = "";
+    wrapper.style.fontSize = "";
+
+    if (window.innerWidth >= 768) return;
+
+    const availableWidth = container.getBoundingClientRect().width;
+    const naturalWidth = h1.scrollWidth;
+    if (naturalWidth <= 0 || availableWidth <= 0) return;
+
+    const currentSize = parseFloat(getComputedStyle(wrapper).fontSize);
+    const scaleBoost = 0.95;
+    wrapper.style.fontSize = `${currentSize * (availableWidth / naturalWidth) * scaleBoost}px`;
+  };
+
+    applyNameStretch();
+    document.fonts?.ready?.then(applyNameStretch);
+
+    window.addEventListener("resize", applyNameStretch);
+    return () => window.removeEventListener("resize", applyNameStretch);
+  }, []);
+
   return (
     <section className="relative min-h-screen px-8 py-10 md:px-16 md:py-12">
       {/* Top row: logo / eyebrow */}
@@ -141,11 +170,11 @@ export default function Hero({ isDark, onToggleTheme }: HeroProps) {
       </div>
 
       {/* Role labels + Name lockup + year, sharing one centered block */}
-      <div className="mt-16 flex md:justify-center md:mt-20">
-        <div className="w-full text-left md:w-auto md:inline-block">
+      <div className="mt-16 flex justify-center md:mt-20">
+        <div ref={nameBlockRef} className="relative w-auto text-center md:inline-block">
           <p
             ref={roleLabelsRef}
-            className="mb-2 flex flex-nowrap items-center gap-2 whitespace-nowrap font-sans text-[2.4vw] md:ml-2 md:gap-5 md:text-sm"
+            className="-mb-2 ml-4.5 flex w-auto flex-nowrap items-center gap-2 whitespace-nowrap font-sans text-[2.4vw] md:ml-[22.8px] md:mb-2 md:gap-5 md:text-sm"
             style={{ opacity: 0, transform: "translateX(-24px)" }}
           >
             <span>Full Stack Developer</span>
@@ -157,7 +186,7 @@ export default function Hero({ isDark, onToggleTheme }: HeroProps) {
           <AnimatedName ref={nameRef} />
           <p
             ref={yearRef}
-            className="-mt-4 text-right font-sans text-xs font-bold md:text-sm"
+            className="absolute right-[10.5px] bottom-1.5 w-auto text-right font-sans text-xs font-bold md:static md:right-auto md:-ml-4 md:-mt-4 md:text-sm"
             style={{ opacity: 0, transform: "translateX(24px)" }}
           >
             2026

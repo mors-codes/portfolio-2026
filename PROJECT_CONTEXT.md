@@ -1,161 +1,222 @@
-# Project Context: Moriss Matias Portfolio
+# Project context — Moriss Matias portfolio
 
-## Purpose
+Stable briefing for another AI. Capture architecture, conventions, and where things live. Do **not** treat this file as a changelog. Skip updating it for spacing, breakpoints, animation tweaks, copy polish, or other local UI work. Update it only when the stack, section map, data sources, or how the app is put together actually changes.
 
-This repository contains Moriss Matias's personal portfolio website. It presents him as a **Full Stack Developer**, **UI Designer**, and **AI Automation Specialist**, with a visual, interaction-led single-page experience rather than a conventional multi-page portfolio.
+Owner: **Moriss Matias** (also **Mors**). Role in the product: software engineer. Prefer working in code, not long planning docs.
 
-The current portfolio copy positions Moriss as open to work and collaborations, interested in modern web and mobile application development, and presently focused on AI automation.
+---
 
-## Running the project
+## What this is
 
-From this directory (`portfolio/`):
+A personal **single-page** portfolio. It presents Moriss as a Full Stack Developer, UI Designer, and AI Automation Specialist. The site is visual and motion-led: GSAP entrances, hover/cursor effects, theme transition. There is **no backend**, no API routes, no CMS, no env-based config, no auth, and no form POST. Content is hard-coded in React and `src/data/`.
+
+Positioning (durable, not word-for-word copy): open to work and collaborations; modern web and mobile apps; currently focused on AI automation.
+
+---
+
+## How to run
+
+From the `portfolio/` repo root:
 
 ```bash
 npm install
-npm run dev
-```
-
-The development site runs at `http://localhost:3000`. Other available commands are:
-
-```bash
+npm run dev      # http://localhost:3000
 npm run lint
 npm run build
 npm start
 ```
 
-## Technology
+---
 
-- **Framework:** Next.js 16.3.1 with the App Router
-- **UI:** React 19.2.8 and TypeScript (strict mode)
-- **Styling:** Tailwind CSS 4, with a few component-scoped CSS files
-- **Animation:** GSAP and ScrollTrigger
-- **Icons:** Lucide React plus local SVG technology icons
-- **Fonts:** Archivo, Inter, Danfo, and Audiowide through `next/font/google`
+## Stack
 
-The `@/*` import alias resolves to `src/*`.
+| Layer | Choice |
+| --- | --- |
+| Framework | Next.js **16** App Router (`next` 16.3.x) |
+| UI | React 19, TypeScript **strict** |
+| Styling | Tailwind CSS **4** (`@import "tailwindcss"` + `@theme` in `globals.css`) |
+| Motion | GSAP; ScrollTrigger registered in sections that scroll-reveal |
+| Icons | `lucide-react` plus SVG logos under `public/icons/` |
+| Fonts | `next/font/google` in `src/lib/fonts.ts` |
 
-## Application structure
+**Next.js 16 differs from older training data.** Before using a Next API, check `node_modules/next/dist/docs/` in this repo. `AGENTS.md` / `CLAUDE.md` only exist to remind agents of that.
+
+Import alias: `@/*` → `src/*`.
+
+---
+
+## Directory map
 
 ```text
 src/
   app/
-    layout.tsx              # Root document, metadata, font variables, theme bootstrap, click sparks
-    page.tsx                # Single-page composition, persistent navigation, theme state
-    globals.css             # Tailwind import, color tokens, theme-transition styles
+    layout.tsx       # html/body, metadata, font CSS variables, theme-init script, ClickSpark
+    page.tsx         # homepage composition: theme, nav shells, all sections
+    globals.css      # tokens, dark class, name-glare, view-transition / sword-glint
   components/
-    sections/               # Hero, About, Works, Stack, Contact
-    ui/                     # Reusable interaction and display components
-  data/
-    stackData.ts            # Technology-category data and icon placement
-  lib/
-    fonts.ts                # next/font configuration
+    sections/        # Hero, About, Works, Stack, Contact
+    ui/              # motion + chrome (not page-level sections)
+  data/              # stack explorer datasets
+  lib/fonts.ts
 public/
-  illustrations/            # Hero and about illustrations
-  images/                   # Portrait and featured-work screenshots
-  icons/stack/              # Frontend, backend, and AI-automation logos
-  resume.pdf                # Resume opened from the About section
+  illustrations/     # hero desk, about portrait SVG
+  images/            # photo + featured-work screenshots
+  icons/stack/       # tech logos (frontend, backend, ai-automation, devtools)
+  resume.pdf
 ```
 
-## Site map and behavior
+Almost every interactive file is a **client component** (`"use client"`). `layout.tsx` is a server component that wraps children.
 
-The homepage (`src/app/page.tsx`) renders all content in this order:
+---
 
-1. **Hero** - Introductory lockup, availability message, role labels, animated name, desk illustration, and numbered section links.
-2. **About** - Bio, illustrated/photo portrait swap, resume link, email, education, and experience timeline.
-3. **Works** - A three-item featured-work carousel with animated panel swapping.
-4. **Stack** - An interactive technology-category explorer.
-5. **Contact** - Call to action, clipboard copy for the email address, social links, and oversized name footer.
+## Page composition
 
-All primary navigation uses in-page anchors. While the hero navigation is visible, the theme control is a floating button at bottom left. After the hero navigation scrolls out of view, `PillNav` appears at the top with the same section links and the theme control.
+`src/app/page.tsx` is the only route that matters today. It owns:
 
-### Theme behavior
+- Light/dark theme (`dark` class on `<html>`, `localStorage.theme`, `useSyncExternalStore` so sections stay in sync)
+- Whether the user has scrolled past the hero in-page nav (`#hero-nav-row` IntersectionObserver → `pastHero`)
+- Mobile menu open state, forwarded to `StaggeredMenu`
 
-- The default theme is light.
-- A saved `localStorage` value of `theme=dark` enables dark mode before hydration, avoiding a flash of the wrong theme.
-- `page.tsx` applies/removes the `dark` class on `<html>` and stores the choice.
-- CSS tokens switch between `#efefef`/`#222222` light and dark foreground/background pairs.
-- Browsers with the View Transitions API receive a custom diagonal "sword glint" transition when changing theme.
+Section order and anchor ids:
 
-### Motion and interaction inventory
+1. `#hero` — `Hero`
+2. `#about` — `About`
+3. `#works` — `Works`
+4. `#stack` — `Stack` (receives `isDark`)
+5. `#contact` — `Contact`
 
-- **Hero:** GSAP entrance timeline reveals name letters from the center outward, then role labels, year, utility labels, illustration, and navigation.
-- **About:** ScrollTrigger runs the section entrance and typing effect for "Hello! I'm Mors."
-- **Portrait:** `PixelTransition` reveals the photo from the illustrated portrait on hover and restores it on mouse leave.
-- **Works:** `WorksSwap` animates an image panel and description panel between left/right positions; arrow buttons cycle the items.
-- **Stack:** Hovering a category previews its scattered icons; clicking locks a category, increases emphasis, and exposes technology labels. `TargetCursor` supplies the desktop target cursor on interactive controls.
-- **Global:** `ClickSpark` draws canvas sparks at click positions, using the current ink color.
+In-page hash links only. Smooth scroll is global (`html { scroll-behavior: smooth }`).
 
-## Current portfolio content
+### Navigation chrome (behavioral, not layout)
 
-### About and contact
+Three systems, not one navbar:
 
-- Display name: **Moriss Matias** / **Mors**
-- Email: `morsmatias15@gmail.com`
-- GitHub: `https://github.com/mors-codes`
-- Education: Associate in Computer Technology, De La Salle Lipa (2023-2025)
-- Experience:
-  - Freelance Developer, self-employed / remote (Jun 2025-Dec 2025)
-  - IT Specialist Intern, Nutech Hardware and Software Solutions (Feb 2025-Apr 2025)
+- **Desktop, while hero nav is on screen:** `Hero` shows logo `MORS.`, availability line, `ThemeToggle`, and `NavRow` (numbered About / Works / Stack / Contact overlaid on the desk illustration).
+- **Desktop, after hero nav leaves the viewport:** `PillNav` (`hidden md:block`) slides in with the same anchors plus theme control. `visible={pastHero}`.
+- **Mobile (`md` and below):** `MobileNav` is a fixed top bar (logo + hamburger). Hamburger calls `StaggeredMenu.toggle()`. `PillNav` is not shown. Hero’s own logo/theme row is desktop-only.
 
-### Featured works
+`md` (768px) is the site-wide desktop/mobile split.
 
-`src/components/sections/Works.tsx` currently defines three placeholder entries:
+---
 
-| Title | Description | Screenshot |
+## Theme and color
+
+Default is **light**. A `beforeInteractive` script in `layout.tsx` reads `localStorage.theme` so dark mode does not flash.
+
+Tokens in `src/app/globals.css` `@theme` / `.dark`:
+
+- `bg` / `ink` — page background and foreground (`#efefef` ↔ `#222222`)
+- `echo` — large muted display (contact footer name)
+
+Tailwind usage: `bg-bg`, `text-ink`, `text-echo`, `font-sans`, `font-display`, `font-logo`, `font-mono-label`.
+
+Theme change: toggle class + persist; if View Transitions API exists, a diagonal clip-path reveal plus a `.sword-glint` overlay.
+
+---
+
+## Type
+
+Configured in `src/lib/fonts.ts`, wired as CSS variables on `<html>`:
+
+| Token | Family | Typical use |
 | --- | --- | --- |
-| Project One | Full-stack web app | `/images/works/project-1.png` |
-| Project Two | Automation workflow | `/images/works/project-2.png` |
-| Project Three | UI/UX design system | `/images/works/project-3.png` |
+| `font-sans` | Archivo | UI copy, nav, body |
+| `font-display` | Inter (full weight range) | Big lockups, section titles like `AboutMe` |
+| `font-logo` | Danfo | `MORS.` |
+| `font-mono-label` | Audiowide | Section numbers `01`–`04` |
 
-### Technology stack
+Display name lockup is the concatenated word **MorissMatias** (hero `AnimatedName` + contact footer). Logo wordmark is **MORS.**
 
-The stack explorer has three categories defined in `src/data/stackData.ts`:
+---
 
-- **Frontend:** HTML, CSS, JavaScript, React, TypeScript, Tailwind CSS, Bootstrap, Vite, Angular, and Next.js.
-- **Backend:** Java, Node.js, PHP, MySQL, PostgreSQL, Supabase, Express.js, MongoDB, OAuth, and JWT.
-- **AI Automation:** n8n, Make.com, Zapier, GoHighLevel, OpenAI, Slack, Gemini, Gmail, Google Sheets, Claude, HubSpot, Airtable, Notion, and ClickUp.
+## Sections (what they are for)
 
-Each icon's position, size, and rotation are explicitly configured in that data file. Express.js, OpenAI, and Notion use separate light/dark SVG variants.
+**Hero** — Entrance timeline (GSAP): letter-by-letter name (center-out), then roles, year, chrome, illustration, `NavRow`. `AnimatedName` is per-letter spans plus a CSS glare overlay (`.name-glare`). Theme toggle lives in the desktop eyebrow, not as a global floating control.
+
+**About** — Numbered eyebrow `01 — AboutMe`. ScrollTrigger typewriter for “Hello! I'm Mors.” Portrait: `PixelTransition` between illustrated SVG and photo. Resume opens `/resume.pdf`. Bio, email, education, experience via `TimelineEntry`.
+
+**Works** — Eyebrow `02 — FeaturedWorks`. Data is the `WORKS` array in `Works.tsx`. Presentation is `WorksSwap` (two panels: image vs info; arrows cycle). Items may include `stack` icon chips and an optional `link`. “View More Works” currently points at `/works` (route does not exist yet).
+
+**Stack** — Eyebrow `03 — TechStack`. `StackScatter` is the explorer: hover previews scattered icons from `src/data/stackData.ts`; click locks a category; a second “block” view lists tools from `src/data/stackBlockData.ts`. Desktop `TargetCursor` on those controls. Dispatches `stack-eyebrow-done` when the eyebrow animation finishes so scatter can start. Some logos have `{ light, dark }` SVG pairs (Express, OpenAI, Notion, etc.). Scatter icons use `<img>` so the `src` can switch with theme; elsewhere prefer `next/image` for local rasters.
+
+**Contact** — Eyebrow `04 — GetInTouch`. Copy-to-clipboard email button, social row, oversized `MorissMatias` footer.
+
+---
+
+## `components/ui` inventory
+
+Use these instead of inventing parallel widgets:
+
+| Component | Role |
+| --- | --- |
+| `AnimatedName` | Hero display name, per-letter animation + glare |
+| `NavRow` / `NavLink` | Hero numbered in-page links + hover bar |
+| `MobileNav` | Mobile top bar |
+| `StaggeredMenu` | Full-screen mobile menu (imperative `open` / `close` / `toggle`) |
+| `PillNav` | Desktop persistent nav after hero |
+| `ThemeToggle` | Sun/moon control (also inlined in PillNav) |
+| `WorksSwap` | Featured work carousel |
+| `StackScatter` | Tech explorer |
+| `TargetCursor` | Desktop target cursor (Stack) |
+| `PixelTransition` | Pixel-grid content swap (About portrait) |
+| `TimelineEntry` | Date / title / subtitle / description |
+| `ClickSpark` | Canvas click sparks around the whole app (layout) |
+
+Several of these have colocated CSS (`PillNav.css`, `StaggeredMenu.css`, `StackScatter.css`, `TargetCursor.css`).
+
+---
+
+## Identity and content (edit in source, not here)
+
+Treat the **files** as source of truth if this list drifts.
+
+- Email: `morsmatias15@gmail.com` (`About.tsx`, `Contact.tsx`)
+- GitHub: `https://github.com/mors-codes`
+- LinkedIn / Twitter: still `#` placeholders in `Contact.tsx` and `StaggeredMenu` socials on `page.tsx`
+- Education: Associate in Computer Technology, De La Salle Lipa, 2023–2025
+- Experience: Freelance Developer (Jun–Dec 2025, remote); IT Specialist Intern at Nutech Hardware and Software Solutions (Feb–Apr 2025)
+- Featured works: defined in `src/components/sections/Works.tsx` (one live project plus placeholders is expected)
+- Stack lists and scatter coordinates: `src/data/stackData.ts` and `src/data/stackBlockData.ts`
+
+Metadata title/description: `src/app/layout.tsx`.
+
+---
 
 ## Assets
 
-Important public assets:
+Paths are public-root (`/illustrations/...`, `/images/...`, `/icons/...`, `/resume.pdf`).
 
-- `public/illustrations/hero-desk.svg` - Hero desk scene.
-- `public/illustrations/about-portrait.svg` - About-section illustration.
-- `public/images/portrait-photo.jpg` - Photo shown through the portrait hover transition.
-- `public/images/works/project-1.png` through `project-3.png` - Featured-work screenshots.
-- `public/resume.pdf` - Resume opened in a new tab.
-- `public/icons/stack/` - 37 technology logo files across frontend, backend, and AI automation.
+Notable:
 
-## Important implementation notes
+- `/illustrations/hero-desk.svg`
+- `/illustrations/about-portrait.svg`
+- `/images/portrait-photo.jpg`
+- `/images/works/project-*.png`
+- `/resume.pdf`
+- `/icons/stack/{frontend,backend,ai-automation,devtools}/`
 
-- The root page is a client component because it owns theme state and scroll observation. Most animated sections/components are also client components.
-- `layout.tsx` provides the site metadata: "Moriss Matias" and "Full Stack Developer / UI Designer / AI Automation Specialist".
-- `next.config.ts` leaves Next image optimization enabled and sets `minimumCacheTTL` to 60 seconds for replaceable work screenshots.
-- No backend, API routes, database configuration, environment variables, authentication, CMS, or form submission flow currently exists. All portfolio data is local and hard-coded.
-- `CardSwap` is a reusable GSAP card-stack component, but it is not currently imported by a rendered section. `WorksSwap` is the active featured-work presentation.
+`next.config.ts` keeps image optimization on and sets a short `minimumCacheTTL` so work screenshots can be replaced at the same URL.
 
-## Content and navigation items still to complete
+---
 
-- The "View More Works" link points to `/works`, but this repository has no `/works` route yet.
-- The Stack section's "View all tech stack" link defaults to `/works`, which is also not implemented.
-- LinkedIn and Twitter links are `#` placeholders in `Contact.tsx`.
-- Featured-work titles and descriptions are generic placeholders. They have screenshots but no external project/demo/repository links.
-- The code comment beside the email says to swap it for the real email; the rendered value is the email listed above.
+## Conventions for another AI
 
-## Editing guide
+- Match existing visual language: light/dark ink-on-paper, heavy Inter lockups, Archivo UI, numbered Audiowide eyebrows, 3px ink borders, rounded-xl buttons.
+- Keep `"use client"` on anything using state, effects, GSAP, `window`, or refs to DOM.
+- Do not add a backend or extra routes unless asked. The product is one scrolling page.
+- Do not “simplify” GSAP timelines into CSS-only unless asked; motion is core.
+- Section padding pattern is `px-8` mobile / `md:px-16` desktop — keep new sections consistent with that rhythm, not pixel-identical to one snapshot.
+- Featured work shape: `WorkItem` in `WorksSwap.tsx` (`title`, `description`, `image`, optional `stack`, optional `link`).
+- Stack scatter positions are explicit `x` / `y` / `size` / `rotation` in data, not computed layout.
 
-- **Personal copy, timeline, links, email, and social destinations:** `src/components/sections/About.tsx` and `src/components/sections/Contact.tsx`.
-- **Featured work data:** `src/components/sections/Works.tsx`; replace the associated images under `public/images/works/` if needed.
-- **Technology names, grouping, scatter placement, size, or theme-specific icon selection:** `src/data/stackData.ts`.
-- **Global colors and theme-transition styling:** `src/app/globals.css`.
-- **Home navigation labels/order:** `src/app/page.tsx` and `src/components/ui/NavRow.tsx`.
-- **SEO title/description and root-level wrappers:** `src/app/layout.tsx`.
+### Known gaps (structural)
 
-## Development conventions
+- No `/works` (or other) extra routes, though some links still target `/works`.
+- LinkedIn and Twitter are placeholders.
+- Contact email comment still says to swap the real address; the rendered address is the one in use.
 
-- Use `next/image` for local raster/image assets where practical; the Stack icon grid deliberately uses `<img>` because its SVG source switches with theme.
-- Preserve the `"use client"` directive on components that use browser APIs, React state/effects, GSAP, or DOM access.
-- Keep image paths rooted at `/` so they resolve from `public/`.
-- Update this file when portfolio content, routes, stack categories, assets, or deployment behavior materially changes.
+---
+
+## When to refresh this file
+
+Refresh if you add routes, a CMS, new top-level sections, a different nav model, new design tokens, or move where content lives. Do not refresh for mobile hero lockup tweaks, font-size fitting, or similar.

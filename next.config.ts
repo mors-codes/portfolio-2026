@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
     // Project screenshots may be replaced without changing their public URL.
     minimumCacheTTL: 60,
   },
+  allowedDevOrigins: ['192.168.1.4'],
 };
 
 export default nextConfig;
