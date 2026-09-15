@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 
 type MobileNavProps = {
@@ -10,6 +10,7 @@ type MobileNavProps = {
 
 export default function MobileNav({ hidden, onMenuToggle }: MobileNavProps) {
   const navRef = useRef<HTMLDivElement>(null);
+  const [hasEntered, setHasEntered] = useState(false);
 
   useLayoutEffect(() => {
     if (!navRef.current) return;
@@ -19,9 +20,10 @@ export default function MobileNav({ hidden, onMenuToggle }: MobileNavProps) {
       opacity: 1,
       duration: 0.6,
       ease: "power3.out",
-      delay: 0.3,
+      delay: 1,
       onComplete: () => {
         gsap.set(navRef.current, { clearProps: "opacity,transform" });
+        setHasEntered(true);
       },
     });
   }, []);
@@ -33,10 +35,11 @@ export default function MobileNav({ hidden, onMenuToggle }: MobileNavProps) {
   return (
     <div
       ref={navRef}
-      className={`fixed inset-x-0 top-0 z-50 flex items-center justify-between bg-bg/70 px-5 py-5 font-sans text-xs backdrop-blur-md transition-opacity duration-200 md:hidden ${
-        hidden
-          ? "pointer-events-none opacity-0 delay-0"
-          : "opacity-100 delay-250"
+      style={!hasEntered ? { opacity: 0, transform: "translateY(-12px)" } : undefined}
+      className={`fixed inset-x-0 top-0 z-50 flex items-center justify-between bg-bg/70 px-6 py-5 font-sans text-xs backdrop-blur-md md:hidden ${
+        hasEntered
+          ? `transition-opacity duration-200 ${hidden ? "pointer-events-none opacity-0 delay-0" : "opacity-100 delay-250"}`
+          : ""
       }`}
     >
       <button type="button" onClick={scrollToTop} aria-label="Scroll to top">
