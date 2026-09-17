@@ -34,10 +34,9 @@ const AnimatedName = forwardRef<HTMLHeadingElement>(
           className="pointer-events-none absolute inset-0 overflow-hidden px-4 pt-4 pb-4 font-display text-[16.5vw] font-black leading-[0.8] -tracking-widest text-transparent md:text-[12vw]"
         >
           <span
-            className="name-glare inline-block h-full w-full transition-[background-position] duration-1100 ease-out group-hover:bg-position-[-50%_0]!"
+            className="name-glare inline-block h-full w-full"
             style={{
               backgroundSize: "250% 100%",
-              backgroundPosition: "150% 0",
               WebkitBackgroundClip: "text",
               backgroundClip: "text",
               color: "transparent",

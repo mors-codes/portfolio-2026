@@ -26,7 +26,16 @@ body {
   color: var(--color-ink);
 }
 
-/* name glare hover effect */
+/* name glare looping sweep */
+@keyframes name-glare-sweep {
+  0%, 50% {
+    background-position: 150% 0;
+  }
+  100% {
+    background-position: -50% 0;
+  }
+}
+
 .name-glare {
   background-image: linear-gradient(
     115deg,
@@ -34,6 +43,7 @@ body {
     rgba(255, 255, 255, 0.75) 50%,
     transparent 60%
   );
+  animation: name-glare-sweep 3.8s ease-in-out infinite alternate;
 }
 
 .dark .name-glare {
