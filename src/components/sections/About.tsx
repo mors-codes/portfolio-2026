@@ -207,7 +207,7 @@ export default function About() {
             </div>
           </div>
 
-          <div ref={contactRef} className="mt-12">
+          <div ref={contactRef} className="mt-12 hidden md:block">
             <p className="font-display text-base font-black lowercase tracking-tighter text-ink">
               Contact
             </p>
@@ -250,6 +250,15 @@ export default function About() {
                 description="Developed a responsive project management website and integrated Zapier with Gmail for automated notifications."
               />
             </div>
+          </div>
+
+          <div className="md:hidden">
+            <p className="font-display text-base font-black lowercase tracking-tighter text-ink">
+              Contact
+            </p>
+            <p className="mt-2 font-sans text-base text-ink">
+              morsmatias15@gmail.com
+            </p>
           </div>
         </div>
       </div>
