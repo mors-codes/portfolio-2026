@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import { archivo, inter, danfo, audiowide } from "@/lib/fonts";
-import ClickSpark from "@/components/ui/ClickSpark";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -32,14 +31,7 @@ export default function RootLayout({
             })();
           `}
         </Script>
-        <ClickSpark
-          sparkSize={10}
-          sparkRadius={18}
-          sparkCount={8}
-          duration={450}
-        >
-          {children}
-        </ClickSpark>
+        {children}
       </body>
     </html>
   );
