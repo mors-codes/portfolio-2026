@@ -96,13 +96,13 @@ export default function Home() {
       <div id="hero">
         <Hero isDark={isDark} onToggleTheme={toggleTheme} />
       </div>
-      <div id="about" className="-scroll-mt-7">
+      <div id="about" className="-scroll-mt-7 max-md:scroll-mt-10">
         <About />
       </div>
-      <div id="works" className="-scroll-mt-17">
+      <div id="works" className="-scroll-mt-17 max-md:-scroll-mt-15">
         <Works />
       </div>
-      <div id="stack" className="-scroll-mt-17">
+      <div id="stack" className="-scroll-mt-17 max-md:-scroll-mt-5">
         <Stack isDark={isDark} />
       </div>
       <div id="contact" className="-scroll-mt-17">
