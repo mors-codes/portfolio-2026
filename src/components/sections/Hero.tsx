@@ -174,7 +174,7 @@ export default function Hero({ isDark, onToggleTheme }: HeroProps) {
         <div ref={nameBlockRef} className="relative w-auto text-center md:inline-block">
           <p
             ref={roleLabelsRef}
-            className="-mb-2 ml-4.5 flex w-auto flex-nowrap items-center gap-2 whitespace-nowrap font-sans text-[2.4vw] md:ml-[22.8px] md:mb-2 md:gap-5 md:text-sm"
+            className="-mb-2 ml-4.5 flex w-auto flex-nowrap items-center gap-2 whitespace-nowrap font-sans text-[2.8vw] md:ml-[22.8px] md:mb-2 md:gap-5 md:text-sm"
             style={{ opacity: 0, transform: "translateX(-24px)" }}
           >
             <span>Full Stack Developer</span>
