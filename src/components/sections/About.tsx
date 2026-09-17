@@ -111,7 +111,7 @@ export default function About() {
 
       <h2
         ref={headlineRef}
-        className="mt-12 font-sans text-6xl font-bold leading-none md:text-8xl"
+        className="mt-12 whitespace-nowrap font-sans text-[13vw] font-bold leading-none sm:text-5xl md:text-8xl"
       >
         <span className="tracking-[-0.07em]">
           {"Hello! ".slice(0, typedCount)}
