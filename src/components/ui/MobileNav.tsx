@@ -62,7 +62,7 @@ export default function MobileNav({ hidden, onMenuToggle }: MobileNavProps) {
     <div
       ref={navRef}
       style={!hasEntered ? { opacity: 0, transform: "translateY(-12px)" } : undefined}
-      className={`fixed inset-x-0 top-0 z-50 flex items-center justify-between bg-bg/70 px-6 py-5 font-sans text-xs backdrop-blur-md transition-[top] duration-100 ease-out md:hidden ${
+      className={`fixed inset-x-0 top-0 z-50 flex items-center justify-between border-b border-ink/10 bg-bg/70 px-6 py-5 font-sans text-xs backdrop-blur-md md:hidden ${
         hasEntered
           ? `transition-opacity duration-200 ${hidden ? "pointer-events-none opacity-0 delay-0" : "opacity-100 delay-250"}`
           : ""
