@@ -2,6 +2,7 @@
 
 import { useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
+import Image from "next/image";
 
 type MobileNavProps = {
   hidden?: boolean;
@@ -36,7 +37,7 @@ export default function MobileNav({ hidden, onMenuToggle }: MobileNavProps) {
     <div
       ref={navRef}
       style={!hasEntered ? { opacity: 0, transform: "translateY(-12px)" } : undefined}
-      className={`fixed inset-x-0 top-0 z-50 flex items-center justify-between bg-bg/70 px-6 py-5 font-sans text-xs backdrop-blur-md md:hidden ${
+      className={`fixed inset-x-0 top-0 z-50 flex items-center justify-between bg-bg/70 px-6 pt-8 pb-5 font-sans text-xs backdrop-blur-md md:hidden ${
         hasEntered
           ? `transition-opacity duration-200 ${hidden ? "pointer-events-none opacity-0 delay-0" : "opacity-100 delay-250"}`
           : ""
@@ -52,23 +53,11 @@ export default function MobileNav({ hidden, onMenuToggle }: MobileNavProps) {
         aria-label="Open menu"
         className="flex flex-col items-end gap-2"
       >
-        <span
-          style={{
-            display: "block",
-            height: "2px",
-            width: "60px",
-            backgroundColor: "#222222",
-            borderRadius: "9999px",
-          }}
-        />
-        <span
-          style={{
-            display: "block",
-            height: "2px",
-            width: "60px",
-            backgroundColor: "#222222",
-            borderRadius: "9999px",
-          }}
+        <Image
+          src="/icons/menu.svg"
+          alt=""
+          width={65}
+          height={24}
         />
       </button>
     </div>
