@@ -24,7 +24,13 @@ export const stackBlockCategories: StackBlockCategory[] = [
       { name: "Vite", icon: "/icons/stack/frontend/vite.svg" },
       { name: "Angular", icon: "/icons/stack/frontend/angular.svg" },
       { name: "Next.js", icon: "/icons/stack/frontend/nextjs.svg" },
-      { name: "GSAP", icon: "/icons/stack/devtools/gsap.svg" },
+      {
+        name: "GSAP",
+        icon: {
+          light: "/icons/stack/frontend/gsap-light.svg",
+          dark: "/icons/stack/frontend/gsap-dark.svg",
+        },
+      },
     ],
   },
   {
