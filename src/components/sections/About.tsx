@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
 import TimelineEntry from "@/components/ui/TimelineEntry";
 import PixelTransition from "@/components/ui/PixelTransition";
+import { Copy, Check } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -15,6 +16,13 @@ export default function About() {
   const headlineRef = useRef<HTMLHeadingElement>(null);
   const cursorRef = useRef<HTMLSpanElement>(null);
   const [typedCount, setTypedCount] = useState(0);
+  const [copied, setCopied] = useState(false);
+
+  const copyEmail = () => {
+    navigator.clipboard.writeText("morsmatias15@gmail.com");
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
   const illustrationColRef = useRef<HTMLDivElement>(null);
   const bioRef = useRef<HTMLDivElement>(null);
   const contactRef = useRef<HTMLDivElement>(null);
@@ -211,9 +219,23 @@ export default function About() {
             <p className="font-display text-base font-black lowercase tracking-tighter text-ink">
               Contact
             </p>
-            <p className="mt-2 font-sans text-base text-ink">
-              morsmatias15@gmail.com
-            </p>
+            <div className="mt-2 flex items-center gap-2">
+              <a
+                href="mailto:morsmatias15@gmail.com"
+                className="group relative w-fit font-sans text-base text-ink"
+              >
+                morsmatias15@gmail.com
+                <span className="absolute -bottom-0.5 left-1/2 h-px w-0 bg-ink transition-all duration-300 ease-out group-hover:left-0 group-hover:w-full" />
+              </a>
+              <button
+                type="button"
+                onClick={copyEmail}
+                aria-label="Copy email address"
+                className="text-ink/50 transition-colors hover:text-ink"
+              >
+                {copied ? <Check size={14} /> : <Copy size={14} />}
+              </button>
+            </div>
           </div>
         </div>
 
@@ -256,9 +278,23 @@ export default function About() {
             <p className="font-display text-base font-black lowercase tracking-tighter text-ink">
               Contact
             </p>
-            <p className="mt-2 font-sans text-base text-ink">
-              morsmatias15@gmail.com
-            </p>
+            <div className="mt-2 flex items-center gap-2">
+              <a
+                href="mailto:morsmatias15@gmail.com"
+                className="group relative w-fit font-sans text-base text-ink"
+              >
+                morsmatias15@gmail.com
+                <span className="absolute -bottom-0.5 left-1/2 h-px w-0 bg-ink transition-all duration-300 ease-out group-hover:left-0 group-hover:w-full" />
+              </a>
+              <button
+                type="button"
+                onClick={copyEmail}
+                aria-label="Copy email address"
+                className="text-ink/50 transition-colors hover:text-ink"
+              >
+                {copied ? <Check size={14} /> : <Copy size={14} />}
+              </button>
+            </div>
           </div>
         </div>
       </div>
