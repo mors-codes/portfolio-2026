@@ -17,6 +17,7 @@ export default function About() {
   const cursorRef = useRef<HTMLSpanElement>(null);
   const [typedCount, setTypedCount] = useState(0);
   const [copied, setCopied] = useState(false);
+  const [emailHover, setEmailHover] = useState(false);
 
   const copyEmail = () => {
     navigator.clipboard.writeText("morsmatias15@gmail.com");
@@ -222,16 +223,26 @@ export default function About() {
             <div className="mt-2 flex items-center gap-2">
               <a
                 href="mailto:morsmatias15@gmail.com"
-                className="group relative w-fit font-sans text-base text-ink"
+                className="relative font-sans text-base text-ink"
+                style={{ width: "max-content" }}
               >
                 morsmatias15@gmail.com
-                <span className="absolute -bottom-0.5 left-1/2 h-px w-0 bg-ink transition-all duration-300 ease-out group-hover:left-0 group-hover:w-full" />
+                <span
+                  className="pointer-events-none absolute -bottom-0.5 h-px bg-ink transition-all duration-300 ease-out"
+                  style={{
+                    left: "50%",
+                    width: emailHover ? "100%" : "0%",
+                    transform: emailHover ? "translateX(-50%)" : "translateX(-50%)",
+                  }}
+                />
               </a>
               <button
                 type="button"
                 onClick={copyEmail}
+                onMouseEnter={() => setEmailHover(true)}
+                onMouseLeave={() => setEmailHover(false)}
                 aria-label="Copy email address"
-                className="text-ink/50 transition-colors hover:text-ink"
+                className="cursor-pointer text-ink/50 transition-colors hover:text-ink"
               >
                 {copied ? <Check size={14} /> : <Copy size={14} />}
               </button>
@@ -281,16 +292,26 @@ export default function About() {
             <div className="mt-2 flex items-center gap-2">
               <a
                 href="mailto:morsmatias15@gmail.com"
-                className="group relative w-fit font-sans text-base text-ink"
+                className="relative font-sans text-base text-ink"
+                style={{ width: "max-content" }}
               >
                 morsmatias15@gmail.com
-                <span className="absolute -bottom-0.5 left-1/2 h-px w-0 bg-ink transition-all duration-300 ease-out group-hover:left-0 group-hover:w-full" />
+                <span
+                  className="pointer-events-none absolute -bottom-0.5 h-px bg-ink transition-all duration-300 ease-out"
+                  style={{
+                    left: "50%",
+                    width: emailHover ? "100%" : "0%",
+                    transform: emailHover ? "translateX(-50%)" : "translateX(-50%)",
+                  }}
+                />
               </a>
               <button
                 type="button"
                 onClick={copyEmail}
+                onMouseEnter={() => setEmailHover(true)}
+                onMouseLeave={() => setEmailHover(false)}
                 aria-label="Copy email address"
-                className="text-ink/50 transition-colors hover:text-ink"
+                className="cursor-pointer text-ink/50 transition-colors hover:text-ink"
               >
                 {copied ? <Check size={14} /> : <Copy size={14} />}
               </button>
