@@ -327,7 +327,10 @@ export default function StackScatter({
         </div>
       </div>
 
-      <div className="stack-scatter-mobile">
+      <div
+        className="stack-scatter-mobile"
+        style={{ display: view === "block" ? "none" : undefined }}
+      >
         <span className="stack-scatter-mobile-badge">
           The tools and platforms that shaped how I build.
         </span>
