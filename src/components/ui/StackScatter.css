@@ -173,8 +173,34 @@
 .stack-scatter-mobile {
   display: none;
   flex-direction: column;
+  align-items: center;
   gap: 32px;
   padding: 20px 0;
+}
+
+.stack-scatter-mobile-badge {
+  padding: 6px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--color-ink);
+  font-size: 0.75rem;
+  color: var(--color-ink);
+  opacity: 0.6;
+  text-align: center;
+}
+
+.stack-scatter-mobile-view-all {
+  padding: 12px 28px;
+  border-radius: 999px;
+  background: var(--color-ink);
+  color: var(--color-bg);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.stack-scatter-mobile-view-all:hover {
+  opacity: 0.8;
 }
 
 @media (min-width: 768px) {
@@ -193,6 +219,9 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .stack-scatter-mobile-label {

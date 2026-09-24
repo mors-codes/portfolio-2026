@@ -328,6 +328,10 @@ export default function StackScatter({
       </div>
 
       <div className="stack-scatter-mobile">
+        <span className="stack-scatter-mobile-badge">
+          The tools and platforms that shaped how I build.
+        </span>
+
         {categories.map((cat, i) => (
           <div key={cat.key} className="stack-scatter-mobile-row">
             <p className="stack-scatter-mobile-label">{cat.label}</p>
@@ -345,6 +349,14 @@ export default function StackScatter({
             />
           </div>
         ))}
+
+        <button
+          type="button"
+          className="stack-scatter-mobile-view-all"
+          onClick={() => setView("block")}
+        >
+          View all tech stack
+        </button>
       </div>
 
       <div
