@@ -57,6 +57,9 @@ export default function StackScatter({
   const badgeRef = useRef<HTMLSpanElement>(null);
   const viewAllRef = useRef<HTMLButtonElement>(null);
   const categoryButtonRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
+  const mobileBadgeRef = useRef<HTMLSpanElement>(null);
+  const mobileRowRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+  const mobileViewAllRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const token = ++transitionTokenRef.current;
@@ -173,6 +176,61 @@ export default function StackScatter({
       window.removeEventListener("stack-eyebrow-done", handleEyebrowDone);
     };
   }, [categories]);
+
+  function getMobileEntranceTargets() {
+    const rows = categories
+      .map((cat) => mobileRowRefs.current.get(cat.key))
+      .filter((el): el is HTMLDivElement => Boolean(el));
+
+    return [mobileBadgeRef.current, ...rows, mobileViewAllRef.current].filter(
+      Boolean
+    ) as HTMLElement[];
+  }
+
+  function playMobileEntrance() {
+    const targets = getMobileEntranceTargets();
+    if (targets.length === 0) return;
+
+    gsap.killTweensOf(targets);
+    gsap.set(targets, { y: 24, opacity: 0 });
+    gsap.to(targets, {
+      y: 0,
+      opacity: 1,
+      duration: 0.6,
+      ease: "power3.out",
+      stagger: 0.12,
+    });
+  }
+
+  useEffect(() => {
+    const targets = getMobileEntranceTargets();
+    if (targets.length === 0) return;
+
+    gsap.set(targets, { y: 24, opacity: 0 });
+
+    const handleEyebrowDone = () => {
+      playMobileEntrance();
+    };
+
+    window.addEventListener("stack-eyebrow-done", handleEyebrowDone);
+    return () => {
+      window.removeEventListener("stack-eyebrow-done", handleEyebrowDone);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [categories]);
+
+  const isFirstViewRender = useRef(true);
+
+  useEffect(() => {
+    if (isFirstViewRender.current) {
+      isFirstViewRender.current = false;
+      return;
+    }
+    if (view === "scatter") {
+      playMobileEntrance();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [view]);
 
   // Toggle between scatter and block view with a crossfade.
   useEffect(() => {
@@ -331,12 +389,19 @@ export default function StackScatter({
         className="stack-scatter-mobile"
         style={{ display: view === "block" ? "none" : undefined }}
       >
-        <span className="stack-scatter-mobile-badge">
+        <span ref={mobileBadgeRef} className="stack-scatter-mobile-badge">
           The tools and platforms that shaped how I build.
         </span>
 
         {categories.map((cat, i) => (
-          <div key={cat.key} className="stack-scatter-mobile-row">
+          <div
+            key={cat.key}
+            ref={(el) => {
+              if (el) mobileRowRefs.current.set(cat.key, el);
+              else mobileRowRefs.current.delete(cat.key);
+            }}
+            className="stack-scatter-mobile-row"
+          >
             <p className="stack-scatter-mobile-label">{cat.label}</p>
             <LogoLoop
               logos={cat.icons.map((icon) => ({
@@ -354,6 +419,7 @@ export default function StackScatter({
         ))}
 
         <button
+          ref={mobileViewAllRef}
           type="button"
           className="stack-scatter-mobile-view-all"
           onClick={() => setView("block")}
