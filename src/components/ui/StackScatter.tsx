@@ -5,6 +5,7 @@ import gsap from "gsap";
 import TargetCursor from "@/components/ui/TargetCursor";
 import { stackBlockCategories } from "@/data/stackBlockData";
 import "./StackScatter.css";
+import LogoLoop from "@/components/ui/LogoLoop";
 
 export interface StackIcon {
   name: string;
@@ -186,7 +187,7 @@ export default function StackScatter({
       gsap.fromTo(
         blockEl,
         { opacity: 0, y: 12 },
-        { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }
+        { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" },
       );
       gsap.to(scatterEl, {
         opacity: 0,
@@ -199,7 +200,7 @@ export default function StackScatter({
       gsap.fromTo(
         scatterEl,
         { opacity: 0 },
-        { opacity: 1, duration: 0.4, ease: "power3.out", delay: 0.5 }
+        { opacity: 1, duration: 0.4, ease: "power3.out", delay: 0.5 },
       );
       gsap.to(blockEl, {
         opacity: 0,
@@ -236,90 +237,114 @@ export default function StackScatter({
         cursorColor={isDark ? "#efefef" : "#222222"}
       />
 
-      <div ref={scatterRootRef} style={{ display: "block" }}>
-        <div className="stack-scatter-icon-layer">
-          {activeIcons.map((icon) => (
-            <div
-              key={icon.name}
-              className="stack-scatter-icon-wrapper"
-              style={{
-                left: `${icon.x}%`,
-                top: `${icon.y}%`,
-                transform: "translate(-50%, -50%)",
-              }}
-            >
+      <div className="hidden md:block">
+        <div ref={scatterRootRef} style={{ display: "block" }}>
+          <div className="stack-scatter-icon-layer">
+            {activeIcons.map((icon) => (
               <div
-                ref={(el) => {
-                  if (el) iconRefs.current.set(icon.name, el);
-                  else iconRefs.current.delete(icon.name);
-                }}
-                className="stack-scatter-icon"
-                data-state={displayedLocked ? "active" : "preview"}
+                key={icon.name}
+                className="stack-scatter-icon-wrapper"
                 style={{
-                  width: icon.size ?? 36,
-                  height: icon.size ?? 36,
+                  left: `${icon.x}%`,
+                  top: `${icon.y}%`,
+                  transform: "translate(-50%, -50%)",
                 }}
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={resolveIcon(icon.icon, isDark)}
-                  alt={icon.name}
-                  width={icon.size ?? 36}
-                  height={icon.size ?? 36}
-                  draggable={false}
-                  style={{ transform: `rotate(${icon.rotation ?? 0}deg)` }}
-                />
-                {displayedLocked && (
-                  <span className="stack-scatter-icon-tooltip">{icon.name}</span>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="stack-scatter-center">
-          <span ref={badgeRef} className="stack-scatter-badge">
-            The tools and platforms that shaped how I build.
-          </span>
-
-          <div className="stack-scatter-category-list">
-            {categories.map((cat) => {
-              const state =
-                locked === cat.key
-                  ? "active"
-                  : activeKey === cat.key
-                    ? "hover"
-                    : "idle";
-              return (
-                <button
-                  key={cat.key}
+                <div
                   ref={(el) => {
-                    if (el) categoryButtonRefs.current.set(cat.key, el);
-                    else categoryButtonRefs.current.delete(cat.key);
+                    if (el) iconRefs.current.set(icon.name, el);
+                    else iconRefs.current.delete(icon.name);
                   }}
-                  type="button"
-                  className="stack-scatter-category cursor-target"
-                  data-state={state}
-                  onMouseEnter={() => handleCategoryEnter(cat.key)}
-                  onMouseLeave={handleCategoryLeave}
-                  onClick={() => handleCategoryClick(cat.key)}
-                  aria-pressed={locked === cat.key}
+                  className="stack-scatter-icon"
+                  data-state={displayedLocked ? "active" : "preview"}
+                  style={{
+                    width: icon.size ?? 36,
+                    height: icon.size ?? 36,
+                  }}
                 >
-                  {cat.label}
-                </button>
-              );
-            })}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={resolveIcon(icon.icon, isDark)}
+                    alt={icon.name}
+                    width={icon.size ?? 36}
+                    height={icon.size ?? 36}
+                    draggable={false}
+                    style={{ transform: `rotate(${icon.rotation ?? 0}deg)` }}
+                  />
+                  {displayedLocked && (
+                    <span className="stack-scatter-icon-tooltip">
+                      {icon.name}
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
 
-          <button
-            ref={viewAllRef}
-            type="button"
-            className="stack-scatter-view-all"
-            onClick={() => setView("block")}
-          >
-            View all tech stack
-          </button>
+          <div className="stack-scatter-center">
+            <span ref={badgeRef} className="stack-scatter-badge">
+              The tools and platforms that shaped how I build.
+            </span>
+
+            <div className="stack-scatter-category-list">
+              {categories.map((cat) => {
+                const state =
+                  locked === cat.key
+                    ? "active"
+                    : activeKey === cat.key
+                      ? "hover"
+                      : "idle";
+                return (
+                  <button
+                    key={cat.key}
+                    ref={(el) => {
+                      if (el) categoryButtonRefs.current.set(cat.key, el);
+                      else categoryButtonRefs.current.delete(cat.key);
+                    }}
+                    type="button"
+                    className="stack-scatter-category cursor-target"
+                    data-state={state}
+                    onMouseEnter={() => handleCategoryEnter(cat.key)}
+                    onMouseLeave={handleCategoryLeave}
+                    onClick={() => handleCategoryClick(cat.key)}
+                    aria-pressed={locked === cat.key}
+                  >
+                    {cat.label}
+                  </button>
+                );
+              })}
+            </div>
+
+            <button
+              ref={viewAllRef}
+              type="button"
+              className="stack-scatter-view-all"
+              onClick={() => setView("block")}
+            >
+              View all tech stack
+            </button>
+          </div>
         </div>
+      </div>
+
+      <div className="stack-scatter-mobile">
+        {categories.map((cat, i) => (
+          <div key={cat.key} className="stack-scatter-mobile-row">
+            <p className="stack-scatter-mobile-label">{cat.label}</p>
+            <LogoLoop
+              logos={cat.icons.map((icon) => ({
+                src: resolveIcon(icon.icon, isDark),
+                alt: icon.name,
+                title: icon.name,
+              }))}
+              speed={40}
+              direction={i % 2 === 0 ? "left" : "right"}
+              logoHeight={28}
+              gap={36}
+              fadeOut
+            />
+          </div>
+        ))}
       </div>
 
       <div
