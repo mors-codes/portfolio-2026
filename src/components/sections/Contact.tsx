@@ -88,8 +88,8 @@ export default function Contact() {
         </div>
       </div>
 
-      <div className="-mx-8 -mb-8 mt-20 h-[18vw] overflow-hidden md:-mx-16 md:mt-32 md:h-[13.5vw]">
-        <p className="font-display select-none text-center whitespace-nowrap text-[22vw] font-black leading-none -tracking-widest text-echo md:text-[16.5vw]">
+      <div className="-mx-8 -mb-8 mt-20 h-[13vw] overflow-hidden md:-mx-16 md:mt-32 md:h-[13.5vw]">
+        <p className="font-display select-none text-center whitespace-nowrap text-[16vw] font-black leading-none -tracking-widest text-echo md:text-[16.5vw]">
           MorissMatias
         </p>
       </div>
