@@ -60,7 +60,7 @@ export default function ThemeToggle({
       }}
     >
       <span
-        className="relative block h-3 w-3 transition-colors duration-300"
+        className="relative block h-[18px] w-[18px] transition-colors duration-300"
         style={{ color: "inherit" }}
         onMouseEnter={(e) =>
           (e.currentTarget.style.color = isDark ? "#efefef" : "#222222")

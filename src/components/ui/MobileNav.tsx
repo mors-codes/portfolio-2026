@@ -3,13 +3,16 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import Image from "next/image";
+import ThemeToggle from "@/components/ui/ThemeToggle";
 
 type MobileNavProps = {
   hidden?: boolean;
   onMenuToggle: () => void;
+  isDark: boolean;
+  onToggleTheme: () => void;
 };
 
-export default function MobileNav({ hidden, onMenuToggle }: MobileNavProps) {
+export default function MobileNav({ hidden, onMenuToggle, isDark, onToggleTheme }: MobileNavProps) {
   const navRef = useRef<HTMLDivElement>(null);
   const [hasEntered, setHasEntered] = useState(false);
 
@@ -72,14 +75,17 @@ export default function MobileNav({ hidden, onMenuToggle }: MobileNavProps) {
         <p className="font-logo text-2xl">MORS.</p>
       </button>
 
-      <button
-        type="button"
-        onClick={onMenuToggle}
-        aria-label="Open menu"
-        className="flex flex-col items-end gap-2"
-      >
-        <Image src="/icons/menu.svg" alt="" width={65} height={24} />
-      </button>
+      <div className="flex items-center gap-4 pb-1">
+        <ThemeToggle isDark={isDark} onToggleTheme={onToggleTheme} visible />
+        <button
+          type="button"
+          onClick={onMenuToggle}
+          aria-label="Open menu"
+          className="flex flex-col items-end gap-2"
+        >
+          <Image src="/icons/menu.svg" alt="" width={65} height={24} />
+        </button>
+      </div>
     </div>
   );
 }

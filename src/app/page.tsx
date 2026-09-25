@@ -92,7 +92,12 @@ export default function Home() {
           ]}
         />
       </div>
-      <MobileNav hidden={menuOpen} onMenuToggle={handleMenuToggle} />
+      <MobileNav
+        hidden={menuOpen}
+        onMenuToggle={handleMenuToggle}
+        isDark={isDark}
+        onToggleTheme={toggleTheme}
+      />
       <div id="hero">
         <Hero isDark={isDark} onToggleTheme={toggleTheme} />
       </div>
