@@ -76,7 +76,7 @@ export default function MobileNav({ hidden, onMenuToggle, isDark, onToggleTheme 
       </button>
 
       <div className="flex items-center gap-4 pb-1">
-        <ThemeToggle isDark={isDark} onToggleTheme={onToggleTheme} visible />
+        <ThemeToggle isDark={isDark} onToggleTheme={onToggleTheme} visible={!hidden} />
         <button
           type="button"
           onClick={onMenuToggle}
