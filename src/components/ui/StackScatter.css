@@ -1,7 +1,12 @@
 .stack-scatter-container {
   position: relative;
   width: 100%;
-  min-height: 480px;
+}
+
+@media (min-width: 768px) {
+  .stack-scatter-container {
+    min-height: 480px;
+  }
 }
 
 .stack-scatter-icon-layer {

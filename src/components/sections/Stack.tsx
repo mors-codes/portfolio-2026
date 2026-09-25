@@ -50,7 +50,7 @@ export default function Stack({ isDark }: StackProps) {
   return (
     <section
       ref={sectionRef}
-      className="min-h-screen px-8 py-24 md:px-16"
+      className="px-8 py-12 md:min-h-screen md:py-24 md:px-16"
     >
       <p
         ref={eyebrowRef}

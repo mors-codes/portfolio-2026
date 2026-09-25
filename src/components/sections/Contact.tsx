@@ -5,7 +5,7 @@ import { Mail, Copy, Check } from "lucide-react";
 
 export default function Contact() {
   const [copied, setCopied] = useState(false);
-  const email = "morsmatias15@gmail.com"; // TODO: swap real email
+  const email = "morsmatias15@gmail.com";
 
   const handleCopy = () => {
     navigator.clipboard.writeText(email);
@@ -16,7 +16,7 @@ export default function Contact() {
   return (
     <section
       id="contact"
-      className="relative flex min-h-screen flex-col justify-end px-8 pt-24 md:px-16 scroll-mt-24"
+      className="relative flex flex-col justify-end px-8 pt-24 md:min-h-screen md:px-16 scroll-mt-24"
     >
       <p className="flex items-center gap-2 text-4xl text-[#B5B5B5]">
         <span className="font-mono-label">04</span>
