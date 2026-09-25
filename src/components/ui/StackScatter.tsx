@@ -177,36 +177,57 @@ export default function StackScatter({
     };
   }, [categories]);
 
-  function getMobileEntranceTargets() {
+  function getMobileFadeTargets() {
     const rows = categories
       .map((cat) => mobileRowRefs.current.get(cat.key))
       .filter((el): el is HTMLDivElement => Boolean(el));
 
-    return [mobileBadgeRef.current, ...rows, mobileViewAllRef.current].filter(
-      Boolean
-    ) as HTMLElement[];
+    return [mobileBadgeRef.current, ...rows].filter(Boolean) as HTMLElement[];
   }
 
   function playMobileEntrance() {
-    const targets = getMobileEntranceTargets();
-    if (targets.length === 0) return;
+    const fadeTargets = getMobileFadeTargets();
+    const button = mobileViewAllRef.current;
+    const allTargets = [...fadeTargets, button].filter(Boolean) as HTMLElement[];
 
-    gsap.killTweensOf(targets);
-    gsap.set(targets, { y: 24, opacity: 0 });
-    gsap.to(targets, {
+    if (allTargets.length === 0) return;
+
+    gsap.killTweensOf(allTargets);
+
+    gsap.set(fadeTargets, { y: 24, opacity: 0 });
+    if (button) gsap.set(button, { scale: 0 });
+
+    const tl = gsap.timeline();
+
+    tl.to(fadeTargets, {
       y: 0,
       opacity: 1,
       duration: 0.6,
       ease: "power3.out",
       stagger: 0.12,
     });
+
+    if (button) {
+      tl.to(
+        button,
+        {
+          scale: 1,
+          duration: 0.5,
+          ease: "back.out(1.5)",
+        },
+        "-=0.2"
+      );
+    }
   }
 
   useEffect(() => {
-    const targets = getMobileEntranceTargets();
-    if (targets.length === 0) return;
+    const fadeTargets = getMobileFadeTargets();
+    const button = mobileViewAllRef.current;
 
-    gsap.set(targets, { y: 24, opacity: 0 });
+    if (fadeTargets.length === 0 && !button) return;
+
+    gsap.set(fadeTargets, { y: 24, opacity: 0 });
+    if (button) gsap.set(button, { scale: 0 });
 
     const handleEyebrowDone = () => {
       playMobileEntrance();
