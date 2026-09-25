@@ -432,9 +432,21 @@ export default function StackScatter({
               }))}
               speed={40}
               direction={i % 2 === 0 ? "left" : "right"}
-              logoHeight={28}
-              gap={36}
+              logoHeight={20}
+              gap={12}
               fadeOut
+              renderItem={(item, key) => {
+                if ("src" in item) {
+                  return (
+                    <span key={key} className="stack-scatter-mobile-pill">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={item.src} alt="" width={20} height={20} draggable={false} />
+                      <span>{item.title}</span>
+                    </span>
+                  );
+                }
+                return null;
+              }}
             />
           </div>
         ))}
