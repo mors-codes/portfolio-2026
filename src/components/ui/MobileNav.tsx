@@ -83,7 +83,12 @@ export default function MobileNav({ hidden, onMenuToggle, isDark, onToggleTheme 
           aria-label="Open menu"
           className="flex flex-col items-end gap-2"
         >
-          <Image src="/icons/menu.svg" alt="" width={65} height={24} />
+        <Image
+          src={isDark ? "/icons/menu-dark.svg" : "/icons/menu-light.svg"}
+          alt=""
+          width={65}
+          height={24}
+        />
         </button>
       </div>
     </div>
