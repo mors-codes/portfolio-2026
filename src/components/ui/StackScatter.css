@@ -126,6 +126,14 @@
   margin: 0 auto;
 }
 
+@media (max-width: 767px) {
+  .stack-block-view {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    padding: 32px 16px;
+  }
+}
+
 .stack-block-back {
   grid-column: 1 / -1;
   justify-self: start;
