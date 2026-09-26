@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Mail, Copy, Check, Phone } from "lucide-react";
+import { Mail, Copy, Check, Phone, ArrowRight } from "lucide-react";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
 export default function Contact() {
@@ -27,8 +27,8 @@ export default function Contact() {
         </span>
       </p>
 
-      <div className="mx-auto mt-22 grid max-w-5xl gap-12 md:mt-26 md:grid-cols-[1fr_1.3fr] md:gap-40 md:items-center">
-        <div className="flex flex-col justify-center">
+      <div className="mx-auto mt-22 grid max-w-7xl gap-12 md:mt-26 md:grid-cols-[450px_450px] md:gap-10 md:items-center">
+        <div className="flex min-w-0 flex-col justify-center">
           <p className="font-display text-3xl font-bold leading-[1.1] tracking-tighter whitespace-nowrap md:text-5xl">
             Let&apos;s Connect
           </p>
@@ -38,32 +38,42 @@ export default function Contact() {
             while building things that actually matter.
           </p>  
 
-          <button
-            onClick={handleCopy}
-            className="group mt-8 inline-flex w-fit cursor-pointer items-center gap-2 whitespace-nowrap rounded-xl border-3 border-ink bg-ink px-5 py-3 font-sans text-sm font-semibold text-bg"
-          >
-            {copied ? (
-              <Check className="h-4 w-4 shrink-0 text-bg" />
-            ) : (
-              <>
-                <Mail className="h-4 w-4 shrink-0 text-bg group-hover:hidden" />
-                <Copy className="hidden h-4 w-4 shrink-0 text-bg group-hover:block" />
-              </>
-            )}
-            <span className="grid grid-cols-1 grid-rows-1 items-center">
-              <span className="col-start-1 row-start-1 whitespace-nowrap opacity-100 blur-none transition-[opacity,filter] duration-300 ease-out group-hover:opacity-0 group-hover:blur-sm">
-                Contact
-              </span>
-              <span className="col-start-1 row-start-1 grid grid-cols-[0fr] overflow-hidden transition-[grid-template-columns] duration-300 ease-out group-hover:grid-cols-[1fr]">
-                <span className="min-w-0 overflow-hidden whitespace-nowrap opacity-0 blur-sm transition-[opacity,filter] delay-100 duration-300 ease-out group-hover:opacity-100 group-hover:blur-none">
-                  {email}
+          <div className="mt-8 flex flex-nowrap items-center gap-3 isolate">
+            <button
+              onClick={handleCopy}
+              className="group relative z-10 inline-flex w-fit cursor-pointer items-center gap-2 whitespace-nowrap rounded-xl border-3 border-ink bg-ink px-5 py-3 font-sans text-sm font-semibold text-bg"
+            >
+              {copied ? (
+                <Check className="h-4 w-4 shrink-0 text-bg" />
+              ) : (
+                <>
+                  <Mail className="h-4 w-4 shrink-0 text-bg group-hover:hidden" />
+                  <Copy className="hidden h-4 w-4 shrink-0 text-bg group-hover:block" />
+                </>
+              )}
+              <span className="grid grid-cols-1 grid-rows-1 items-center">
+                <span className="col-start-1 row-start-1 whitespace-nowrap opacity-100 blur-none transition-[opacity,filter] duration-300 ease-out group-hover:opacity-0 group-hover:blur-sm">
+                  Contact
+                </span>
+                <span className="col-start-1 row-start-1 grid grid-cols-[0fr] overflow-hidden transition-[grid-template-columns] duration-300 ease-out group-hover:grid-cols-[1fr]">
+                  <span className="min-w-0 overflow-hidden whitespace-nowrap opacity-0 blur-sm transition-[opacity,filter] delay-100 duration-300 ease-out group-hover:opacity-100 group-hover:blur-none">
+                    {email}
+                  </span>
                 </span>
               </span>
-            </span>
-          </button>
+            </button>
+
+            <a
+              href="#works"
+              className="group inline-flex w-fit items-center gap-2 whitespace-nowrap rounded-xl border border-ink/20 px-5 py-3 font-sans text-sm font-semibold text-ink"
+            >
+              See projects
+              <ArrowRight className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-1" />
+            </a>
+          </div>
         </div>
 
-        <div className="relative flex flex-col items-center justify-center gap-4 rounded-3xl border border-ink/10 bg-bg p-24 shadow-sm">
+        <div className="relative flex w-full flex-col items-center justify-center gap-4 rounded-3xl border border-ink/10 bg-bg p-26 shadow-sm">
           <div className="pointer-events-none absolute -bottom-13.5 -right-18 w-70" aria-hidden="true">
             <DotLottieReact src="/lottie/cat.lottie" loop autoplay />
           </div>
