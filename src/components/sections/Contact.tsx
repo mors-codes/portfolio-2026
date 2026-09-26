@@ -26,7 +26,7 @@ export default function Contact() {
         </span>
       </p>
 
-      <div className="mx-auto mt-16 grid max-w-5xl gap-40 md:mt-24 md:grid-cols-2 md:items-stretch">
+      <div className="mx-auto mt-24 grid max-w-5xl gap-40 md:mt-32 md:grid-cols-[1fr_1.3fr] md:items-center">
         <div className="flex flex-col justify-center">
           <p className="font-display text-3xl font-bold leading-[1.1] tracking-tighter whitespace-nowrap md:text-5xl">
             Let&apos;s Connect
@@ -62,7 +62,7 @@ export default function Contact() {
           </button>
         </div>
 
-        <div className="flex flex-col items-center justify-center gap-4 rounded-3xl border border-ink/10 bg-bg p-8 shadow-sm">
+        <div className="flex flex-col items-center justify-center gap-4 rounded-3xl border border-ink/10 bg-bg p-24 shadow-sm">
           <div className="flex gap-3">
             <a
               href="https://github.com/mors-codes"
@@ -92,6 +92,9 @@ export default function Contact() {
               <Phone className="h-4 w-4" />
             </a>
           </div>
+          <p className="font-sans text-sm font-normal text-ink/40 italic">
+            Refined by Repetition
+          </p>
         </div>
       </div>
 
