@@ -1,12 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Mail, Copy, Check, Phone, ArrowRight } from "lucide-react";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default function Contact() {
   const [copied, setCopied] = useState(false);
   const email = "morsmatias15@gmail.com";
+
+  const sectionRef = useRef<HTMLElement>(null);
+  const eyebrowRef = useRef<HTMLParagraphElement>(null);
+  const headingRef = useRef<HTMLParagraphElement>(null);
+  const subtextRef = useRef<HTMLParagraphElement>(null);
+  const buttonRowRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const echoRef = useRef<HTMLParagraphElement>(null);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(email);
@@ -14,12 +26,79 @@ export default function Contact() {
     setTimeout(() => setCopied(false), 1500);
   };
 
+  useLayoutEffect(() => {
+    if (!sectionRef.current || !eyebrowRef.current) return;
+
+    gsap.set(eyebrowRef.current, { y: 32, opacity: 0 });
+    gsap.set(
+      [headingRef.current, subtextRef.current, buttonRowRef.current].filter(Boolean),
+      { y: 24, opacity: 0 },
+    );
+    if (cardRef.current) {
+      gsap.set(cardRef.current, { scale: 0.85, opacity: 0 });
+    }
+    if (echoRef.current) {
+      gsap.set(echoRef.current, { y: 40, opacity: 0 });
+    }
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: "top 75%",
+      },
+    });
+
+    tl.to(eyebrowRef.current, {
+      y: 0,
+      opacity: 1,
+      duration: 0.6,
+      ease: "power3.out",
+    })
+      .to(
+        headingRef.current,
+        { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
+        0.15,
+      )
+      .to(
+        subtextRef.current,
+        { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
+        0.3,
+      )
+      .to(
+        buttonRowRef.current,
+        { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
+        0.45,
+      );
+
+    if (cardRef.current) {
+      tl.to(
+        cardRef.current,
+        { scale: 1, opacity: 1, duration: 0.7, ease: "back.out(1.7)" },
+        0.5,
+      );
+    }
+
+    if (echoRef.current) {
+      tl.to(
+        echoRef.current,
+        { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" },
+        0.6,
+      );
+    }
+
+    return () => {
+      tl.scrollTrigger?.kill();
+      tl.kill();
+    };
+  }, []);
+
   return (
     <section
+      ref={sectionRef}
       id="contact"
       className="relative flex flex-col justify-end px-8 pt-24 md:min-h-screen md:px-16 scroll-mt-24"
     >
-      <p className="flex items-center gap-2 text-4xl text-[#B5B5B5]">
+      <p ref={eyebrowRef} className="flex items-center gap-2 text-4xl text-[#B5B5B5]">
         <span className="font-mono-label">04</span>
         <span className="font-sans font-thin">—</span>
         <span className="font-display font-black -tracking-widest">
@@ -29,16 +108,16 @@ export default function Contact() {
 
       <div className="mx-auto mt-22 grid max-w-7xl gap-12 md:mt-26 md:grid-cols-[450px_450px] md:gap-10 md:items-center">
         <div className="flex min-w-0 flex-col justify-center">
-          <p className="font-display text-3xl font-bold leading-[1.1] tracking-tighter whitespace-nowrap md:text-5xl">
+          <p ref={headingRef} className="font-display text-3xl font-bold leading-[1.1] tracking-tighter whitespace-nowrap md:text-5xl">
             Let&apos;s Connect
           </p>
 
-          <p className="mt-4 max-w-xs font-sans text-base text-ink/60 md:text-lg">
+          <p ref={subtextRef} className="mt-4 max-w-xs font-sans text-base text-ink/60 md:text-lg">
             Open to roles and projects where I can keep growing as a developer
             while building things that actually matter.
           </p>  
 
-          <div className="mt-8 flex flex-nowrap items-center gap-3 isolate">
+          <div ref={buttonRowRef} className="mt-8 flex flex-nowrap items-center gap-3 isolate">
             <button
               onClick={handleCopy}
               className="group relative z-10 inline-flex w-fit cursor-pointer items-center gap-2 whitespace-nowrap rounded-xl border-3 border-ink bg-ink px-5 py-3 font-sans text-sm font-semibold text-bg"
@@ -73,7 +152,7 @@ export default function Contact() {
           </div>
         </div>
 
-        <div className="relative flex w-full flex-col items-center justify-center gap-4 rounded-3xl border border-ink/10 bg-bg p-26 shadow-sm">
+        <div ref={cardRef} className="relative flex w-full flex-col items-center justify-center gap-4 rounded-3xl border border-ink/10 bg-bg p-26 shadow-sm">
           <div className="pointer-events-none absolute -bottom-13.5 -right-18 w-70" aria-hidden="true">
             <DotLottieReact src="/lottie/cat.lottie" loop autoplay />
           </div>
@@ -113,7 +192,7 @@ export default function Contact() {
       </div>
 
       <div className="-mx-8 -mb-8 mt-20 h-[13vw] overflow-hidden md:-mx-16 md:mt-32 md:h-[13.5vw]">
-        <p className="font-display select-none text-center whitespace-nowrap text-[16vw] font-black leading-none -tracking-widest text-echo md:text-[16.5vw]">
+        <p ref={echoRef} className="font-display select-none text-center whitespace-nowrap text-[16vw] font-black leading-none -tracking-widest text-echo md:text-[16.5vw]">
           MorissMatias
         </p>
       </div>
