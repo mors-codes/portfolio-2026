@@ -129,7 +129,7 @@ export default function Contact() {
         </span>
       </p>
 
-      <div className="mx-auto mt-22 grid max-w-7xl grid-cols-[minmax(0,450px)] gap-12 md:mt-26 md:grid-cols-[450px_450px] md:gap-10 md:items-center">
+      <div className="mx-auto mt-10 grid max-w-7xl grid-cols-[minmax(0,450px)] gap-12 md:mt-26 md:grid-cols-[450px_450px] md:gap-10 md:items-center">
         <div className="flex min-w-0 flex-col justify-center">
           <p ref={headingRef} className="font-display text-3xl font-bold leading-[1.1] tracking-tighter whitespace-nowrap md:text-5xl">
             Let&apos;s Connect
@@ -224,7 +224,7 @@ export default function Contact() {
         </div>
       </div>
 
-      <div className="-mx-8 -mb-8 mt-20 h-[13vw] overflow-hidden md:-mx-16 md:mt-32 md:h-[13.5vw]">
+      <div className="-mx-8 -mb-8 mt-10 h-[13vw] overflow-hidden md:-mx-16 md:mt-32 md:h-[13.5vw]">
         <p ref={echoRef} className="font-display select-none text-center whitespace-nowrap text-[16vw] font-black leading-none -tracking-widest text-echo md:text-[16.5vw]">
           MorissMatias
         </p>
