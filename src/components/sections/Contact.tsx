@@ -20,10 +20,33 @@ export default function Contact() {
   const cardRef = useRef<HTMLDivElement>(null);
   const echoRef = useRef<HTMLParagraphElement>(null);
 
-  const handleCopy = () => {
+  const [expanded, setExpanded] = useState(false);
+
+  const copyEmail = () => {
     navigator.clipboard.writeText(email);
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
+  };
+
+  const handlePointerUp = (e: React.PointerEvent<HTMLButtonElement>) => {
+    if (e.pointerType === "touch") {
+      if (!expanded) {
+        setExpanded(true);
+        return;
+      }
+      copyEmail();
+      setExpanded(false);
+      return;
+    }
+    copyEmail();
+  };
+
+  const handlePointerEnter = (e: React.PointerEvent<HTMLButtonElement>) => {
+    if (e.pointerType === "mouse") setExpanded(true);
+  };
+
+  const handlePointerLeave = (e: React.PointerEvent<HTMLButtonElement>) => {
+    if (e.pointerType === "mouse") setExpanded(false);
   };
 
   useLayoutEffect(() => {
@@ -106,7 +129,7 @@ export default function Contact() {
         </span>
       </p>
 
-      <div className="mx-auto mt-22 grid max-w-7xl gap-12 md:mt-26 md:grid-cols-[450px_450px] md:gap-10 md:items-center">
+      <div className="mx-auto mt-22 grid max-w-7xl grid-cols-[minmax(0,450px)] gap-12 md:mt-26 md:grid-cols-[450px_450px] md:gap-10 md:items-center">
         <div className="flex min-w-0 flex-col justify-center">
           <p ref={headingRef} className="font-display text-3xl font-bold leading-[1.1] tracking-tighter whitespace-nowrap md:text-5xl">
             Let&apos;s Connect
@@ -119,23 +142,33 @@ export default function Contact() {
 
           <div ref={buttonRowRef} className="mt-8 flex flex-nowrap items-center gap-3 isolate">
             <button
-              onClick={handleCopy}
-              className="group relative z-10 inline-flex w-fit cursor-pointer items-center gap-2 whitespace-nowrap rounded-xl border-3 border-ink bg-ink px-5 py-3 font-sans text-sm font-semibold text-bg"
+              onPointerUp={handlePointerUp}
+              onPointerEnter={handlePointerEnter}
+              onPointerLeave={handlePointerLeave}
+              className="relative z-10 inline-flex w-fit cursor-pointer items-center gap-2 whitespace-nowrap rounded-xl border-3 border-ink bg-ink px-5 py-3 font-sans text-sm font-semibold text-bg"
             >
               {copied ? (
                 <Check className="h-4 w-4 shrink-0 text-bg" />
+              ) : expanded ? (
+                <Copy className="h-4 w-4 shrink-0 text-bg" />
               ) : (
-                <>
-                  <Mail className="h-4 w-4 shrink-0 text-bg group-hover:hidden" />
-                  <Copy className="hidden h-4 w-4 shrink-0 text-bg group-hover:block" />
-                </>
+                <Mail className="h-4 w-4 shrink-0 text-bg" />
               )}
               <span className="grid grid-cols-1 grid-rows-1 items-center">
-                <span className="col-start-1 row-start-1 whitespace-nowrap opacity-100 blur-none transition-[opacity,filter] duration-300 ease-out group-hover:opacity-0 group-hover:blur-sm">
+                <span
+                  className="col-start-1 row-start-1 whitespace-nowrap transition-[opacity,filter] duration-300 ease-out"
+                  style={{ opacity: expanded ? 0 : 1, filter: expanded ? "blur(4px)" : "blur(0px)" }}
+                >
                   Contact
                 </span>
-                <span className="col-start-1 row-start-1 grid grid-cols-[0fr] overflow-hidden transition-[grid-template-columns] duration-300 ease-out group-hover:grid-cols-[1fr]">
-                  <span className="min-w-0 overflow-hidden whitespace-nowrap opacity-0 blur-sm transition-[opacity,filter] delay-100 duration-300 ease-out group-hover:opacity-100 group-hover:blur-none">
+                <span
+                  className="col-start-1 row-start-1 grid overflow-hidden transition-[grid-template-columns] duration-300 ease-out"
+                  style={{ gridTemplateColumns: expanded ? "1fr" : "0fr" }}
+                >
+                  <span
+                    className="min-w-0 overflow-hidden whitespace-nowrap transition-[opacity,filter] delay-100 duration-300 ease-out"
+                    style={{ opacity: expanded ? 1 : 0, filter: expanded ? "blur(0px)" : "blur(4px)" }}
+                  >
                     {email}
                   </span>
                 </span>
