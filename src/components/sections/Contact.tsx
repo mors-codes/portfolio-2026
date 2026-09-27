@@ -185,7 +185,7 @@ export default function Contact() {
           </div>
         </div>
 
-        <div ref={cardRef} className="relative flex w-full flex-col items-center justify-center gap-4 rounded-3xl border border-ink/10 bg-bg p-26 shadow-sm">
+        <div ref={cardRef} className="relative flex w-full flex-col items-center justify-center gap-3 rounded-3xl border border-ink/10 bg-bg p-26 shadow-sm">
           <div className="pointer-events-none absolute -bottom-13.5 -right-18 w-70" aria-hidden="true">
             <DotLottieReact src="/lottie/cat.lottie" loop autoplay />
           </div>
@@ -220,6 +220,9 @@ export default function Contact() {
           </div>
           <p className="font-sans text-sm font-normal text-ink/40 italic">
             Refined by Repetition
+          </p>
+          <p className="font-sans text-xs font-normal text-ink/30">
+            © 2026
           </p>
         </div>
       </div>
