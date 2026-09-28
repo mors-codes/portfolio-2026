@@ -163,12 +163,12 @@ export default function StackScatter({
           opacity: 0.6,
           duration: 0.6,
           ease: "power2.out",
-        })
+        }, 0.3)
         .to(viewAllRef.current, {
           scale: 1,
           duration: 0.4,
-          ease: "back.out(1.5)",
-        });
+          ease: "power3.out",
+        }, 0.6)
     };
 
     window.addEventListener("stack-eyebrow-done", handleEyebrowDone);
