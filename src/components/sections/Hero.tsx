@@ -57,7 +57,7 @@ export default function Hero({ isDark, onToggleTheme }: HeroProps) {
       {
         y: "0%",
         opacity: 1,
-        duration: 0.7,
+        duration: 0.5,
         ease: "back.out(1.7)",
         stagger: 0.035,
       },
@@ -67,38 +67,38 @@ export default function Hero({ isDark, onToggleTheme }: HeroProps) {
     if (roleLabelsRef.current) {
       tl.to(
         roleLabelsRef.current,
-        { x: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
-        0.9,
+        { x: 0, opacity: 1, duration: 0.4, ease: "power3.out" },
+        0.7,
       );
     }
 
     if (yearRef.current) {
       tl.to(
         yearRef.current,
-        { x: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
-        1.3,
+        { x: 0, opacity: 1, duration: 0.4, ease: "power3.out" },
+        0.8,
       );
     }
 
     tl.to(
       [eyebrowRef.current, logoRef.current].filter(Boolean),
-      { y: 0, opacity: 1, duration: 0.6, ease: "power3.out", stagger: 0.08 },
-      1.5,
+      { y: 0, opacity: 1, duration: 0.4, ease: "power3.out", stagger: 0.08 },
+      0.9,
     );
 
     if (illustrationRef.current) {
       tl.to(
         illustrationRef.current,
-        { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" },
-        1.8,
+        { y: 0, opacity: 1, duration: 0.5, ease: "power3.out" },
+        0.9,
       );
     }
 
     if (navWrapRef.current) {
       tl.to(
         navWrapRef.current,
-        { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
-        2.1,
+        { y: 0, opacity: 1, duration: 0.5, ease: "power3.out" },
+        1,
       );
     }
   }, []);
