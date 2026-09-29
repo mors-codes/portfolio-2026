@@ -57,7 +57,7 @@ export default function Hero({ isDark, onToggleTheme }: HeroProps) {
       {
         y: "0%",
         opacity: 1,
-        duration: 0.5,
+        duration: 0.6,
         ease: "back.out(1.7)",
         stagger: 0.035,
       },
