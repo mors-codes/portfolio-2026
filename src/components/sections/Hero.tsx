@@ -145,11 +145,11 @@ export default function Hero({ isDark, onToggleTheme }: HeroProps) {
 
         <div
           ref={eyebrowRef}
-          className="ml-auto hidden items-center gap-4 md:flex"
+          className="ml-auto hidden items-center gap-5 md:flex"
           style={{ opacity: 0, transform: "translateY(-12px)" }}
         >
           <p
-            className="mr-3 max-w-40 text-right font-normal leading-tight"
+            className="mr-2 max-w-40 text-right font-normal leading-tight"
             style={{ color: isDark ? "#a0a0a0" : "#8a8a8a" }}
           >
             Open for work and collaborations
@@ -158,7 +158,7 @@ export default function Hero({ isDark, onToggleTheme }: HeroProps) {
             className="h-6 w-0.5 shrink-0"
             style={{ backgroundColor: isDark ? "#3a3a3a" : "#dcdcdc" }}
           />
-          <div className="flex shrink-0 items-center -translate-y-1">
+          <div className="flex shrink-0 items-center -translate-y-0.5">
             <ThemeToggle
               isDark={isDark}
               onToggleTheme={onToggleTheme}
