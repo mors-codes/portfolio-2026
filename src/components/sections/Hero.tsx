@@ -174,7 +174,7 @@ export default function Hero({ isDark, onToggleTheme }: HeroProps) {
         <div ref={nameBlockRef} className="relative w-auto text-center md:inline-block">
           <p
             ref={roleLabelsRef}
-            className="-mb-2 ml-4.5 flex w-auto flex-nowrap items-center gap-2 whitespace-nowrap font-sans text-[2.8vw] md:ml-[22.8px] md:mb-2 md:gap-5 md:text-sm"
+            className="mb-2 ml-4.5 flex w-auto flex-nowrap items-center gap-2 whitespace-nowrap font-sans text-[2.8vw] md:ml-[22.8px] md:gap-8 md:text-sm"
             style={{ opacity: 0, transform: "translateX(-24px)" }}
           >
             <span>Full Stack Developer</span>
@@ -186,7 +186,7 @@ export default function Hero({ isDark, onToggleTheme }: HeroProps) {
           <AnimatedName ref={nameRef} />
           <p
             ref={yearRef}
-            className="absolute right-[10.5px] bottom-1.5 w-auto text-right font-sans text-xs font-bold md:static md:right-auto md:-ml-4 md:-mt-4 md:text-sm"
+            className="absolute right-[10.5px] -bottom-0.5 w-auto text-right font-sans text-xs font-bold md:static md:right-auto md:-ml-4 md:-mt-3 md:text-sm"
             style={{ opacity: 0, transform: "translateX(24px)" }}
           >
             2026
