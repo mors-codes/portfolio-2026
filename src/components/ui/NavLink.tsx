@@ -23,7 +23,7 @@ export default function NavLink({
       <span className="font-mono-label block text-xs opacity-50">
         {number}
       </span>
-      <span className="inline-flex items-center gap-1 font-semibold opacity-85 transition-opacity hover:opacity-100">
+      <span className="inline-flex items-center gap-1 font-medium opacity-70 transition-opacity hover:opacity-100">
         {label}
         <svg
           width="12"
