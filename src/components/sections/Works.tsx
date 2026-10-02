@@ -5,11 +5,23 @@ import WorksSwap, {
 } from "@/components/ui/WorksSwap";
 import { ArrowRight } from "lucide-react";
 
+/*
+ * Add a project = add an object. `visual` picks the presentation:
+ *
+ *   { type: "browser", image: "/images/works/x.png", url: "x.com" }
+ *   { type: "screens", screens: [{ image: "/images/works/a.png", label: "Home" }] }   // 1–3
+ *   { type: "phones",  images: ["/images/works/m1.png", "/images/works/m2.png"] }     // 1–3
+ *   { type: "workflow", nodes: [{ label: "Form submitted", kind: "trigger" }, ...] }  // 2–5
+ *   { type: "artwork", image: "/images/works/poster.png" }
+ *
+ * workflow node kinds: "trigger" | "ai" | "logic" | "action" ("ai" renders inverted)
+ */
 const WORKS: WorkItem[] = [
   {
     title: "DM Workflows",
-    description: "",
-    image: "/images/works/project-1.png",
+    category: "Web development",
+    description:
+      "Website for an automation studio, with a lead form that emails new inquiries.",
     stack: [
       { name: "Next.js", icon: "/icons/stack/frontend/nextjs.svg" },
       { name: "TypeScript", icon: "/icons/stack/frontend/typescript.svg" },
@@ -17,16 +29,37 @@ const WORKS: WorkItem[] = [
       { name: "Resend", icon: "/icons/stack/resend-light.svg" },
     ],
     link: "https://dmworkflows.com",
+    visual: {
+      type: "browser",
+      image: "/images/works/project-1.png",
+      url: "dmworkflows.com",
+    },
   },
   {
     title: "Project Two",
+    category: "AI automation",
     description: "Automation workflow",
-    image: "/images/works/project-2.png",
+    visual: {
+      type: "workflow",
+      nodes: [
+        { label: "Form submitted", kind: "trigger" },
+        { label: "Extract with Gemini", kind: "ai" },
+        { label: "Validate fields", kind: "logic" },
+        { label: "Route by type", kind: "logic" },
+        { label: "Update CRM", kind: "action" },
+      ],
+    },
   },
   {
     title: "Project Three",
+    category: "UI/UX design",
     description: "UI/UX design system",
-    image: "/images/works/project-3.png",
+    visual: {
+      type: "screens",
+      screens: [
+        { image: "/images/works/project-3.png", label: "Design system" },
+      ],
+    },
   },
 ];
 

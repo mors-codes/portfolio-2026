@@ -1,390 +1,470 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type RefObject,
+} from "react";
 import { flushSync } from "react-dom";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 import gsap from "gsap";
+import WorkVisual, {
+  prefersReducedMotion,
+  type WorkVisualData,
+} from "@/components/ui/WorkVisual";
+
+export type {
+  WorkVisualData,
+  WorkScreen,
+  WorkflowNode,
+  WorkflowNodeKind,
+} from "@/components/ui/WorkVisual";
 
 export interface WorkStackItem {
   name: string;
-  icon: string;
+  /** Optional logo. Without one the tag renders as plain text. */
+  icon?: string;
 }
 
 export interface WorkItem {
   title: string;
-  description: string;
-  image: string;
+  /** e.g. "Web development", "AI automation" */
+  category: string;
+  description?: string;
   stack?: WorkStackItem[];
   link?: string;
+  /** Decides how the project is presented. See WorkVisualData. */
+  visual: WorkVisualData;
 }
 
 interface WorksSwapProps {
   works: WorkItem[];
 }
 
-const PANEL_WIDTH_PCT = 47;
-const OUTER_MARGIN_PCT = 4;
-const LEFT_REST_PCT = OUTER_MARGIN_PCT;
-const RIGHT_REST_PCT = 100 - PANEL_WIDTH_PCT - OUTER_MARGIN_PCT;
-const REST_GAP_PCT = RIGHT_REST_PCT - LEFT_REST_PCT - PANEL_WIDTH_PCT;
-const COLLAPSE_LEFT_PCT = 50 - REST_GAP_PCT / 2;
-const COLLAPSE_RIGHT_PCT = 50 + REST_GAP_PCT / 2;
-const CARD_FRAME_MAX_WIDTH = 640;
+const FULL_CLIP = "inset(0% 0% 0% 0%)";
+const ENTER_CLIP = "inset(0% 0% 0% 100%)";
+const SWAP_DURATION = 1.1;
+const SWAP_EASE = "power3.inOut";
+const PARALLAX_PCT = 8;
+
+const pad = (n: number) => String(n).padStart(2, "0");
+
+const NAV_BUTTON =
+  "grid h-12 w-12 place-items-center rounded-xl border-[3px] border-ink text-ink transition-colors hover:bg-ink hover:text-bg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink";
+
+function Layer({
+  layerRef,
+  work,
+  workIndex,
+}: {
+  layerRef: RefObject<HTMLDivElement | null>;
+  work: WorkItem;
+  workIndex: number;
+}) {
+  return (
+    <div ref={layerRef} className="absolute inset-0">
+      <div
+        data-layer-inner
+        className="flex h-full w-full items-center justify-center"
+      >
+        {/* key remounts the visual per project so image-error state never leaks across projects */}
+        <WorkVisual key={workIndex} visual={work.visual} title={work.title} />
+      </div>
+    </div>
+  );
+}
 
 export default function WorksSwap({ works }: WorksSwapProps) {
-  const [index, setIndex] = useState(0);
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  const [infoOnLeft, setInfoOnLeft] = useState(true);
+  const total = works.length;
 
+  // `current` drives the info column. `layers` holds which project each of the
+  // two stacked visual layers is showing; they alternate on every swap.
+  const [current, setCurrent] = useState(0);
+  const [layers, setLayers] = useState<[number, number]>([0, 0]);
+
+  const rootRef = useRef<HTMLDivElement>(null);
   const infoRef = useRef<HTMLDivElement>(null);
-  const cardARef = useRef<HTMLDivElement>(null);
-  const cardBRef = useRef<HTMLDivElement>(null);
-  const [activeSlot, setActiveSlot] = useState<"A" | "B">("A");
+  const controlsRef = useRef<HTMLDivElement>(null);
+  const layerARef = useRef<HTMLDivElement>(null);
+  const layerBRef = useRef<HTMLDivElement>(null);
 
-  const active = works[index];
-  const [displayedWork, setDisplayedWork] = useState<{
-    A: WorkItem;
-    B: WorkItem;
-  }>({
-    A: works[0],
-    B: works[0],
-  });
+  const currentRef = useRef(0);
+  const prevCurrentRef = useRef(0);
+  const activeLayerRef = useRef<0 | 1>(0);
+  const busyRef = useRef(false);
+  const inViewRef = useRef(false);
 
-  const containerRef = useRef<HTMLDivElement>(null);
-  const hasPlayedEntranceRef = useRef(false);
-  // Start at the fully-rendered desktop frame width so the image never falls
-  // back to its narrow intrinsic width before the first measurement arrives.
-  const [cardFrameWidth, setCardFrameWidth] = useState(CARD_FRAME_MAX_WIDTH);
-  const imageWidth = Math.max(Math.min(cardFrameWidth - 80, 560) - 56, 0);
-
+  /* ---------------------------- first-view entrance ---------------------------- */
   useLayoutEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
+    const root = rootRef.current;
+    const info = infoRef.current;
+    const layerA = layerARef.current;
+    const layerB = layerBRef.current;
+    if (!root || !info || !layerA || !layerB) return;
 
-    const updateCardFrameWidth = () => {
-      setCardFrameWidth(container.clientWidth * (PANEL_WIDTH_PCT / 100));
-    };
+    gsap.set(layerB, { autoAlpha: 0 });
+    if (prefersReducedMotion()) return;
 
-    updateCardFrameWidth();
-    const resizeObserver = new ResizeObserver(updateCardFrameWidth);
-    resizeObserver.observe(container);
+    const controls = controlsRef.current;
+    const items = info.querySelectorAll("[data-reveal]");
+    const title = info.querySelector("[data-title]");
+    const innerA = layerA.querySelector("[data-layer-inner]");
 
-    return () => resizeObserver.disconnect();
-  }, []);
+    gsap.set(items, { autoAlpha: 0, y: 18 });
+    gsap.set(title, { yPercent: 110 });
+    gsap.set(controls, { autoAlpha: 0 });
+    gsap.set(layerA, { clipPath: ENTER_CLIP });
+    gsap.set(innerA, { xPercent: PARALLAX_PCT });
 
-  useLayoutEffect(() => {
-    if (!infoRef.current || !cardARef.current) return;
-    gsap.set(cardARef.current, { left: `${COLLAPSE_RIGHT_PCT}%`, width: "0%" });
-    gsap.set(infoRef.current, { opacity: 0, y: 30 });
-  }, []);
-
-  useLayoutEffect(() => {
-    const node = containerRef.current;
-    if (!node) return;
-
-    const playEntrance = () => {
-      if (hasPlayedEntranceRef.current || !infoRef.current || !cardARef.current)
-        return;
-      hasPlayedEntranceRef.current = true;
-
-      const tl = gsap.timeline();
-      tl.to(
-        cardARef.current,
-        {
-          left: `${RIGHT_REST_PCT}%`,
-          width: `${PANEL_WIDTH_PCT}%`,
-          duration: 1.2,
-          ease: "power3.inOut",
+    const play = () => {
+      const tl = gsap.timeline({
+        onComplete: () => {
+          gsap.set([layerA, innerA], { clearProps: "clipPath,transform" });
         },
-        0,
-      );
+      });
       tl.to(
-        infoRef.current,
-        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
-        0.3,
-      );
+        layerA,
+        { clipPath: FULL_CLIP, duration: 1.2, ease: SWAP_EASE },
+        0,
+      )
+        .to(innerA, { xPercent: 0, duration: 1.2, ease: SWAP_EASE }, 0)
+        .to(title, { yPercent: 0, duration: 0.8, ease: "power3.out" }, 0.35)
+        .to(
+          items,
+          {
+            autoAlpha: 1,
+            y: 0,
+            duration: 0.6,
+            stagger: 0.07,
+            ease: "power2.out",
+          },
+          0.4,
+        )
+        .to(controls, { autoAlpha: 1, duration: 0.5, ease: "power2.out" }, 0.9);
     };
 
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0]?.isIntersecting) {
-          playEntrance();
+          play();
           observer.disconnect();
         }
       },
       { threshold: 0.2 },
     );
-
-    observer.observe(node);
+    observer.observe(root);
     return () => observer.disconnect();
   }, []);
 
-  const goTo = (target: number) => {
-    if (
-      target === index ||
-      isTransitioning ||
-      !infoRef.current ||
-      !cardARef.current ||
-      !cardBRef.current
-    ) {
-      return;
-    }
+  /* ------------------- info column: reveal after content swaps ------------------ */
+  useLayoutEffect(() => {
+    if (prevCurrentRef.current === current) return;
+    prevCurrentRef.current = current;
 
-    setIsTransitioning(true);
+    const info = infoRef.current;
+    if (!info || prefersReducedMotion()) return;
 
-    const nextInfoOnLeft = !infoOnLeft;
-    const nextCardOnLeft = !nextInfoOnLeft;
-
-    const outgoingSlot = activeSlot;
-    const incomingSlot = outgoingSlot === "A" ? "B" : "A";
-    const outgoingRef = outgoingSlot === "A" ? cardARef : cardBRef;
-    const incomingRef = incomingSlot === "A" ? cardARef : cardBRef;
-
-    const outgoingWasOnLeft = !nextCardOnLeft;
-    const outgoingCollapsePct = outgoingWasOnLeft
-      ? COLLAPSE_LEFT_PCT
-      : COLLAPSE_RIGHT_PCT;
-    const incomingStartPct = outgoingWasOnLeft
-      ? COLLAPSE_RIGHT_PCT
-      : COLLAPSE_LEFT_PCT;
-
-    // Commit the new image before GSAP exposes the incoming slot. Without this,
-    // the first swap can reveal one frame of that slot's stale collapsed content.
-    flushSync(() => {
-      setDisplayedWork((prev) => ({ ...prev, [incomingSlot]: works[target] }));
-    });
-
-    // The DOM order would otherwise put Card B above Card A during B -> A swaps,
-    // allowing the collapsing panel to briefly peek over the incoming one.
-    gsap.set(outgoingRef.current, { zIndex: 10 });
-    gsap.set(incomingRef.current, { zIndex: 11 });
-    gsap.set(incomingRef.current, {
-      left: `${incomingStartPct}%`,
-      width: "0%",
-    });
-
-    const tl = gsap.timeline({
-      defaults: { overwrite: "auto" },
-      onComplete: () => {
-        setActiveSlot(incomingSlot);
-        setIndex(target);
-        setInfoOnLeft(nextInfoOnLeft);
-        setIsTransitioning(false);
-      },
-    });
-
-    tl.to(
-      infoRef.current,
-      { opacity: 0, y: 12, duration: 0.3, ease: "power2.out" },
-      0,
-    );
-
-    tl.to(
-      outgoingRef.current,
+    gsap.fromTo(
+      info.querySelectorAll("[data-reveal]"),
+      { autoAlpha: 0, y: 18 },
       {
-        left: `${outgoingCollapsePct}%`,
-        width: "0%",
-        duration: 1.2,
-        ease: "power3.inOut",
+        autoAlpha: 1,
+        y: 0,
+        duration: 0.6,
+        stagger: 0.06,
+        ease: "power3.out",
+        overwrite: "auto",
       },
-      0,
     );
+    gsap.fromTo(
+      info.querySelector("[data-title]"),
+      { yPercent: 110 },
+      { yPercent: 0, duration: 0.7, ease: "power3.out", overwrite: "auto" },
+    );
+  }, [current]);
 
-    tl.to(
-      incomingRef.current,
-      {
-        left: nextCardOnLeft ? `${LEFT_REST_PCT}%` : `${RIGHT_REST_PCT}%`,
-        width: `${PANEL_WIDTH_PCT}%`,
-        duration: 1.2,
-        ease: "power3.inOut",
+  /* --------------------------------- navigation --------------------------------- */
+  const goTo = useCallback(
+    (target: number, direction: 1 | -1) => {
+      const info = infoRef.current;
+      const layerA = layerARef.current;
+      const layerB = layerBRef.current;
+      if (total < 2 || busyRef.current || !info || !layerA || !layerB) return;
+      if (target === currentRef.current) return;
+
+      busyRef.current = true;
+
+      const incomingIdx: 0 | 1 = activeLayerRef.current === 0 ? 1 : 0;
+      const outEl = incomingIdx === 1 ? layerA : layerB;
+      const inEl = incomingIdx === 1 ? layerB : layerA;
+      const outInner = outEl.querySelector("[data-layer-inner]");
+      const inInner = inEl.querySelector("[data-layer-inner]");
+
+      const commit = () => {
+        activeLayerRef.current = incomingIdx;
+        currentRef.current = target;
+        busyRef.current = false;
+      };
+
+      // Mount the incoming visual before it is revealed so no stale frame flashes.
+      flushSync(() => {
+        setLayers((prev): [number, number] =>
+          incomingIdx === 0 ? [target, prev[1]] : [prev[0], target],
+        );
+      });
+
+      if (prefersReducedMotion()) {
+        flushSync(() => setCurrent(target));
+        gsap.set(outEl, { autoAlpha: 0 });
+        gsap.set(inEl, { autoAlpha: 1 });
+        commit();
+        return;
+      }
+
+      // The outgoing layer's clip edge and the incoming layer's clip edge share one
+      // easing curve, so they meet on a single moving line: no overlap, no pop.
+      const inStart = direction === 1 ? ENTER_CLIP : "inset(0% 100% 0% 0%)";
+      const outEnd = direction === 1 ? "inset(0% 100% 0% 0%)" : ENTER_CLIP;
+
+      gsap.set(outEl, { zIndex: 1, clipPath: FULL_CLIP });
+      gsap.set(inEl, { zIndex: 2, autoAlpha: 1, clipPath: inStart });
+      gsap.set(inInner, { xPercent: PARALLAX_PCT * direction });
+
+      const items = info.querySelectorAll("[data-reveal]");
+      const title = info.querySelector("[data-title]");
+
+      const tl = gsap.timeline({
+        defaults: { overwrite: "auto" },
+        onComplete: () => {
+          gsap.set(outEl, { autoAlpha: 0 });
+          gsap.set([outEl, inEl, outInner, inInner], {
+            clearProps: "clipPath,transform",
+          });
+          commit();
+        },
+      });
+
+      tl.to(
+        items,
+        {
+          autoAlpha: 0,
+          y: -14,
+          duration: 0.3,
+          stagger: 0.04,
+          ease: "power2.in",
+        },
+        0,
+      )
+        .to(title, { yPercent: -110, duration: 0.4, ease: "power2.in" }, 0)
+        .add(() => {
+          flushSync(() => setCurrent(target));
+        }, 0.45)
+        .to(outEl, { clipPath: outEnd, duration: SWAP_DURATION, ease: SWAP_EASE }, 0)
+        .to(inEl, { clipPath: FULL_CLIP, duration: SWAP_DURATION, ease: SWAP_EASE }, 0)
+        .to(
+          outInner,
+          {
+            xPercent: -PARALLAX_PCT * direction,
+            duration: SWAP_DURATION,
+            ease: SWAP_EASE,
+          },
+          0,
+        )
+        .to(
+          inInner,
+          { xPercent: 0, duration: SWAP_DURATION, ease: SWAP_EASE },
+          0,
+        );
+    },
+    [total],
+  );
+
+  const next = useCallback(
+    () => goTo((currentRef.current + 1) % total, 1),
+    [goTo, total],
+  );
+  const prev = useCallback(
+    () => goTo((currentRef.current - 1 + total) % total, -1),
+    [goTo, total],
+  );
+
+  /* ----------------------------- keyboard (in view only) ----------------------------- */
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        inViewRef.current = entries[0]?.isIntersecting ?? false;
       },
-      0,
+      { threshold: 0.4 },
     );
+    observer.observe(root);
+    return () => observer.disconnect();
+  }, []);
 
-    tl.set(
-      infoRef.current,
-      {
-        left: nextInfoOnLeft ? `${LEFT_REST_PCT}%` : `${RIGHT_REST_PCT}%`,
-        y: 12,
-      },
-      1.2,
-    );
-    tl.to(
-      infoRef.current,
-      { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" },
-      1.25,
-    );
-  };
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (!inViewRef.current || e.defaultPrevented) return;
+      if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+      if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
 
-  const next = () => goTo((index + 1) % works.length);
-  const prev = () => goTo((index - 1 + works.length) % works.length);
+      const target = e.target as HTMLElement | null;
+      if (
+        target &&
+        (target.isContentEditable ||
+          /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName))
+      ) {
+        return;
+      }
+
+      e.preventDefault();
+      if (e.key === "ArrowRight") next();
+      else prev();
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [next, prev]);
+
+  if (total === 0) return null;
+
+  const active = works[current] ?? works[0];
+  const workAt = (i: number) => works[i] ?? works[0];
 
   return (
-    <div ref={containerRef} className="relative mt-7 h-160">
-      <div className="pointer-events-none absolute top-0 bottom-0 left-1/2 z-30 w-px -translate-x-1/2 bg-ink/10 dark:bg-bg/10" />
-
-      <button
-        type="button"
-        aria-label="Previous project"
-        onClick={prev}
-        disabled={isTransitioning}
-        className="absolute top-1/2 left-0 z-40 -translate-x-4 -translate-y-1/2 text-ink/40 transition-colors hover:text-ink disabled:pointer-events-none disabled:opacity-30"
-      >
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
-        >
-          <path
-            d="M16 5L8 12L16 19"
-            stroke="currentColor"
-            strokeWidth="3"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </button>
-
+    <div
+      ref={rootRef}
+      role="region"
+      aria-roledescription="carousel"
+      aria-label="Featured works"
+      className="relative mt-7 grid gap-10 lg:h-[calc(100svh-18rem)] lg:max-h-216 lg:min-h-128 lg:grid-cols-[minmax(0,38fr)_minmax(0,62fr)] lg:grid-rows-[1fr_auto] lg:gap-x-14 lg:gap-y-8"
+    >
+      {/* Left column: project info */}
       <div
         ref={infoRef}
-        className="absolute top-[calc(50%-10rem)] z-20 -translate-y-1/2 overflow-hidden px-10"
-        style={{
-          left: infoOnLeft ? `${LEFT_REST_PCT}%` : `${RIGHT_REST_PCT}%`,
-          width: `${PANEL_WIDTH_PCT}%`,
-        }}
+        aria-live="polite"
+        className="flex flex-col justify-center lg:col-start-1 lg:row-start-1 lg:pr-4"
       >
-        <div className="overflow-hidden">
-          <h3 className="font-sans text-7xl font-medium tracking-tighter whitespace-nowrap">
+        <p
+          data-reveal
+          className="flex items-baseline gap-2 font-mono-label text-sm tracking-widest"
+        >
+          <span>{pad(current + 1)}</span>
+          <span className="text-ink/30">/ {pad(total)}</span>
+        </p>
+
+        <p data-reveal className="mt-10 font-sans text-base text-ink/50">
+          {active.category}
+        </p>
+
+        <div className="mt-2 overflow-hidden pb-[0.1em]">
+          <h3
+            data-title
+            className="font-sans text-[clamp(2.75rem,5.2vw,5.5rem)] leading-[0.95] font-medium tracking-tighter text-balance"
+          >
             {active.title}
           </h3>
-
-          {active.stack && active.stack.length > 0 && (
-            <div className="mt-3 flex flex-wrap gap-2">
-              {active.stack.map((item) => (
-                <span
-                  key={item.name}
-                  className="flex h-10 w-10 items-center justify-center rounded-lg bg-ink"
-                  title={item.name}
-                >
-                  <Image
-                    src={item.icon}
-                    alt={item.name}
-                    width={20}
-                    height={20}
-                    className="h-5 w-5"
-                  />
-                </span>
-              ))}
-            </div>
-          )}
-
-          {active.link && (
-            <a
-              href={active.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group relative mt-3 inline-block font-sans text-base font-normal text-ink/60 transition-colors hover:text-ink"
-            >
-              <span className="relative italic">
-                Visit Site
-                <span className="absolute bottom-0 left-0 h-[1.5px] w-0 bg-current transition-all duration-300 group-hover:w-full" />
-              </span>
-              <ArrowUpRight size={16} className="inline-block ml-1" />
-            </a>
-          )}
         </div>
+
+        {active.description && (
+          <p
+            data-reveal
+            className="mt-6 max-w-md font-sans text-base leading-relaxed text-ink/70 md:text-lg"
+          >
+            {active.description}
+          </p>
+        )}
+
+        {active.stack && active.stack.length > 0 && (
+          <ul data-reveal className="mt-8 flex flex-wrap gap-2">
+            {active.stack.map((item) => (
+              <li
+                key={item.name}
+                className={`flex items-center gap-2 border border-ink/20 py-1 font-sans text-sm text-ink/70 ${
+                  item.icon ? "pr-3 pl-1" : "px-3"
+                }`}
+              >
+                {item.icon && (
+                  <span className="grid h-6 w-6 place-items-center bg-ink">
+                    <Image
+                      src={item.icon}
+                      alt=""
+                      width={14}
+                      height={14}
+                      className="h-3.5 w-3.5"
+                    />
+                  </span>
+                )}
+                {item.name}
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {active.link && (
+          <a
+            data-reveal
+            href={active.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group relative mt-8 inline-block self-start font-sans text-base font-normal text-ink/60 transition-colors hover:text-ink"
+          >
+            <span className="relative italic">
+              Visit Site
+              <span className="absolute bottom-0 left-0 h-[1.5px] w-0 bg-current transition-all duration-300 group-hover:w-full" />
+            </span>
+            <ArrowUpRight size={16} className="ml-1 inline-block" />
+          </a>
+        )}
       </div>
 
-      {/* Card A */}
-      <div
-        ref={cardARef}
-        className="absolute top-1/2 z-10 -translate-y-1/2 overflow-hidden isolate [clip-path:inset(0)]"
-        style={
-          activeSlot === "A"
-            ? {
-                left: infoOnLeft ? `${RIGHT_REST_PCT}%` : `${LEFT_REST_PCT}%`,
-                width: `${PANEL_WIDTH_PCT}%`,
-              }
-            : { left: "50%", width: "0%" }
-        }
-      >
-        <div className="h-160 w-full px-10">
-          <div className="relative mx-auto h-full w-full max-w-140 overflow-hidden rounded-4xl bg-white pt-7 pr-7 pl-7">
-            <div
-              className="relative h-full overflow-hidden shadow-[0_0_22px_rgba(0,0,0,0.48)]"
-              style={{ width: imageWidth }}
-            >
-              <Image
-                src={displayedWork.A.image}
-                alt={displayedWork.A.title}
-                fill
-                sizes="(max-width: 680px) calc(47vw - 7rem), 528px"
-                className="object-cover object-top"
-              />
-            </div>
-          </div>
-        </div>
+      {/* Right column: visual stage (two alternating layers) */}
+      <div className="relative h-88 @container-size sm:h-128 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:h-auto">
+        <Layer layerRef={layerARef} work={workAt(layers[0])} workIndex={layers[0]} />
+        <Layer layerRef={layerBRef} work={workAt(layers[1])} workIndex={layers[1]} />
       </div>
 
-      {/* Card B */}
-      <div
-        ref={cardBRef}
-        className="absolute top-1/2 z-10 -translate-y-1/2 overflow-hidden isolate [clip-path:inset(0)]"
-        style={
-          activeSlot === "B"
-            ? {
-                left: infoOnLeft ? `${RIGHT_REST_PCT}%` : `${LEFT_REST_PCT}%`,
-                width: `${PANEL_WIDTH_PCT}%`,
-              }
-            : { left: "50%", width: "0%" }
-        }
-      >
-        <div className="h-160 w-full px-10">
-          <div className="relative mx-auto h-full w-full max-w-140 overflow-hidden rounded-4xl bg-white pt-7 pr-7 pl-7">
-            <div
-              className="relative h-full overflow-hidden shadow-[0_0_22px_rgba(0,0,0,0.48)]"
-              style={{ width: imageWidth }}
-            >
-              <Image
-                src={displayedWork.B.image}
-                alt={displayedWork.B.title}
-                fill
-                sizes="(max-width: 680px) calc(47vw - 7rem), 528px"
-                className="object-cover object-top"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <button
-        type="button"
-        aria-label="Next project"
-        onClick={next}
-        disabled={isTransitioning}
-        className="absolute top-1/2 right-0 z-40 translate-x-4 -translate-y-1/2 text-ink/40 transition-colors hover:text-ink disabled:pointer-events-none disabled:opacity-30"
-      >
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
+      {/* Controls */}
+      {total > 1 && (
+        <div
+          ref={controlsRef}
+          className="flex items-center gap-6 lg:col-start-1 lg:row-start-2 lg:pr-4"
         >
-          <path
-            d="M8 5L16 12L8 19"
-            stroke="currentColor"
-            strokeWidth="3"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </button>
+          <div className="flex gap-3">
+            <button
+              type="button"
+              aria-label="Previous project"
+              onClick={prev}
+              className={NAV_BUTTON}
+            >
+              <ArrowLeft size={20} strokeWidth={2.5} aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              aria-label="Next project"
+              onClick={next}
+              className={NAV_BUTTON}
+            >
+              <ArrowRight size={20} strokeWidth={2.5} aria-hidden="true" />
+            </button>
+          </div>
+
+          <div
+            aria-hidden="true"
+            className="relative h-0.5 flex-1 bg-ink/15"
+          >
+            <span
+              className="absolute inset-0 origin-left bg-ink transition-transform duration-700 ease-out"
+              style={{ transform: `scaleX(${(current + 1) / total})` }}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
