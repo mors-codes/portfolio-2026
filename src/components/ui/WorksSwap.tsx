@@ -52,6 +52,9 @@ const EXIT_DURATION = 0.5;
 const ENTER_DURATION = 0.8;
 const ENTER_DELAY = 0.4;
 
+// Left panel: every info element just fades (no movement).
+const FADE_SELECTOR = "[data-reveal], [data-title]";
+
 const pad = (n: number) => String(n).padStart(2, "0");
 
 const NAV_BUTTON =
@@ -108,11 +111,9 @@ export default function WorksSwap({ works }: WorksSwapProps) {
     if (prefersReducedMotion()) return;
 
     const controls = controlsRef.current;
-    const items = info.querySelectorAll("[data-reveal]");
-    const title = info.querySelector("[data-title]");
+    const items = info.querySelectorAll(FADE_SELECTOR);
 
-    gsap.set(items, { autoAlpha: 0, y: 18 });
-    gsap.set(title, { yPercent: 110 });
+    gsap.set(items, { autoAlpha: 0 });
     gsap.set(controls, { autoAlpha: 0 });
     gsap.set(layerA, { autoAlpha: 0, xPercent: SHIFT_PCT });
 
@@ -132,18 +133,7 @@ export default function WorksSwap({ works }: WorksSwapProps) {
         },
         0.15,
       )
-        .to(title, { yPercent: 0, duration: 0.8, ease: "power3.out" }, 0.35)
-        .to(
-          items,
-          {
-            autoAlpha: 1,
-            y: 0,
-            duration: 0.6,
-            stagger: 0.07,
-            ease: "power2.out",
-          },
-          0.4,
-        )
+        .to(items, { autoAlpha: 1, duration: 0.6, ease: "power2.out" }, 0.4)
         .to(controls, { autoAlpha: 1, duration: 0.5, ease: "power2.out" }, 0.9);
     };
 
@@ -169,21 +159,9 @@ export default function WorksSwap({ works }: WorksSwapProps) {
     if (!info || prefersReducedMotion()) return;
 
     gsap.fromTo(
-      info.querySelectorAll("[data-reveal]"),
-      { autoAlpha: 0, y: 18 },
-      {
-        autoAlpha: 1,
-        y: 0,
-        duration: 0.6,
-        stagger: 0.06,
-        ease: "power3.out",
-        overwrite: "auto",
-      },
-    );
-    gsap.fromTo(
-      info.querySelector("[data-title]"),
-      { yPercent: 110 },
-      { yPercent: 0, duration: 0.7, ease: "power3.out", overwrite: "auto" },
+      info.querySelectorAll(FADE_SELECTOR),
+      { autoAlpha: 0 },
+      { autoAlpha: 1, duration: 0.5, ease: "power2.out", overwrite: "auto" },
     );
   }, [current]);
 
@@ -227,8 +205,7 @@ export default function WorksSwap({ works }: WorksSwapProps) {
       gsap.set(outEl, { zIndex: 1 });
       gsap.set(inEl, { zIndex: 2, autoAlpha: 0, xPercent: SHIFT_PCT });
 
-      const items = info.querySelectorAll("[data-reveal]");
-      const title = info.querySelector("[data-title]");
+      const items = info.querySelectorAll(FADE_SELECTOR);
 
       const tl = gsap.timeline({
         defaults: { overwrite: "auto" },
@@ -239,21 +216,10 @@ export default function WorksSwap({ works }: WorksSwapProps) {
         },
       });
 
-      tl.to(
-        items,
-        {
-          autoAlpha: 0,
-          y: -14,
-          duration: 0.3,
-          stagger: 0.04,
-          ease: "power2.in",
-        },
-        0,
-      )
-        .to(title, { yPercent: -110, duration: 0.4, ease: "power2.in" }, 0)
+      tl.to(items, { autoAlpha: 0, duration: 0.3, ease: "power2.in" }, 0)
         .add(() => {
           flushSync(() => setCurrent(target));
-        }, 0.45)
+        }, 0.35)
         .to(
           outEl,
           {
