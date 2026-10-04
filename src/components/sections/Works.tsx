@@ -38,7 +38,15 @@ const WORKS: WorkItem[] = [
   {
     title: "Project Two",
     category: "AI automation",
-    description: "Automation workflow",
+    description:
+      "Placeholder description. Replace with one or two lines on what the automation does and the result.",
+    stack: [
+      { name: "n8n" },
+      { name: "Gemini" },
+      { name: "Supabase" },
+      { name: "Webhooks" },
+    ],
+    link: "#", // placeholder, swap for the real link
     visual: {
       type: "workflow",
       nodes: [
@@ -53,11 +61,21 @@ const WORKS: WorkItem[] = [
   {
     title: "Project Three",
     category: "UI/UX design",
-    description: "UI/UX design system",
+    description:
+      "Placeholder description. Replace with one or two lines on the design problem and what you delivered.",
+    stack: [
+      { name: "Figma" },
+      { name: "Design tokens" },
+      { name: "Prototyping" },
+      { name: "Handoff" },
+    ],
+    link: "#", // placeholder, swap for the real link
     visual: {
       type: "screens",
       screens: [
-        { image: "/images/works/project-3.png", label: "Design system" },
+        { image: "/images/works/project-3.png", label: "Home" },
+        { label: "Dashboard" },
+        { label: "Settings" },
       ],
     },
   },

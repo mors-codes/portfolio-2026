@@ -71,9 +71,14 @@ function Layer({
 }) {
   return (
     <div ref={layerRef} className="absolute inset-0">
-      <div className="flex h-full w-full items-center justify-center">
-        {/* key remounts the visual per project so image-error state never leaks across projects */}
-        <WorkVisual key={workIndex} visual={work.visual} title={work.title} />
+      {/* Card behind the visual. Also the size container the visuals' cq units measure. */}
+      <div className="h-full w-full bg-ink/8 p-6 @container-size sm:p-8 lg:p-12">
+        <div className="flex h-full w-full items-center justify-center">
+          {/* key remounts the visual per project so image-error state never leaks across projects */}
+          <div className="flex aspect-16/10 w-[min(100cqw,160cqh)] items-center justify-center @container-size">
+            <WorkVisual key={workIndex} visual={work.visual} title={work.title} />
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -303,7 +308,7 @@ export default function WorksSwap({ works }: WorksSwapProps) {
       role="region"
       aria-roledescription="carousel"
       aria-label="Featured works"
-      className="relative mt-7 grid gap-10 lg:h-[calc(100svh-18rem)] lg:max-h-216 lg:min-h-128 lg:grid-cols-[minmax(0,38fr)_minmax(0,62fr)] lg:grid-rows-[1fr_auto] lg:gap-x-14 lg:gap-y-8"
+      className="relative mt-14 grid gap-10 lg:h-[calc(100svh-19.75rem)] lg:max-h-216 lg:min-h-128 lg:grid-cols-[minmax(0,38fr)_minmax(0,62fr)] lg:grid-rows-[1fr_auto] lg:gap-x-14 lg:gap-y-8"
     >
       {/* Left column: project info */}
       <div
