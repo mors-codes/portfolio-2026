@@ -353,30 +353,26 @@ export default function WorksSwap({ works }: WorksSwapProps) {
           <span className="text-ink/30">/ {pad(total)}</span>
         </p>
 
-        <p data-reveal className="mt-10 font-sans text-base text-ink/50">
+        <p data-reveal className="mt-8 font-sans text-base text-ink/50">
           {active.category}
         </p>
 
-        <div className="mt-2 overflow-hidden pb-[0.1em]">
+        <div className="mt-2 overflow-hidden pb-[0.1em] text-[clamp(2.75rem,5.2vw,5.5rem)] lg:min-h-[2em]">
           <h3
             data-title
-            className="font-sans text-[clamp(2.75rem,5.2vw,5.5rem)] leading-[0.95] font-medium tracking-tighter text-balance"
+            className="font-sans leading-[0.95] font-medium tracking-tighter text-balance"
           >
             {active.title}
           </h3>
         </div>
 
-        {active.description && (
-          <p
-            data-reveal
-            className="mt-6 max-w-md font-sans text-base leading-relaxed text-ink/70 md:text-lg"
-          >
-            {active.description}
-          </p>
-        )}
+        <div className="mt-6 max-w-md font-sans text-base leading-relaxed text-ink/70 empty:hidden md:text-lg lg:min-h-[3.25em] lg:empty:block">
+          {active.description && <p data-reveal>{active.description}</p>}
+        </div>
 
+        <div className="mt-6 empty:hidden lg:min-h-19 lg:empty:block">
         {active.stack && active.stack.length > 0 && (
-          <ul data-reveal className="mt-8 flex flex-wrap gap-2">
+          <ul data-reveal className="flex flex-wrap gap-2">
             {active.stack.map((item) => (
               <li
                 key={item.name}
@@ -400,6 +396,7 @@ export default function WorksSwap({ works }: WorksSwapProps) {
             ))}
           </ul>
         )}
+        </div>
 
         {active.link && (
           <a
