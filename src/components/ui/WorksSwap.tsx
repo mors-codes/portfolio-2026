@@ -45,11 +45,12 @@ interface WorksSwapProps {
   works: WorkItem[];
 }
 
-const FULL_CLIP = "inset(0% 0% 0% 0%)";
-const ENTER_CLIP = "inset(0% 0% 0% 100%)";
-const SWAP_DURATION = 1.1;
-const SWAP_EASE = "power3.inOut";
-const PARALLAX_PCT = 8;
+// Right panel: the old visual fades out drifting right, the new one fades in
+// drifting left. SHIFT_PCT is the drift distance as a % of the stage width.
+const SHIFT_PCT = 6;
+const EXIT_DURATION = 0.5;
+const ENTER_DURATION = 0.8;
+const ENTER_DELAY = 0.4;
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
@@ -67,10 +68,7 @@ function Layer({
 }) {
   return (
     <div ref={layerRef} className="absolute inset-0">
-      <div
-        data-layer-inner
-        className="flex h-full w-full items-center justify-center"
-      >
+      <div className="flex h-full w-full items-center justify-center">
         {/* key remounts the visual per project so image-error state never leaks across projects */}
         <WorkVisual key={workIndex} visual={work.visual} title={work.title} />
       </div>
@@ -112,26 +110,28 @@ export default function WorksSwap({ works }: WorksSwapProps) {
     const controls = controlsRef.current;
     const items = info.querySelectorAll("[data-reveal]");
     const title = info.querySelector("[data-title]");
-    const innerA = layerA.querySelector("[data-layer-inner]");
 
     gsap.set(items, { autoAlpha: 0, y: 18 });
     gsap.set(title, { yPercent: 110 });
     gsap.set(controls, { autoAlpha: 0 });
-    gsap.set(layerA, { clipPath: ENTER_CLIP });
-    gsap.set(innerA, { xPercent: PARALLAX_PCT });
+    gsap.set(layerA, { autoAlpha: 0, xPercent: SHIFT_PCT });
 
     const play = () => {
       const tl = gsap.timeline({
         onComplete: () => {
-          gsap.set([layerA, innerA], { clearProps: "clipPath,transform" });
+          gsap.set(layerA, { clearProps: "transform" });
         },
       });
       tl.to(
         layerA,
-        { clipPath: FULL_CLIP, duration: 1.2, ease: SWAP_EASE },
-        0,
+        {
+          autoAlpha: 1,
+          xPercent: 0,
+          duration: ENTER_DURATION + 0.2,
+          ease: "power3.out",
+        },
+        0.15,
       )
-        .to(innerA, { xPercent: 0, duration: 1.2, ease: SWAP_EASE }, 0)
         .to(title, { yPercent: 0, duration: 0.8, ease: "power3.out" }, 0.35)
         .to(
           items,
@@ -189,7 +189,7 @@ export default function WorksSwap({ works }: WorksSwapProps) {
 
   /* --------------------------------- navigation --------------------------------- */
   const goTo = useCallback(
-    (target: number, direction: 1 | -1) => {
+    (target: number) => {
       const info = infoRef.current;
       const layerA = layerARef.current;
       const layerB = layerBRef.current;
@@ -201,8 +201,6 @@ export default function WorksSwap({ works }: WorksSwapProps) {
       const incomingIdx: 0 | 1 = activeLayerRef.current === 0 ? 1 : 0;
       const outEl = incomingIdx === 1 ? layerA : layerB;
       const inEl = incomingIdx === 1 ? layerB : layerA;
-      const outInner = outEl.querySelector("[data-layer-inner]");
-      const inInner = inEl.querySelector("[data-layer-inner]");
 
       const commit = () => {
         activeLayerRef.current = incomingIdx;
@@ -225,14 +223,9 @@ export default function WorksSwap({ works }: WorksSwapProps) {
         return;
       }
 
-      // The outgoing layer's clip edge and the incoming layer's clip edge share one
-      // easing curve, so they meet on a single moving line: no overlap, no pop.
-      const inStart = direction === 1 ? ENTER_CLIP : "inset(0% 100% 0% 0%)";
-      const outEnd = direction === 1 ? "inset(0% 100% 0% 0%)" : ENTER_CLIP;
-
-      gsap.set(outEl, { zIndex: 1, clipPath: FULL_CLIP });
-      gsap.set(inEl, { zIndex: 2, autoAlpha: 1, clipPath: inStart });
-      gsap.set(inInner, { xPercent: PARALLAX_PCT * direction });
+      // Incoming layer waits invisible, parked to the right of its resting spot.
+      gsap.set(outEl, { zIndex: 1 });
+      gsap.set(inEl, { zIndex: 2, autoAlpha: 0, xPercent: SHIFT_PCT });
 
       const items = info.querySelectorAll("[data-reveal]");
       const title = info.querySelector("[data-title]");
@@ -241,9 +234,7 @@ export default function WorksSwap({ works }: WorksSwapProps) {
         defaults: { overwrite: "auto" },
         onComplete: () => {
           gsap.set(outEl, { autoAlpha: 0 });
-          gsap.set([outEl, inEl, outInner, inInner], {
-            clearProps: "clipPath,transform",
-          });
+          gsap.set([outEl, inEl], { clearProps: "transform" });
           commit();
         },
       });
@@ -263,32 +254,36 @@ export default function WorksSwap({ works }: WorksSwapProps) {
         .add(() => {
           flushSync(() => setCurrent(target));
         }, 0.45)
-        .to(outEl, { clipPath: outEnd, duration: SWAP_DURATION, ease: SWAP_EASE }, 0)
-        .to(inEl, { clipPath: FULL_CLIP, duration: SWAP_DURATION, ease: SWAP_EASE }, 0)
         .to(
-          outInner,
+          outEl,
           {
-            xPercent: -PARALLAX_PCT * direction,
-            duration: SWAP_DURATION,
-            ease: SWAP_EASE,
+            autoAlpha: 0,
+            xPercent: SHIFT_PCT,
+            duration: EXIT_DURATION,
+            ease: "power2.in",
           },
           0,
         )
         .to(
-          inInner,
-          { xPercent: 0, duration: SWAP_DURATION, ease: SWAP_EASE },
-          0,
+          inEl,
+          {
+            autoAlpha: 1,
+            xPercent: 0,
+            duration: ENTER_DURATION,
+            ease: "power3.out",
+          },
+          ENTER_DELAY,
         );
     },
     [total],
   );
 
   const next = useCallback(
-    () => goTo((currentRef.current + 1) % total, 1),
+    () => goTo((currentRef.current + 1) % total),
     [goTo, total],
   );
   const prev = useCallback(
-    () => goTo((currentRef.current - 1 + total) % total, -1),
+    () => goTo((currentRef.current - 1 + total) % total),
     [goTo, total],
   );
 
