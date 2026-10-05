@@ -416,16 +416,6 @@ export default function WorksSwap({ works }: WorksSwapProps) {
               <ArrowRight size={20} strokeWidth={2.5} aria-hidden="true" />
             </button>
           </div>
-
-          <div
-            aria-hidden="true"
-            className="relative h-0.5 flex-1 bg-ink/15"
-          >
-            <span
-              className="absolute inset-0 origin-left bg-ink transition-transform duration-700 ease-out"
-              style={{ transform: `scaleX(${(current + 1) / total})` }}
-            />
-          </div>
         </div>
       )}
     </div>

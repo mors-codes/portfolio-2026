@@ -3,7 +3,6 @@
 import WorksSwap, {
   type WorkItem,
 } from "@/components/ui/WorksSwap";
-import { ArrowRight } from "lucide-react";
 
 /*
  * Add a project = add an object. `visual` picks the presentation:
@@ -98,17 +97,9 @@ export default function Works() {
           </span>
 
           <span className="font-display font-black -tracking-widest">
-            FeaturedWorks
+            SelectedWorks
           </span>
         </p>
-
-        <a
-          href="/works"
-          className="font-sans text-sm font-medium text-ink/50 transition-colors hover:text-ink"
-        >
-          View More Works
-          <ArrowRight size={12} className="inline-block ml-1" />
-        </a>
       </div>
 
       <WorksSwap works={WORKS} />
