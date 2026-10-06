@@ -17,7 +17,7 @@ import WorksSwap, {
  */
 const WORKS: WorkItem[] = [
   {
-    title: "DM Workflows",
+    title: "DM\nWorkflows",
     category: "Web development",
     description:
       "Website for an automation studio, with a lead form that emails new inquiries.",

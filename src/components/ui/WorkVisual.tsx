@@ -103,7 +103,7 @@ function BrowserVisual({
 }) {
   return (
     <div
-      className={`flex h-full w-full flex-col overflow-hidden rounded-lg border-[3px] border-ink bg-bg ${FRAME_SHADOW}`}
+      className={`flex h-full w-full flex-col overflow-hidden border-[3px] border-ink bg-bg ${FRAME_SHADOW}`}
     >
       <div className="flex h-9 shrink-0 items-center gap-3 border-b-[3px] border-ink px-3">
         <span className="flex gap-1.5" aria-hidden="true">
@@ -285,7 +285,7 @@ function WorkflowVisual({
   }, []);
 
   return (
-    <div className="h-full w-full overflow-hidden rounded-lg border-[3px] border-ink bg-bg text-ink">
+    <div className="h-full w-full overflow-hidden border-[3px] border-ink bg-bg text-ink">
       <svg
         ref={svgRef}
         viewBox={`0 0 ${WF.width} ${WF.height}`}

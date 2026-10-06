@@ -328,10 +328,10 @@ export default function WorksSwap({ works }: WorksSwapProps) {
           {active.category}
         </p>
 
-        <div className="mt-2 overflow-hidden pb-[0.1em] text-[clamp(2.75rem,5.2vw,5.5rem)] lg:min-h-[2em]">
+        <div className="mt-2 overflow-hidden pb-[0.15em] text-[clamp(3.5rem,calc(7vw-0.4rem),7rem)] lg:min-h-[1.85em]">
           <h3
-            data-title
-            className="font-sans leading-[0.95] font-medium tracking-tighter text-balance"
+            data-title  
+            className="font-sans leading-[0.80] font-medium tracking-tighter text-balance whitespace-pre-line"
           >
             {active.title}
           </h3>
