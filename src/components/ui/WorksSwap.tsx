@@ -324,11 +324,11 @@ export default function WorksSwap({ works }: WorksSwapProps) {
           <span className="text-ink/30">/ {pad(total)}</span>
         </p>
 
-        <p data-reveal className="mt-8 font-sans text-base text-ink/50">
+        <p data-reveal className="mt-8 font-display text-xs text-ink/50 uppercase">
           {active.category}
         </p>
 
-        <div className="mt-2 overflow-hidden pb-[0.15em] text-[clamp(3.5rem,calc(7vw-0.4rem),7rem)] lg:min-h-[1.85em]">
+        <div className="mt-2 overflow-hidden pb-[0.15em] text-[clamp(3.5rem,calc(7vw-0.4rem),7rem)] lg:min-h-[1.85em] lg:flex lg:items-end">
           <h3
             data-title  
             className="font-sans leading-[0.80] font-medium tracking-tighter text-balance whitespace-pre-line"
@@ -337,7 +337,7 @@ export default function WorksSwap({ works }: WorksSwapProps) {
           </h3>
         </div>
 
-        <div className="mt-6 max-w-md font-sans text-base leading-relaxed text-ink/70 empty:hidden md:text-lg lg:min-h-[3.25em] lg:empty:block">
+        <div className="mt-2 max-w-md font-display text-xs leading-normal text-ink/70 empty:hidden md:text-sm lg:min-h-[3em] lg:empty:block">
           {active.description && <p data-reveal>{active.description}</p>}
         </div>
 
