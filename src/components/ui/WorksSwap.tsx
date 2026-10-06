@@ -58,7 +58,7 @@ const FADE_SELECTOR = "[data-reveal], [data-title]";
 const pad = (n: number) => String(n).padStart(2, "0");
 
 const NAV_BUTTON =
-  "grid h-12 w-12 place-items-center rounded-xl border-[3px] border-ink text-ink transition-colors hover:bg-ink hover:text-bg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink";
+    "grid h-12 w-12 place-items-center border-[2px] border-ink text-ink transition-colors hover:bg-ink hover:text-bg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink";
 
 function Layer({
   layerRef,
