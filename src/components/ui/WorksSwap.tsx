@@ -341,7 +341,7 @@ export default function WorksSwap({ works }: WorksSwapProps) {
           {active.description && <p data-reveal>{active.description}</p>}
         </div>
 
-        <div className="mt-6 empty:hidden lg:min-h-19 lg:empty:block">
+        <div className="mt-6 empty:hidden lg:min-h-8.5 lg:empty:block">
         {active.stack && active.stack.length > 0 && (
           <ul data-reveal className="flex flex-wrap gap-2">
             {active.stack.map((item) => (
@@ -375,13 +375,12 @@ export default function WorksSwap({ works }: WorksSwapProps) {
             href={active.link}
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative mt-8 inline-block self-start font-sans text-base font-normal text-ink/60 transition-colors hover:text-ink"
+            className="group relative mt-8 inline-block self-start font-sans text-xs font-normal text-ink"
           >
-            <span className="relative italic">
+            <span className="underline decoration-ink/30 decoration-1 underline-offset-8 transition-colors group-hover:decoration-ink">
               Visit Site
-              <span className="absolute bottom-0 left-0 h-[1.5px] w-0 bg-current transition-all duration-300 group-hover:w-full" />
             </span>
-            <ArrowUpRight size={16} className="ml-1 inline-block" />
+            <ArrowUpRight size={12} className="ml-1 inline-block" />
           </a>
         )}
       </div>
