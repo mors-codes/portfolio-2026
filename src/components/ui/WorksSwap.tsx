@@ -324,7 +324,7 @@ export default function WorksSwap({ works }: WorksSwapProps) {
           <span className="text-ink/30">/ {pad(total)}</span>
         </p>
 
-        <p data-reveal className="mt-8 font-display text-xs text-ink/50 uppercase">
+        <p data-reveal className="mt-8 font-display text-[11px] font-light tracking-widest text-ink/50 uppercase">
           {active.category}
         </p>
 
@@ -337,28 +337,28 @@ export default function WorksSwap({ works }: WorksSwapProps) {
           </h3>
         </div>
 
-        <div className="mt-2 max-w-md font-display text-xs leading-normal text-ink/70 empty:hidden md:text-sm lg:min-h-[3em] lg:empty:block">
+        <div className="mt-2 max-w-md font-display text-xs font-light leading-normal text-ink/70 empty:hidden md:text-sm lg:min-h-[3em] lg:empty:block">
           {active.description && <p data-reveal>{active.description}</p>}
         </div>
 
-        <div className="mt-6 empty:hidden lg:min-h-8.5 lg:empty:block">
+        <div className="mt-6 empty:hidden lg:min-h-7.5 lg:empty:block">
         {active.stack && active.stack.length > 0 && (
-          <ul data-reveal className="flex flex-wrap gap-2">
+          <ul data-reveal className="flex flex-wrap gap-1.5">
             {active.stack.map((item) => (
               <li
                 key={item.name}
-                className={`flex items-center gap-2 border border-ink/20 py-1 font-sans text-sm text-ink/70 ${
-                  item.icon ? "pr-3 pl-1" : "px-3"
+                className={`flex items-center gap-2 border border-ink/20 py-1 font-sans text-xs text-ink/70 ${
+                  item.icon ? "pr-2.5 pl-1" : "px-2.5"
                 }`}
               >
                 {item.icon && (
-                  <span className="grid h-6 w-6 place-items-center bg-ink">
+                  <span className="grid h-5 w-5 place-items-center">
                     <Image
                       src={item.icon}
                       alt=""
-                      width={14}
-                      height={14}
-                      className="h-3.5 w-3.5"
+                      width={15}
+                      height={15}
+                      className="h-3.75 w-3.75"
                     />
                   </span>
                 )}

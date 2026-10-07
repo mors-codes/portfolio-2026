@@ -25,7 +25,6 @@ const WORKS: WorkItem[] = [
       { name: "Next.js", icon: "/icons/stack/frontend/nextjs.svg" },
       { name: "TypeScript", icon: "/icons/stack/frontend/typescript.svg" },
       { name: "Tailwind CSS", icon: "/icons/stack/frontend/tailwindcss.svg" },
-      { name: "Resend", icon: "/icons/stack/resend-light.svg" },
     ],
     link: "https://dmworkflows.com",
     visual: {
