@@ -317,10 +317,9 @@ export default function WorksSwap({ works }: WorksSwapProps) {
         className="flex flex-col justify-center lg:col-start-1 lg:row-start-1 lg:pr-4"
       >
         <p
-          data-reveal
           className="flex items-baseline gap-2 font-mono-label text-sm tracking-widest"
         >
-          <span>{pad(current + 1)}</span>
+          <span className="w-[2ch] shrink-0 tabular-nums">{pad(current + 1)}</span>
           <span className="text-ink/30">/ {pad(total)}</span>
         </p>
 
