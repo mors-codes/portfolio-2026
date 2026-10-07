@@ -414,6 +414,10 @@ export default function WorksSwap({ works }: WorksSwapProps) {
               <ArrowRight size={20} strokeWidth={2.5} aria-hidden="true" />
             </button>
           </div>
+
+          <span className="font-display text-[10px] font-light text-ink/50 uppercase">
+            Navigate projects
+          </span>
         </div>
       )}
     </div>
