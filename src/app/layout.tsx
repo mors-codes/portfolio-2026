@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-import { archivo, inter, danfo, audiowide } from "@/lib/fonts";
+import { archivo, inter, danfo, audiowide, jetbrainsMono } from "@/lib/fonts";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -17,7 +17,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${archivo.variable} ${inter.variable} ${danfo.variable} ${audiowide.variable}`}
+      className={`${archivo.variable} ${inter.variable} ${danfo.variable} ${audiowide.variable} ${jetbrainsMono.variable}`}
     >
       <body className="font-sans antialiased">
         <Script id="theme-init" strategy="beforeInteractive">

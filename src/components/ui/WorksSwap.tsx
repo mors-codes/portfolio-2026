@@ -9,7 +9,7 @@ import {
   type RefObject,
 } from "react";
 import { flushSync } from "react-dom";
-import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import gsap from "gsap";
 import WorkVisual, {
@@ -323,7 +323,7 @@ export default function WorksSwap({ works }: WorksSwapProps) {
           <span className="text-ink/30">/ {pad(total)}</span>
         </p>
 
-        <p data-reveal className="mt-8 font-display text-[11px] font-light tracking-widest text-ink/50 uppercase">
+        <p data-reveal className="mt-8 font-mono text-[10px] font-light tracking-[1.08px] text-ink/50 uppercase">
           {active.category}
         </p>
 
@@ -336,7 +336,7 @@ export default function WorksSwap({ works }: WorksSwapProps) {
           </h3>
         </div>
 
-        <div className="mt-2 max-w-md font-display text-xs font-light leading-normal text-ink/70 empty:hidden md:text-sm lg:min-h-[3em] lg:empty:block">
+        <div className="mt-2 max-w-md font-sans text-xs font-light leading-normal text-ink/70 empty:hidden md:text-sm lg:min-h-[3em] lg:empty:block">
           {active.description && <p data-reveal>{active.description}</p>}
         </div>
 
@@ -346,7 +346,7 @@ export default function WorksSwap({ works }: WorksSwapProps) {
             {active.stack.map((item) => (
               <li
                 key={item.name}
-                className={`flex items-center gap-2 border border-ink/20 py-1 font-sans text-xs text-ink/70 ${
+                className={`flex items-center gap-2 border border-ink/20 py-1 font-mono text-[8px] text-ink/70 uppercase ${
                   item.icon ? "pr-2.5 pl-1" : "px-2.5"
                 }`}
               >
@@ -374,12 +374,12 @@ export default function WorksSwap({ works }: WorksSwapProps) {
             href={active.link}
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative mt-8 inline-block self-start font-sans text-xs font-normal text-ink"
+            className="group relative mt-8 inline-block self-start border-b border-ink/30 pb-1 transition-colors hover:border-ink font-sans text-[9px] font-medium text-ink"
           >
-            <span className="underline decoration-ink/30 decoration-1 underline-offset-8 transition-colors group-hover:decoration-ink">
-              Visit Site
+            <span className="font-mono uppercase tracking-[0.72px]">
+              Visit Site{" "}
+              <span className="text-xs leading-0">↗</span>
             </span>
-            <ArrowUpRight size={12} className="ml-1 inline-block" />
           </a>
         )}
       </div>
@@ -415,7 +415,7 @@ export default function WorksSwap({ works }: WorksSwapProps) {
             </button>
           </div>
 
-          <span className="font-display text-[10px] font-light text-ink/50 uppercase">
+          <span className="font-mono text-[10px] font-light text-ink/50 uppercase">
             Navigate projects
           </span>
         </div>

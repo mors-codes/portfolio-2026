@@ -8,8 +8,8 @@
   --font-sans: var(--font-archivo);
   --font-display: var(--font-inter);
   --font-logo: var(--font-danfo);
-  --font-mono-label: var(--font-audiowide);
-}
+  --font-mono-label: var(--font-audiowide);  --font-mono-label: var(--font-audiowide);
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;}
 
 .dark {
   --color-bg: #222222;

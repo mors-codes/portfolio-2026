@@ -1,4 +1,4 @@
-import { Archivo, Inter, Danfo, Audiowide } from "next/font/google";
+import { Archivo, Inter, Danfo, Audiowide, JetBrains_Mono } from "next/font/google";
 
 export const archivo = Archivo({
   subsets: ["latin"],
@@ -23,5 +23,11 @@ export const audiowide = Audiowide({
   subsets: ["latin"],
   weight: "400",
   variable: "--font-audiowide",
+  display: "swap",
+});
+
+export const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains-mono",
   display: "swap",
 });
