@@ -94,7 +94,6 @@ function FrameImage({
 
 function BrowserVisual({
   image,
-  url,
   title,
 }: {
   image: string;
@@ -102,23 +101,8 @@ function BrowserVisual({
   title: string;
 }) {
   return (
-    <div
-      className={`flex h-full w-full flex-col overflow-hidden border-[3px] border-ink bg-bg ${FRAME_SHADOW}`}
-    >
-      <div className="flex h-9 shrink-0 items-center gap-3 border-b-[3px] border-ink px-3">
-        <span className="flex gap-1.5" aria-hidden="true">
-          <span className="h-2.5 w-2.5 rounded-full border-2 border-ink" />
-          <span className="h-2.5 w-2.5 rounded-full border-2 border-ink" />
-          <span className="h-2.5 w-2.5 rounded-full border-2 border-ink" />
-        </span>
-        <span className="min-w-0 flex-1 truncate text-center font-sans text-xs text-ink/50">
-          {url}
-        </span>
-        <span className="w-10.5 shrink-0" aria-hidden="true" />
-      </div>
-      <div className="relative min-h-0 flex-1">
-        <FrameImage src={image} alt={`${title} website`} />
-      </div>
+    <div className={`relative h-full w-full overflow-hidden ${FRAME_SHADOW}`}>
+      <FrameImage src={image} alt={`${title} website`} />
     </div>
   );
 }

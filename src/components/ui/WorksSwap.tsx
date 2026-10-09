@@ -70,9 +70,9 @@ function Layer({
   workIndex: number;
 }) {
   return (
-    <div ref={layerRef} className="absolute inset-0">
+    <div ref={layerRef} className="absolute inset-0 flex items-center justify-center">
       {/* Card behind the visual. Also the size container the visuals' cq units measure. */}
-      <div className="h-full w-full bg-ink/8 p-6 @container-size sm:p-8 lg:p-12">
+      <div className="h-[98%] w-full bg-ink/8 p-6 @container-size sm:p-8 lg:p-12">
         <div className="flex h-full w-full items-center justify-center">
           {/* key remounts the visual per project so image-error state never leaks across projects */}
           <div className="flex aspect-16/10 w-[min(100cqw,160cqh)] items-center justify-center @container-size">
