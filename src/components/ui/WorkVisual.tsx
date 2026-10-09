@@ -101,8 +101,15 @@ function BrowserVisual({
   title: string;
 }) {
   return (
-    <div className={`relative h-full w-full overflow-hidden ${FRAME_SHADOW}`}>
-      <FrameImage src={image} alt={`${title} website`} />
+    <div className="flex h-full w-full items-center justify-center">
+      <Image
+        src={image}
+        alt={`${title} website`}
+        width={0}
+        height={0}
+        sizes={IMAGE_SIZES}
+        className={`h-auto max-h-full w-auto max-w-full ${FRAME_SHADOW}`}
+      />
     </div>
   );
 }
