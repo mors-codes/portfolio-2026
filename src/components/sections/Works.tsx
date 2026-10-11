@@ -34,7 +34,7 @@ const WORKS: WorkItem[] = [
     },
   },
   {
-    title: "Project Two",
+    title: "Project\nTwo",
     category: "AI automation",
     description:
       "Placeholder description. Replace with one or two lines on what the automation does and the result.",
@@ -56,25 +56,20 @@ const WORKS: WorkItem[] = [
       ],
     },
   },
-  {
-    title: "Project Three",
-    category: "UI/UX design",
+    {
+    title: "VOYA\nTravel",
+    category: "Web development",
     description:
-      "Placeholder description. Replace with one or two lines on the design problem and what you delivered.",
+      "Landing page for a fictional adventure travel company. Dark editorial design, scroll animations, responsive layout, working contact form.",
     stack: [
-      { name: "Figma" },
-      { name: "Design tokens" },
-      { name: "Prototyping" },
-      { name: "Handoff" },
+      { name: "HTML5" },
+      { name: "Tailwind CSS", icon: "/icons/stack/frontend/tailwindcss.svg" },
+      { name: "JavaScript" },
     ],
-    link: "#", // placeholder, swap for the real link
+    link: "https://github.com/mors-codes/voya",
     visual: {
-      type: "screens",
-      screens: [
-        { image: "/images/works/project-3.png", label: "Home" },
-        { label: "Dashboard" },
-        { label: "Settings" },
-      ],
+      type: "browser",
+      image: "/images/works/project-3.png",
     },
   },
 ];

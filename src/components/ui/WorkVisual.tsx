@@ -139,6 +139,40 @@ const SCREEN_SLOTS: Record<1 | 2 | 3, ScreenSlot[]> = {
   ],
 };
 
+function ScreenImage({
+  src,
+  alt,
+  fallbackRatio,
+}: {
+  src?: string;
+  alt: string;
+  fallbackRatio: string;
+}) {
+  const [failed, setFailed] = useState(false);
+
+  if (!src || failed) {
+    return (
+      <div
+        aria-hidden="true"
+        className="w-full bg-ink/6"
+        style={{ aspectRatio: fallbackRatio }}
+      />
+    );
+  }
+
+  return (
+    <Image
+      src={src}
+      alt={alt}
+      width={0}
+      height={0}
+      sizes={IMAGE_SIZES}
+      onError={() => setFailed(true)}
+      className="block h-auto w-full"
+    />
+  );
+}
+
 function ScreensVisual({
   screens,
   title,
@@ -150,7 +184,7 @@ function ScreensVisual({
   const slots = SCREEN_SLOTS[Math.max(shown.length, 1) as 1 | 2 | 3];
 
   return (
-    <div className="relative aspect-5/4 w-[min(90cqw,112cqh)]">
+    <div className="relative aspect-5/4 w-[min(100cqw,125cqh)]">
       {shown.map((screen, i) => {
         const slot = slots[i];
         return (
@@ -161,7 +195,6 @@ function ScreensVisual({
               left: `${slot.left}%`,
               top: `${slot.top}%`,
               width: `${slot.width}%`,
-              aspectRatio: slot.ratio,
               zIndex: i + 1,
             }}
           >
@@ -170,12 +203,11 @@ function ScreensVisual({
                 {screen.label}
               </figcaption>
             )}
-            <div className="absolute inset-0 overflow-hidden">
-              <FrameImage
-                src={screen.image}
-                alt={screen.label ?? `${title} screen ${i + 1}`}
-              />
-            </div>
+            <ScreenImage
+              src={screen.image}
+              alt={screen.label ?? `${title} screen ${i + 1}`}
+              fallbackRatio={slot.ratio}
+            />
           </figure>
         );
       })}
