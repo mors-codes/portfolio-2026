@@ -34,25 +34,24 @@ const WORKS: WorkItem[] = [
     },
   },
   {
-    title: "Project\nTwo",
+    title: "Invoice\nProcessing",
     category: "AI automation",
     description:
-      "Placeholder description. Replace with one or two lines on what the automation does and the result.",
+      "Reads invoices with Gemini, checks the math, and saves clean records to Airtable. Low-confidence ones get flagged and emailed for review.",
     stack: [
       { name: "n8n" },
       { name: "Gemini" },
-      { name: "Supabase" },
-      { name: "Webhooks" },
+      { name: "Airtable" },
+      { name: "Google Drive" },
     ],
-    link: "#", // placeholder, swap for the real link
     visual: {
       type: "workflow",
       nodes: [
-        { label: "Form submitted", kind: "trigger" },
+        { label: "Invoice uploaded", kind: "trigger" },
         { label: "Extract with Gemini", kind: "ai" },
-        { label: "Validate fields", kind: "logic" },
-        { label: "Route by type", kind: "logic" },
-        { label: "Update CRM", kind: "action" },
+        { label: "Validate totals", kind: "logic" },
+        { label: "Needs review?", kind: "logic" },
+        { label: "Save to Airtable", kind: "action" },
       ],
     },
   },
