@@ -56,7 +56,7 @@ const WORKS: WorkItem[] = [
     },
   },
     {
-    title: "VOYA\nTravel",
+    title: "Voya\nTravel",
     category: "Web development",
     description:
       "Landing page for a fictional adventure travel company. Dark editorial design, scroll animations, responsive layout, working contact form.",
@@ -69,6 +69,28 @@ const WORKS: WorkItem[] = [
     visual: {
       type: "browser",
       image: "/images/works/project-3.png",
+    },
+  },
+  {
+    title: "Lead\nScoring",
+    category: "AI automation",
+    description:
+      "Scores real estate leads hot, warm, or cold with Gemini, syncs them to HubSpot, and sends a tailored follow-up email. Hot leads trigger an instant alert.",
+    stack: [
+      { name: "n8n" },
+      { name: "Gemini" },
+      { name: "HubSpot" },
+      { name: "Gmail" },
+    ],
+    visual: {
+      type: "workflow",
+      nodes: [
+        { label: "Lead form submitted", kind: "trigger" },
+        { label: "Score with Gemini", kind: "ai" },
+        { label: "Route by tier", kind: "logic" },
+        { label: "Sync to HubSpot", kind: "action" },
+        { label: "Send follow-up", kind: "action" },
+      ],
     },
   },
 ];
