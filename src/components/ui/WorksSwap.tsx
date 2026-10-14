@@ -337,7 +337,11 @@ export default function WorksSwap({ works }: WorksSwapProps) {
         </div>
 
         <div className="mt-2 max-w-md font-sans text-xs font-light leading-normal text-ink/70 empty:hidden md:text-sm lg:min-h-[3em] lg:empty:block">
-          {active.description && <p data-reveal>{active.description}</p>}
+          {active.description && (
+            <p data-reveal className="line-clamp-2">
+              {active.description}
+            </p>
+          )}
         </div>
 
         <div className="mt-6 empty:hidden lg:min-h-7.5 lg:empty:block">
@@ -368,20 +372,22 @@ export default function WorksSwap({ works }: WorksSwapProps) {
         )}
         </div>
 
-        {active.link && (
-          <a
-            data-reveal
-            href={active.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group relative mt-8 inline-block self-start border-b border-ink/30 pb-1 transition-colors hover:border-ink font-sans text-[9px] font-medium text-ink"
-          >
-            <span className="font-mono uppercase tracking-[0.72px]">
-              Visit Site{" "}
-              <span className="text-xs leading-0">↗</span>
-            </span>
-          </a>
-        )}
+        <div className="mt-8 flex empty:hidden lg:min-h-5 lg:empty:flex">
+          {active.link && (
+            <a
+              data-reveal
+              href={active.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group relative inline-block self-start border-b border-ink/30 pb-1 transition-colors hover:border-ink font-sans text-[9px] font-medium text-ink"
+            >
+              <span className="font-mono uppercase tracking-[0.72px]">
+                Visit Site{" "}
+                <span className="text-xs leading-0">↗</span>
+              </span>
+            </a>
+          )}
+        </div>
       </div>
 
       {/* Right column: visual stage (two alternating layers) */}

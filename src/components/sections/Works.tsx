@@ -37,10 +37,10 @@ const WORKS: WorkItem[] = [
     title: "Invoice\nProcessing",
     category: "AI automation",
     description:
-      "Reads invoices with Gemini, checks the math, and saves clean records to Airtable. Low-confidence ones get flagged and emailed for review.",
+      "AI reads each invoice, checks the math, and saves clean records to Airtable. Doubtful ones get flagged by email.",
     stack: [
       { name: "n8n" },
-      { name: "Gemini" },
+      { name: "AI" },
       { name: "Airtable" },
       { name: "Google Drive" },
     ],
@@ -48,7 +48,7 @@ const WORKS: WorkItem[] = [
       type: "workflow",
       nodes: [
         { label: "Invoice uploaded", kind: "trigger" },
-        { label: "Extract with Gemini", kind: "ai" },
+        { label: "Extract with AI", kind: "ai" },
         { label: "Validate totals", kind: "logic" },
         { label: "Needs review?", kind: "logic" },
         { label: "Save to Airtable", kind: "action" },
@@ -59,7 +59,7 @@ const WORKS: WorkItem[] = [
     title: "Voya\nTravel",
     category: "Web development",
     description:
-      "Landing page for a fictional adventure travel company. Dark editorial design, scroll animations, responsive layout, working contact form.",
+      "Landing page for a fictional adventure travel company, with scroll animations and a working contact form.",
     stack: [
       { name: "HTML5" },
       { name: "Tailwind CSS", icon: "/icons/stack/frontend/tailwindcss.svg" },
@@ -75,10 +75,10 @@ const WORKS: WorkItem[] = [
     title: "Lead\nScoring",
     category: "AI automation",
     description:
-      "Scores real estate leads hot, warm, or cold with Gemini, syncs them to HubSpot, and sends a tailored follow-up email. Hot leads trigger an instant alert.",
+      "AI scores real estate leads hot, warm, or cold, syncs them to HubSpot, and sends a tailored follow-up.",
     stack: [
       { name: "n8n" },
-      { name: "Gemini" },
+      { name: "AI" },
       { name: "HubSpot" },
       { name: "Gmail" },
     ],
@@ -86,7 +86,7 @@ const WORKS: WorkItem[] = [
       type: "workflow",
       nodes: [
         { label: "Lead form submitted", kind: "trigger" },
-        { label: "Score with Gemini", kind: "ai" },
+        { label: "Score with AI", kind: "ai" },
         { label: "Route by tier", kind: "logic" },
         { label: "Sync to HubSpot", kind: "action" },
         { label: "Send follow-up", kind: "action" },
