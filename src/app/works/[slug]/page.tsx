@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CASE_STUDIES, getCaseStudy } from "@/data/caseStudies";
+import WorkflowDiagram from "@/components/ui/WorkflowDiagram";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -86,6 +87,11 @@ export default async function CaseStudyPage({ params }: Props) {
 
       <section className="mt-24 border-t border-ink/20 pt-12">
         <SectionLabel n="03">HowItWorks</SectionLabel>
+        {study.diagram && (
+          <div className="relative left-1/2 mt-10 w-[min(1400px,calc(100vw-4rem))] -translate-x-1/2">
+            <WorkflowDiagram diagram={study.diagram} />
+          </div>
+        )}
         <ol className="mt-10">
           {study.flow.map((step, i) => (
             <li

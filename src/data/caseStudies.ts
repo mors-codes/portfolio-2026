@@ -3,6 +3,29 @@ export interface CaseStudyPoint {
   body: string;
 }
 
+export type DiagramNodeKind = "trigger" | "ai" | "logic" | "action";
+
+export interface DiagramNode {
+  id: string;
+  label: string;
+  /** Small second line under the label. */
+  sub?: string;
+  kind: DiagramNodeKind;
+  x: number;
+  y: number;
+}
+
+export interface DiagramEdge {
+  from: string;
+  to: string;
+  label?: string;
+}
+
+export interface CaseStudyDiagram {
+  nodes: DiagramNode[];
+  edges: DiagramEdge[];
+}
+
 export interface CaseStudy {
   slug: string;
   title: string;
@@ -12,6 +35,7 @@ export interface CaseStudy {
   problem: string;
   solution: string;
   flow: CaseStudyPoint[];
+  diagram?: CaseStudyDiagram;
   decisions: CaseStudyPoint[];
   outcome: string[];
 }
@@ -54,6 +78,32 @@ export const CASE_STUDIES: CaseStudy[] = [
         body: "Flagged invoices also trigger an email with the invoice number, vendor, total, and the exact reason it was flagged.",
       },
     ],
+    diagram: {
+      nodes: [
+        { id: "watch", label: "Watch intake folder", sub: "Drive · every minute", kind: "trigger", x: 0, y: 40 },
+        { id: "form", label: "Test upload form", sub: "For testing", kind: "trigger", x: 0, y: 160 },
+        { id: "fetch", label: "Fetch file", sub: "Get the invoice file", kind: "action", x: 200, y: 100 },
+        { id: "extract", label: "Extract with AI", sub: "Vision model to JSON", kind: "ai", x: 400, y: 100 },
+        { id: "validate", label: "Validate the math", sub: "Totals and confidence", kind: "logic", x: 600, y: 100 },
+        { id: "review", label: "Needs review?", sub: "Any check failed", kind: "logic", x: 800, y: 100 },
+        { id: "clean", label: "Save as clean", sub: "Airtable · Invoices", kind: "action", x: 1040, y: 0 },
+        { id: "flagged", label: "Save as flagged", sub: "Airtable · Needs Review", kind: "action", x: 1040, y: 100 },
+        { id: "alert", label: "Email alert", sub: "Gmail · with reason", kind: "action", x: 1040, y: 200 },
+        { id: "items", label: "Save line items", sub: "Airtable · linked rows", kind: "action", x: 1240, y: 50 },
+      ],
+      edges: [
+        { from: "watch", to: "fetch" },
+        { from: "form", to: "fetch" },
+        { from: "fetch", to: "extract" },
+        { from: "extract", to: "validate" },
+        { from: "validate", to: "review" },
+        { from: "review", to: "clean", label: "clean" },
+        { from: "review", to: "flagged", label: "flagged" },
+        { from: "review", to: "alert", label: "flagged" },
+        { from: "clean", to: "items" },
+        { from: "flagged", to: "items" },
+      ],
+    },
     decisions: [
       {
         title: "Don't trust the AI's confidence alone",
