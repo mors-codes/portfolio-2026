@@ -11,6 +11,7 @@ import {
 import { flushSync } from "react-dom";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import gsap from "gsap";
 import WorkVisual, {
   prefersReducedMotion,
@@ -37,6 +38,8 @@ export interface WorkItem {
   description?: string;
   stack?: WorkStackItem[];
   link?: string;
+  /** Internal route to the case study page, e.g. "/works/invoice-processing". */
+  caseStudy?: string;
   /** Decides how the project is presented. See WorkVisualData. */
   visual: WorkVisualData;
 }
@@ -372,7 +375,19 @@ export default function WorksSwap({ works }: WorksSwapProps) {
         )}
         </div>
 
-        <div className="mt-8 flex empty:hidden lg:min-h-5 lg:empty:flex">
+        <div className="mt-8 flex flex-wrap items-start gap-x-6 gap-y-3 empty:hidden lg:min-h-5 lg:empty:flex">
+          {active.caseStudy && (
+            <Link
+              data-reveal
+              href={active.caseStudy}
+              className="group relative inline-block border-b border-ink/30 pb-1 transition-colors hover:border-ink font-sans text-[9px] font-medium text-ink"
+            >
+              <span className="font-mono uppercase tracking-[0.72px]">
+                View Case Study{" "}
+                <span className="text-xs leading-0">↗</span>
+              </span>
+            </Link>
+          )}
           {active.link && (
             <a
               data-reveal

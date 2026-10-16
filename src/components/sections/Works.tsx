@@ -44,6 +44,7 @@ const WORKS: WorkItem[] = [
       { name: "Airtable" },
       { name: "Google Drive" },
     ],
+    caseStudy: "/works/invoice-processing",
     visual: {
       type: "workflow",
       nodes: [
