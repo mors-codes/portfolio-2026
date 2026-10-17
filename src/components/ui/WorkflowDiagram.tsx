@@ -18,6 +18,12 @@ type StepNode = Node<StepData, "step">;
 
 const HANDLE_STYLE = { opacity: 0, pointerEvents: "none" } as const;
 
+// Keep NODE_W in sync with the node's w-[160px] below.
+const NODE_W = 160;
+const FRAME_PAD = 40;
+// The frame's 3px border on each side.
+const BORDER_W = 6;
+
 function StepNodeView({ data }: NodeProps<StepNode>) {
   // "ai" renders inverted, same as the cards on the Works section.
   const inverted = data.kind === "ai";
@@ -73,6 +79,14 @@ export default function WorkflowDiagram({
 }) {
   const reduced = useReducedMotion();
 
+  // Frame width follows the workflow: its span plus padding.
+  const frameWidth = useMemo(() => {
+    const xs = diagram.nodes.map((n) => n.x);
+    return (
+      Math.max(...xs) - Math.min(...xs) + NODE_W + FRAME_PAD * 2 + BORDER_W
+    );
+  }, [diagram]);
+
   const nodes = useMemo<StepNode[]>(
     () =>
       diagram.nodes.map((n) => ({
@@ -110,15 +124,17 @@ export default function WorkflowDiagram({
   return (
     <figure
       aria-label="Workflow diagram"
-      className="m-0 overflow-x-auto border-[3px] border-ink bg-bg"
+      className="m-0 mx-auto max-w-full overflow-x-auto border-[3px] border-ink bg-bg"
+      style={{ width: frameWidth }}
     >
-      <div className="h-85 min-w-275">
+      <div className="h-85" style={{ minWidth: frameWidth - BORDER_W }}>
         <ReactFlow
           nodes={nodes}
           edges={edges}
           nodeTypes={NODE_TYPES}
+          proOptions={{ hideAttribution: true }}
           fitView
-          fitViewOptions={{ padding: 0.08 }}
+          fitViewOptions={{ padding: `${FRAME_PAD}px` }}
           minZoom={0.2}
           maxZoom={1}
           nodesDraggable={false}
