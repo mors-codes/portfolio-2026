@@ -83,6 +83,7 @@ const WORKS: WorkItem[] = [
       { name: "HubSpot" },
       { name: "Gmail" },
     ],
+    caseStudy: "/works/lead-scoring",
     visual: {
       type: "workflow",
       nodes: [

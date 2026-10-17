@@ -111,7 +111,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       },
       {
         title: "Fail safe, not silent",
-        body: "If the model returns malformed JSON, the workflow flags the invoice and keeps the raw output instead of crashing. Nothing disappears.",
+        body: "If the model returns malformed JSON, the workflow flags the invoice with the parse error as the reason instead of crashing. Nothing disappears.",
       },
       {
         title: "Save flagged invoices too",
@@ -122,6 +122,84 @@ export const CASE_STUDIES: CaseStudy[] = [
       "Every invoice ends up as a structured record, with its line items linked.",
       "Bad or uncertain extractions are caught and explained, not silently saved.",
       "Each record keeps a link to its source file for quick checking.",
+    ],
+  },
+  {
+    slug: "lead-scoring",
+    title: "Lead Scoring",
+    category: "AI automation",
+    tagline:
+      "An n8n workflow that scores real estate leads with AI, syncs them to HubSpot, and sends a tailored follow-up the moment a form is submitted.",
+    stack: ["n8n", "AI", "HubSpot", "Gmail"],
+    problem:
+      "Real estate inquiries arrive all day, and they are not equal. Some people want to move this month, others are just browsing. Without a quick sort, hot leads wait in the same pile as cold ones, and every reply gets written by hand.",
+    solution:
+      "A form submission starts the workflow. An AI step reads the inquiry against a written rubric, labels it hot, warm, or cold, explains why, and drafts a reply that mentions what the lead actually said. Every lead lands in HubSpot as a contact with a deal, and hot leads also send an instant alert to the owner.",
+    flow: [
+      {
+        title: "Capture",
+        body: "A web form collects name, email, phone, whether they want to buy or sell, free-text details, budget or property value, and timeline.",
+      },
+      {
+        title: "Score",
+        body: "The AI step applies a written rubric and returns JSON: a tier (hot, warm, or cold), a one or two sentence reason, structured fields like location and financing, and a drafted follow-up email.",
+      },
+      {
+        title: "Prepare",
+        body: "A code step parses the JSON, merges in the contact details from the form, and formats the email as HTML with a booking button.",
+      },
+      {
+        title: "Route",
+        body: "A switch sends each lead down a hot, warm, or cold path. All three end up in HubSpot. Hot leads also trigger an instant email to the owner with contact details and the AI's reasoning.",
+      },
+      {
+        title: "Sync",
+        body: "Each lead becomes a HubSpot contact and a linked deal. Hot leads start at Qualified to Buy, the rest at Appointment Scheduled. The AI's reasoning is saved on the contact and the deal.",
+      },
+      {
+        title: "Follow up",
+        body: "The lead gets the AI-drafted email, written around what they submitted, with a link to book a call.",
+      },
+    ],
+    diagram: {
+      nodes: [
+        { id: "form", label: "Lead form", sub: "Buy or sell inquiry", kind: "trigger", x: 0, y: 100 },
+        { id: "score", label: "Score with AI", sub: "Rubric and reasoning", kind: "ai", x: 200, y: 100 },
+        { id: "parse", label: "Parse result", sub: "JSON and email HTML", kind: "logic", x: 400, y: 100 },
+        { id: "route", label: "Route by tier", sub: "Hot, warm, or cold", kind: "logic", x: 600, y: 100 },
+        { id: "alert", label: "Hot lead alert", sub: "Gmail · to the owner", kind: "action", x: 840, y: 0 },
+        { id: "contact", label: "Add contact", sub: "HubSpot", kind: "action", x: 840, y: 100 },
+        { id: "deal", label: "Create deal", sub: "HubSpot · stage by tier", kind: "action", x: 1040, y: 100 },
+        { id: "followup", label: "Send follow-up", sub: "Gmail · AI-drafted", kind: "action", x: 1240, y: 100 },
+      ],
+      edges: [
+        { from: "form", to: "score" },
+        { from: "score", to: "parse" },
+        { from: "parse", to: "route" },
+        { from: "route", to: "alert", label: "hot" },
+        { from: "route", to: "contact", label: "all tiers" },
+        { from: "contact", to: "deal" },
+        { from: "deal", to: "followup" },
+      ],
+    },
+    decisions: [
+      {
+        title: "Score against a written rubric",
+        body: "The prompt spells out what hot, warm, and cold mean: timeline, budget, financing, and how specific the request is. The model has to cite what the lead said, so every score can be checked.",
+      },
+      {
+        title: "Keep the reasoning with the lead",
+        body: "The AI's explanation is saved on the HubSpot contact and deal and quoted in the hot-lead alert. A person can see why a lead was scored that way and overrule it.",
+      },
+      {
+        title: "Only hot leads interrupt",
+        body: "Every lead is saved and gets a reply, but only hot ones trigger an alert. Deal stage also follows the tier, so hot leads start further down the pipeline.",
+      },
+    ],
+    outcome: [
+      "Every inquiry gets a tier, a written reason, and a personalized reply without anyone touching it.",
+      "Hot leads reach the owner right away, with contact details and the AI's reasoning.",
+      "Nothing is dropped. Warm and cold leads still become HubSpot contacts and deals.",
     ],
   },
 ];

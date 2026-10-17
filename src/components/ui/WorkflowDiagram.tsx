@@ -23,7 +23,7 @@ function StepNodeView({ data }: NodeProps<StepNode>) {
   const inverted = data.kind === "ai";
   return (
     <div
-      className={`w-[160px] border-[3px] border-ink px-3 py-2.5 ${
+      className={`w-40 border-[3px] border-ink px-3 py-2.5 ${
         inverted ? "bg-ink text-bg" : "bg-bg text-ink"
       }`}
     >
@@ -112,7 +112,7 @@ export default function WorkflowDiagram({
       aria-label="Workflow diagram"
       className="m-0 overflow-x-auto border-[3px] border-ink bg-bg"
     >
-      <div className="h-[340px] min-w-[1100px]">
+      <div className="h-85 min-w-275">
         <ReactFlow
           nodes={nodes}
           edges={edges}
