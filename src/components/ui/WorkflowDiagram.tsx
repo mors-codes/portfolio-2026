@@ -10,10 +10,18 @@ import {
   type Node,
   type NodeProps,
 } from "@xyflow/react";
+import { GitBranch, Send, Sparkles, Zap } from "lucide-react";
 import "@xyflow/react/dist/style.css";
 import type { CaseStudyDiagram, DiagramNodeKind } from "@/data/caseStudies";
 
 type StepData = { label: string; sub?: string; kind: DiagramNodeKind };
+
+const KIND_META = {
+  trigger: { label: "Trigger", Icon: Zap },
+  ai: { label: "AI", Icon: Sparkles },
+  logic: { label: "Logic", Icon: GitBranch },
+  action: { label: "Action", Icon: Send },
+} as const;
 type StepNode = Node<StepData, "step">;
 
 const HANDLE_STYLE = { opacity: 0, pointerEvents: "none" } as const;
@@ -27,6 +35,7 @@ const BORDER_W = 6;
 function StepNodeView({ data }: NodeProps<StepNode>) {
   // "ai" renders inverted, same as the cards on the Works section.
   const inverted = data.kind === "ai";
+  const { label: kindLabel, Icon } = KIND_META[data.kind];
   return (
     <div
       className={`w-40 border-[3px] border-ink px-3 py-2.5 ${
@@ -39,6 +48,10 @@ function StepNodeView({ data }: NodeProps<StepNode>) {
         isConnectable={false}
         style={HANDLE_STYLE}
       />
+      <span className="mb-2 flex w-fit items-center gap-1 border border-current/30 px-1.5 py-0.5 font-mono text-[8px] tracking-wider uppercase opacity-70">
+        <Icon size={9} strokeWidth={2.5} aria-hidden="true" />
+        {kindLabel}
+      </span>
       <p className="font-sans text-[14px] leading-tight font-medium">
         {data.label}
       </p>
