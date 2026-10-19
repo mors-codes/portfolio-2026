@@ -1,6 +1,8 @@
 "use client";
 
+import { useSyncExternalStore } from "react";
 import WorksSwap, {
+  OPENED_KEY,
   type WorkItem,
 } from "@/components/ui/WorksSwap";
 
@@ -97,7 +99,21 @@ const WORKS: WorkItem[] = [
   },
 ];
 
+const noopSubscribe = () => () => {};
+
+// Index of the project whose case study was last opened in this tab.
+// sessionStorage is client-only, so the server snapshot is always 0.
+function readOpened() {
+  try {
+    const n = Number(sessionStorage.getItem(OPENED_KEY));
+    return Number.isInteger(n) && n >= 0 && n < WORKS.length ? n : 0;
+  } catch {
+    return 0;
+  }
+}
+
 export default function Works() {
+  const startIndex = useSyncExternalStore(noopSubscribe, readOpened, () => 0);
   return (
     <section
       id="works"
@@ -119,7 +135,7 @@ export default function Works() {
         </p>
       </div>
 
-      <WorksSwap works={WORKS} />
+      <WorksSwap key={startIndex} works={WORKS} initialIndex={startIndex} />
     </section>
   );
 }

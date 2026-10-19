@@ -17,11 +17,17 @@ import type { CaseStudyDiagram, DiagramNodeKind } from "@/data/caseStudies";
 type StepData = { label: string; sub?: string; kind: DiagramNodeKind };
 
 const KIND_META = {
-  trigger: { label: "Trigger", Icon: Zap },
-  ai: { label: "AI", Icon: Sparkles },
-  logic: { label: "Logic", Icon: GitBranch },
-  action: { label: "Action", Icon: Send },
+  trigger: { label: "Trigger", Icon: Zap, color: "#E5405E" },
+  ai: { label: "AI", Icon: Sparkles, color: "#6C47FF" },
+  logic: { label: "Logic", Icon: GitBranch, color: "#F59E0B" },
+  action: { label: "Action", Icon: Send, color: "#16A34A" },
 } as const;
+
+// Edges take the color of the node they point to.
+const edgeColor = (diagram: CaseStudyDiagram, targetId: string) => {
+  const kind = diagram.nodes.find((n) => n.id === targetId)?.kind;
+  return kind ? KIND_META[kind].color : "var(--color-ink)";
+};
 type StepNode = Node<StepData, "step">;
 
 const HANDLE_STYLE = { opacity: 0, pointerEvents: "none" } as const;
@@ -33,14 +39,11 @@ const FRAME_PAD = 40;
 const BORDER_W = 6;
 
 function StepNodeView({ data }: NodeProps<StepNode>) {
-  // "ai" renders inverted, same as the cards on the Works section.
-  const inverted = data.kind === "ai";
-  const { label: kindLabel, Icon } = KIND_META[data.kind];
+  const { label: kindLabel, Icon, color } = KIND_META[data.kind];
   return (
     <div
-      className={`w-40 border-[3px] border-ink px-3 py-2.5 ${
-        inverted ? "bg-ink text-bg" : "bg-bg text-ink"
-      }`}
+      className="w-40 border-[3px] bg-bg px-3 py-2.5 text-ink"
+      style={{ borderColor: color }}
     >
       <Handle
         type="target"
@@ -48,10 +51,15 @@ function StepNodeView({ data }: NodeProps<StepNode>) {
         isConnectable={false}
         style={HANDLE_STYLE}
       />
-      <span className="mb-2 flex w-fit items-center gap-1 border border-current/30 px-1.5 py-0.5 font-mono text-[8px] tracking-wider uppercase opacity-70">
-        <Icon size={9} strokeWidth={2.5} aria-hidden="true" />
-        {kindLabel}
-      </span>
+      <div className="mb-2 flex items-center justify-between">
+        <span
+          className="px-1.5 py-0.5 font-mono text-[8px] tracking-wider text-white uppercase"
+          style={{ backgroundColor: color }}
+        >
+          {kindLabel}
+        </span>
+        <Icon size={13} strokeWidth={2.25} color={color} aria-hidden="true" />
+      </div>
       <p className="font-sans text-[14px] leading-tight font-medium">
         {data.label}
       </p>
@@ -120,9 +128,9 @@ export default function WorkflowDiagram({
         type: "smoothstep",
         animated: !reduced,
         label: e.label,
-        style: { stroke: "var(--color-ink)", strokeWidth: 2.5 },
+        style: { stroke: edgeColor(diagram, e.to), strokeWidth: 2.5 },
         labelStyle: {
-          fill: "var(--color-ink)",
+          fill: edgeColor(diagram, e.to),
           fontSize: 10,
           fontFamily: "var(--font-mono)",
         },

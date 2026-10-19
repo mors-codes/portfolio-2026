@@ -46,7 +46,12 @@ export interface WorkItem {
 
 interface WorksSwapProps {
   works: WorkItem[];
+  /** Project to show first. Used on mount only. */
+  initialIndex?: number;
 }
+
+/** sessionStorage key: index of the project whose case study was last opened. */
+export const OPENED_KEY = "works:opened";
 
 // Right panel: the old visual fades out drifting right, the new one fades in
 // drifting left. SHIFT_PCT is the drift distance as a % of the stage width.
@@ -87,13 +92,14 @@ function Layer({
   );
 }
 
-export default function WorksSwap({ works }: WorksSwapProps) {
+export default function WorksSwap({ works, initialIndex = 0 }: WorksSwapProps) {
   const total = works.length;
+  const start = Math.max(0, Math.min(initialIndex, total - 1));
 
   // `current` drives the info column. `layers` holds which project each of the
   // two stacked visual layers is showing; they alternate on every swap.
-  const [current, setCurrent] = useState(0);
-  const [layers, setLayers] = useState<[number, number]>([0, 0]);
+  const [current, setCurrent] = useState(start);
+  const [layers, setLayers] = useState<[number, number]>([start, start]);
 
   const rootRef = useRef<HTMLDivElement>(null);
   const infoRef = useRef<HTMLDivElement>(null);
@@ -101,8 +107,8 @@ export default function WorksSwap({ works }: WorksSwapProps) {
   const layerARef = useRef<HTMLDivElement>(null);
   const layerBRef = useRef<HTMLDivElement>(null);
 
-  const currentRef = useRef(0);
-  const prevCurrentRef = useRef(0);
+  const currentRef = useRef(start);
+  const prevCurrentRef = useRef(start);
   const activeLayerRef = useRef<0 | 1>(0);
   const busyRef = useRef(false);
   const inViewRef = useRef(false);
@@ -380,6 +386,13 @@ export default function WorksSwap({ works }: WorksSwapProps) {
             <Link
               data-reveal
               href={active.caseStudy}
+              onClick={() => {
+                try {
+                  sessionStorage.setItem(OPENED_KEY, String(current));
+                } catch {
+                  /* storage blocked, start from the first project */
+                }
+              }}
               className="group relative inline-block border-b border-ink/30 pb-1 transition-colors hover:border-ink font-sans text-[9px] font-medium text-ink"
             >
               <span className="font-mono uppercase tracking-[0.72px]">
