@@ -4,6 +4,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CASE_STUDIES, getCaseStudy } from "@/data/caseStudies";
 import WorkflowDiagram from "@/components/ui/WorkflowDiagram";
+import Image from "next/image";
+import { Sparkles } from "lucide-react";
+import {
+  stackBlockCategories,
+  type StackBlockTool,
+} from "@/data/stackBlockData";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -19,6 +25,55 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: `${study.title} — Case Study`,
     description: study.tagline,
   };
+}
+
+const TOOLS = stackBlockCategories.flatMap((c) => c.tools);
+
+// Icons for tags that aren't in the stack data. Add the file, then uncomment.
+const EXTRA_ICONS: Record<string, StackBlockTool["icon"]> = {
+  // "Google Drive": "/icons/stack/ai-automation/drive.svg",
+};
+
+const iconFor = (name: string) =>
+  EXTRA_ICONS[name] ??
+  TOOLS.find((t) => t.name.toLowerCase() === name.toLowerCase())?.icon;
+
+function TagIcon({ name }: { name: string }) {
+  if (name === "AI") {
+    return <Sparkles size={13} strokeWidth={2.25} aria-hidden="true" />;
+  }
+  const icon = iconFor(name);
+  if (!icon) return null;
+  if (typeof icon === "string") {
+    return (
+      <Image
+        src={icon}
+        alt=""
+        width={15}
+        height={15}
+        className="h-3.75 w-3.75"
+      />
+    );
+  }
+  // Light/dark pair: show one per theme.
+  return (
+    <>
+      <Image
+        src={icon.light}
+        alt=""
+        width={15}
+        height={15}
+        className="h-3.75 w-3.75 in-[.dark]:hidden"
+      />
+      <Image
+        src={icon.dark}
+        alt=""
+        width={15}
+        height={15}
+        className="hidden h-3.75 w-3.75 in-[.dark]:block"
+      />
+    </>
+  );
 }
 
 const META =
@@ -52,23 +107,39 @@ export default async function CaseStudyPage({ params }: Props) {
 
       <header className="mt-16">
         <p className={META}>{study.category}</p>
-        <h1 className="mt-4 font-sans text-[clamp(2.75rem,8vw,5rem)] leading-[0.9] font-medium tracking-tighter text-balance">
+        <h1 className="mt-4 font-sans text-[clamp(1.75rem,7vw,4rem)] leading-none font-medium tracking-tighter whitespace-nowrap">
           {study.title}
         </h1>
-        <p className="mt-8 max-w-2xl font-sans text-base font-light leading-normal text-ink/70 md:text-lg">
+        <p className="mt-8 max-w-2xl font-sans text-sm font-light leading-normal text-ink/70 md:text-base">
           {study.tagline}
         </p>
         <ul className="mt-8 flex flex-wrap gap-1.5">
-          {study.stack.map((name) => (
-            <li
-              key={name}
-              className="border border-ink/20 px-2.5 py-1 font-mono text-[8px] text-ink/70 uppercase"
-            >
-              {name}
-            </li>
-          ))}
+          {study.stack.map((name) => {
+            const hasIcon = name === "AI" || Boolean(iconFor(name));
+            return (
+              <li
+                key={name}
+                className={`flex items-center gap-2 border border-ink/20 py-1 font-mono text-[8px] text-ink/70 uppercase ${
+                  hasIcon ? "pr-2.5 pl-1" : "px-2.5"
+                }`}
+              >
+                {hasIcon && (
+                  <span className="grid h-5 w-5 place-items-center">
+                    <TagIcon name={name} />
+                  </span>
+                )}
+                {name}
+              </li>
+            );
+          })}
         </ul>
       </header>
+
+      {study.diagram && (
+        <div className="relative left-1/2 mt-16 w-[min(1400px,calc(100vw-4rem))] -translate-x-1/2">
+          <WorkflowDiagram diagram={study.diagram} />
+        </div>
+      )}
 
       <section className="mt-24 grid gap-12 border-t border-ink/20 pt-12">
         <div>
@@ -87,11 +158,6 @@ export default async function CaseStudyPage({ params }: Props) {
 
       <section className="mt-24 border-t border-ink/20 pt-12">
         <SectionLabel n="03">HowItWorks</SectionLabel>
-        {study.diagram && (
-          <div className="relative left-1/2 mt-10 w-[min(1400px,calc(100vw-4rem))] -translate-x-1/2">
-            <WorkflowDiagram diagram={study.diagram} />
-          </div>
-        )}
         <ol className="mt-10">
           {study.flow.map((step, i) => (
             <li
