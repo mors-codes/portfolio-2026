@@ -141,74 +141,27 @@ export default async function CaseStudyPage({ params }: Props) {
         </div>
       )}
 
-      <section className="mt-24 grid gap-12 border-t border-ink/20 pt-12">
-        <div>
-          <SectionLabel n="01">Problem</SectionLabel>
-          <p className="mt-6 font-sans text-sm font-light leading-relaxed text-ink/70 md:text-base">
-            {study.problem}
-          </p>
-        </div>
-        <div>
-          <SectionLabel n="02">Solution</SectionLabel>
-          <p className="mt-6 font-sans text-sm font-light leading-relaxed text-ink/70 md:text-base">
-            {study.solution}
-          </p>
-        </div>
-      </section>
-
-      <section className="mt-24 border-t border-ink/20 pt-12">
-        <SectionLabel n="03">HowItWorks</SectionLabel>
-        <ol className="mt-10">
-          {study.flow.map((step, i) => (
-            <li
-              key={step.title}
-              className="grid grid-cols-[3rem_1fr] gap-x-4 gap-y-2 border-t border-ink/20 py-6"
-            >
-              <span className="font-mono-label text-sm text-ink/40 tabular-nums">
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              <h3 className="font-sans text-xl font-medium tracking-tight">
-                {step.title}
-              </h3>
-              <p className="col-start-2 font-sans text-sm font-light leading-relaxed text-ink/70">
-                {step.body}
-              </p>
-            </li>
-          ))}
-        </ol>
-      </section>
-
-      <section className="mt-24 border-t border-ink/20 pt-12">
-        <SectionLabel n="04">KeyDecisions</SectionLabel>
-        <div className="mt-10 grid gap-6">
-          {study.decisions.map((d) => (
-            <div key={d.title} className="border-2 border-ink p-6">
-              <h3 className="font-sans text-lg font-medium tracking-tight">
-                {d.title}
-              </h3>
-              <p className="mt-3 font-sans text-sm font-light leading-relaxed text-ink/70">
-                {d.body}
-              </p>
+      <section className="mt-16">
+        {[
+          { n: "01", label: "Problem", text: study.problem },
+          { n: "02", label: "Solution", text: study.solution },
+          { n: "03", label: "Result", text: study.outcome },
+        ].map(({ n, label, text }) => (
+          <div
+            key={n}
+            className="grid gap-4 border-t border-ink/20 py-10 last:border-b md:grid-cols-[7rem_1fr] md:gap-8"
+          >
+            <div className="flex items-baseline gap-3 md:block">
+              <span className="font-mono-label text-sm text-ink/40">{n}</span>
+              <h2 className="font-display text-xl font-black -tracking-widest md:mt-1">
+                {label}
+              </h2>
             </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="mt-24 border-t border-ink/20 pt-12">
-        <SectionLabel n="05">Outcome</SectionLabel>
-        <ul className="mt-8 max-w-2xl space-y-3">
-          {study.outcome.map((item) => (
-            <li
-              key={item}
-              className="flex gap-3 font-sans text-sm font-light leading-relaxed text-ink/70 md:text-base"
-            >
-              <span aria-hidden="true" className="text-ink/30">
-                —
-              </span>
-              {item}
-            </li>
-          ))}
-        </ul>
+            <p className="font-sans text-sm font-light leading-relaxed text-ink/70 md:text-base">
+              {text}
+            </p>
+          </div>
+        ))}
       </section>
 
       <Link
