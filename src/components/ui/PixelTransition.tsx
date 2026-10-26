@@ -10,6 +10,8 @@ type PixelTransitionProps = {
   pixelColor?: string;
   animationStepDuration?: number;
   once?: boolean;
+  autoPlay?: boolean;
+  holdDuration?: number;
   className?: string;
 };
 
@@ -20,6 +22,8 @@ export default function PixelTransition({
   pixelColor = "#EFEFEF",
   animationStepDuration = 0.4,
   once = false,
+  autoPlay = false,
+  holdDuration = 3,
   className = "",
 }: PixelTransitionProps) {
   const pixelGridRef = useRef<HTMLDivElement>(null);
@@ -83,10 +87,31 @@ export default function PixelTransition({
     });
   };
 
+  useEffect(() => {
+    if (!autoPlay) return;
+    let next = true;
+    const id = setInterval(() => {
+      animatePixels(next);
+      next = !next;
+    }, holdDuration * 1000);
+    return () => {
+      clearInterval(id);
+      delayedCallRef.current?.kill();
+      const pixels = pixelGridRef.current?.children;
+      if (pixels) {
+        gsap.killTweensOf(pixels);
+        gsap.set(pixels, { display: "none" });
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoPlay, holdDuration]);
+
   const handleEnter = () => {
+    if (autoPlay) return;
     if (!isActive) animatePixels(true);
   };
   const handleLeave = () => {
+    if (autoPlay) return;
     if (isActive && !once) animatePixels(false);
   };
 

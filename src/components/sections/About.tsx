@@ -150,7 +150,8 @@ export default function About() {
                   gridSize={10}
                   pixelColor="#222222"
                   animationStepDuration={0.4}
-                  once={false}
+                  autoPlay
+                  holdDuration={3}
                   firstContent={
                     <div className="relative h-full w-full bg-white">
                       <Image
