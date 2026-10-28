@@ -97,6 +97,27 @@ const WORKS: WorkItem[] = [
       ],
     },
   },
+  {
+    title: "LozEat\nApp",
+    category: "UI/UX design",
+    description:
+      "Mobile app design for ordering food around campus, with delivery to classrooms and landmarks.",
+    stack: [
+      { name: "Figma", icon: "/icons/stack/frontend/figma.svg" },
+      { name: "Prototyping" },
+      { name: "HCI" },
+      { name: "Mobile UI" },
+    ],
+    caseStudy: "/works/lozeat",
+    visual: {
+      type: "phones",
+      images: [
+        "/images/works/lozeat-1.png",
+        "/images/works/lozeat-2.png",
+        "/images/works/lozeat-3.png",
+      ],
+    },
+  },
 ];
 
 const noopSubscribe = () => () => {};

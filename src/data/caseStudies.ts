@@ -96,6 +96,20 @@ export const CASE_STUDIES: CaseStudy[] = [
     outcome:
       "Every inquiry now gets a tier, a written reason, and a personalized reply without anyone touching it. Hot leads reach the owner right away with contact details and the AI's reasoning, so the people ready to act are seen first. Nothing is dropped: warm and cold leads still become HubSpot contacts and deals, and the reasoning stays on both so a person can review or overrule any score.",
   },
+  {
+    slug: "lozeat",
+    title: "LozEat App",
+    category: "UI/UX design",
+    tagline:
+      "A mobile app design that lets the De La Salle Lipa community order campus food and have it delivered, without the queue.",
+    stack: ["Figma", "Prototyping", "HCI", "Mobile UI"],
+    problem:
+      "Ordering food on campus means standing in line at the stall. At peak hours the queues eat into short breaks, make students late for class, and sometimes lead to skipped meals. Vendors have no shared digital place to receive orders or show what is available, and students have no single place to check menus, prices, and order status.",
+    solution:
+      "LozEat is a mobile app design for the De La Salle Lipa community. Users browse campus stalls, order meals, and choose delivery to a classroom, office, or campus landmark, or pickup. They can search by category, see store hours, ratings, and prep time, customize items, and order from several stalls in one cart. Checkout shows fees and the order summary up front, and tracking follows the order from placed to preparing, on the way, and arrived. The interface applies Nielsen-style usability heuristics, with a clear hierarchy, thumb-friendly controls, and less typing. It is a high-fidelity prototype designed in Figma.",
+    outcome:
+      "LozEat is a design prototype, not a live app, so there are no usage numbers to report. What it delivers is a complete, consistent mobile flow across 12 features, from login and food discovery to checkout, tracking, reordering, and ratings. Its intended impact is shorter waits, easier access to menus and prices, better budgeting for students, and more organized orders for vendors.",
+  },
 ];
 
 export const getCaseStudy = (slug: string) =>
