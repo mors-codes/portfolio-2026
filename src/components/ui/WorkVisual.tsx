@@ -221,33 +221,62 @@ function ScreensVisual({
 
 const PHONE_RATIO = 19.5 / 9;
 
+function MockupImage({
+  src,
+  alt,
+  maxWidth,
+  className = "",
+}: {
+  src: string;
+  alt: string;
+  maxWidth: number;
+  className?: string;
+}) {
+  const [failed, setFailed] = useState(false);
+
+  // Missing file: blank phone-shaped placeholder instead of a broken image.
+  if (failed) {
+    return (
+      <div aria-hidden="true" className="aspect-9/19.5 h-[80%] bg-ink/6" />
+    );
+  }
+
+  return (
+    <Image
+      src={src}
+      alt={alt}
+      width={0}
+      height={0}
+      sizes={IMAGE_SIZES}
+      onError={() => setFailed(true)}
+      style={{ maxWidth: `${maxWidth}%` }}
+      className={`h-auto max-h-full w-auto min-w-0 object-contain ${className}`}
+    />
+  );
+}
+
 function PhonesVisual({ images, title }: { images: string[]; title: string }) {
   const shown = images.slice(0, 3);
   const count = Math.max(shown.length, 1);
-  // Cap each phone's width so the row never overflows the stage.
-  const maxWidthCqw = (90 - (count - 1) * 4) / count;
-  const height = `min(86cqh, ${(maxWidthCqw * PHONE_RATIO).toFixed(1)}cqw)`;
+  // Per-image width cap so the row never overflows the stage.
+  const maxWidth = count === 1 ? 50 : count === 2 ? 44 : 30;
 
   return (
-    <div className="flex h-full w-full items-center justify-center gap-[4cqw]">
+    <div className="flex h-full w-full items-center justify-center gap-[3cqw]">
       {shown.map((src, i) => (
-        <div
+        <MockupImage
           key={`${src}-${i}`}
-          className={`relative aspect-9/19.5 shrink-0 overflow-hidden rounded-[14%/6.5%] border-[3px] border-ink bg-bg ${FRAME_SHADOW} ${
+          src={src}
+          alt={`${title} mobile screen ${i + 1}`}
+          maxWidth={maxWidth}
+          className={
             count === 1
               ? ""
               : i % 2 === 1
                 ? "translate-y-[5%]"
                 : "translate-y-[-4%]"
-          }`}
-          style={{ height }}
-        >
-          <span
-            aria-hidden="true"
-            className="absolute top-[2.2%] left-1/2 z-10 h-[1.6%] w-[28%] -translate-x-1/2 rounded-full bg-ink"
-          />
-          <FrameImage src={src} alt={`${title} mobile screen ${i + 1}`} />
-        </div>
+          }
+        />
       ))}
     </div>
   );
