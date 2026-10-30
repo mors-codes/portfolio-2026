@@ -68,7 +68,7 @@ const WORKS: WorkItem[] = [
       { name: "Tailwind CSS", icon: "/icons/stack/frontend/tailwindcss.svg" },
       { name: "JavaScript" },
     ],
-    link: "https://github.com/mors-codes/voya",
+    link: "https://voya-adventures.vercel.app",
     visual: {
       type: "browser",
       image: "/images/works/project-3.png",
