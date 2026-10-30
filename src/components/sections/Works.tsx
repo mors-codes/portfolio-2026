@@ -112,9 +112,9 @@ const WORKS: WorkItem[] = [
     visual: {
       type: "phones",
       images: [
-        "/images/works/lozeat-1.png",
-        "/images/works/lozeat-2.png",
-        "/images/works/lozeat-3.png",
+        "/images/works/lozeat-1.svg",
+        "/images/works/lozeat-2.svg",
+        "/images/works/lozeat-3.svg",
       ],
     },
   },

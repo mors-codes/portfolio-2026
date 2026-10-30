@@ -219,8 +219,6 @@ function ScreensVisual({
 /*  Phones — mobile UI                                                         */
 /* -------------------------------------------------------------------------- */
 
-const PHONE_RATIO = 19.5 / 9;
-
 function MockupImage({
   src,
   alt,
@@ -250,7 +248,7 @@ function MockupImage({
       sizes={IMAGE_SIZES}
       onError={() => setFailed(true)}
       style={{ maxWidth: `${maxWidth}%` }}
-      className={`h-auto max-h-full w-auto min-w-0 object-contain ${className}`}
+      className={`h-auto max-h-full w-auto min-w-0 object-contain drop-shadow-[0_12px_20px_rgba(0,0,0,0.18)] ${className}`}
     />
   );
 }
@@ -272,9 +270,13 @@ function PhonesVisual({ images, title }: { images: string[]; title: string }) {
           className={
             count === 1
               ? ""
-              : i % 2 === 1
-                ? "translate-y-[5%]"
-                : "translate-y-[-4%]"
+              : count === 3
+                ? i === 1
+                  ? "translate-y-[-6%]"
+                  : "translate-y-[6%]"
+                : i % 2 === 1
+                  ? "translate-y-[5%]"
+                  : "translate-y-[-4%]"
           }
         />
       ))}
