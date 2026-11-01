@@ -40,7 +40,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     category: "AI automation",
     tagline:
       "An n8n workflow that turns invoice files into checked, structured records in Airtable.",
-    stack: ["n8n", "AI", "Airtable", "Google Drive", "Gmail"],
+    stack: ["n8n", "Airtable", "Google Drive", "Gmail"],
     problem:
       "Invoices arrive as PDFs and images in every layout, from different vendors. Typing the vendor, dates, totals, and line items into a system by hand is tedious, and one wrong digit in a total is easy to miss and hard to trace later. Trusting an AI to read them blindly is risky too, because a confident wrong answer looks just like a right one.",
     solution:
@@ -71,7 +71,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     category: "AI automation",
     tagline:
       "An n8n workflow that scores real estate leads with AI, syncs them to HubSpot, and sends a tailored follow-up the moment a form is submitted.",
-    stack: ["n8n", "AI", "HubSpot", "Gmail"],
+    stack: ["n8n", "HubSpot", "Gmail"],
     problem:
       "Real estate inquiries arrive all day, and they are not equal. Some people want to move this month, others are just browsing. Without a quick sort, hot leads wait in the same pile as cold ones, and every reply gets written by hand. The leads most ready to act are the ones that can least afford to wait for a response.",
     solution:
@@ -109,6 +109,37 @@ export const CASE_STUDIES: CaseStudy[] = [
       "LozEat is a mobile app design for the De La Salle Lipa community. Users browse campus stalls, order meals, and choose delivery to a classroom, office, or campus landmark, or pickup. They can search by category, see store hours, ratings, and prep time, customize items, and order from several stalls in one cart. Checkout shows fees and the order summary up front, and tracking follows the order from placed to preparing, on the way, and arrived. The interface applies Nielsen-style usability heuristics, with a clear hierarchy, thumb-friendly controls, and less typing. It is a high-fidelity prototype designed in Figma.",
     outcome:
       "LozEat is a design prototype, not a live app, so there are no usage numbers to report. What it delivers is a complete, consistent mobile flow across 12 features, from login and food discovery to checkout, tracking, reordering, and ratings. Its intended impact is shorter waits, easier access to menus and prices, better budgeting for students, and more organized orders for vendors.",
+  },
+  {
+    slug: "ap-automation",
+    title: "Finance Automation",
+    category: "AI automation",
+    tagline:
+      "A Make.com scenario that reads emailed invoices with AI, runs a chain of validation checks, and creates QuickBooks bills for the ones that pass.",
+    stack: ["Make.com", "Gmail", "QuickBooks", "Google Sheets"],
+    problem:
+      "Accounts payable starts with invoices landing in an inbox as PDFs. Someone has to open each one, retype the vendor, dates, and amounts, look for duplicates and missing purchase orders, and decide what needs approval before anything reaches the books. It is repetitive, and a duplicate or a wrong total can slip through when everything is checked by eye. Automating it blindly is risky too, because a bad extraction turns into a bad bill.",
+    solution:
+      "A Make.com scenario watches an inbox for new emails with attachments and sends the PDF to an AI model. The model returns structured data: vendor, invoice number, dates, PO number, currency, subtotal, tax, total, and every line item. The invoice then passes through a chain of checks. The invoice number is looked up in a Google Sheets log to catch duplicates, the line items must add up to the subtotal, subtotal plus tax must equal the total, and a purchase order number is required. Any failure is logged as flagged, with the reason. Invoices that pass and come in under 500 become QuickBooks bills automatically, with their line items carried over, and are logged with the bill ID. Larger invoices are logged as pending approval instead.",
+    diagram: {
+      nodes: [
+        { id: "email", label: "Invoice emailed", sub: "Gmail · PDF attached", kind: "trigger", x: 0, y: 110 },
+        { id: "extract", label: "Extract with AI", sub: "PDF to structured data", kind: "ai", x: 240, y: 110 },
+        { id: "route", label: "Validate and route", sub: "Checks, then threshold", kind: "logic", x: 480, y: 110 },
+        { id: "flagged", label: "Log as flagged", sub: "Sheets · with reason", kind: "action", x: 720, y: 0 },
+        { id: "pending", label: "Log for approval", sub: "Sheets · over 500", kind: "action", x: 720, y: 110 },
+        { id: "bill", label: "Create bill", sub: "QuickBooks · then log", kind: "action", x: 720, y: 220 },
+      ],
+      edges: [
+        { from: "email", to: "extract" },
+        { from: "extract", to: "route" },
+        { from: "route", to: "flagged", label: "failed" },
+        { from: "route", to: "pending", label: "over 500" },
+        { from: "route", to: "bill", label: "under 500" },
+      ],
+    },
+    outcome:
+      "Emailed invoices are read, checked, and logged without anyone retyping them. Duplicates, mismatched totals, missing purchase orders, and bad line items are caught and recorded with a reason, so a person looks at them instead of them becoming bills. Small, clean invoices become QuickBooks bills on their own, and larger ones wait in the log for approval, so people only review what needs it.",
   },
 ];
 

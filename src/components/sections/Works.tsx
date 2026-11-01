@@ -42,7 +42,6 @@ const WORKS: WorkItem[] = [
       "AI reads each invoice, checks the math, and saves clean records to Airtable. Doubtful ones get flagged by email.",
     stack: [
       { name: "n8n" },
-      { name: "AI" },
       { name: "Airtable" },
       { name: "Google Drive" },
     ],
@@ -81,7 +80,6 @@ const WORKS: WorkItem[] = [
       "AI scores real estate leads hot, warm, or cold, syncs them to HubSpot, and sends a tailored follow-up.",
     stack: [
       { name: "n8n" },
-      { name: "AI" },
       { name: "HubSpot" },
       { name: "Gmail" },
     ],
@@ -115,6 +113,29 @@ const WORKS: WorkItem[] = [
         "/images/works/lozeat-1.svg",
         "/images/works/lozeat-2.svg",
         "/images/works/lozeat-3.svg",
+      ],
+    },
+  },
+  {
+    title: "Finance\nAutomation",
+    category: "AI automation",
+    description:
+      "Reads emailed invoices with AI, runs validation checks, and creates QuickBooks bills for the clean ones.",
+    stack: [
+      { name: "Make.com" },
+      { name: "Gmail" },
+      { name: "QuickBooks" },
+      { name: "Google Sheets" },
+    ],
+    caseStudy: "/works/ap-automation",
+    visual: {
+      type: "workflow",
+      nodes: [
+        { label: "Invoice emailed", kind: "trigger" },
+        { label: "Extract with AI", kind: "ai" },
+        { label: "Run checks", kind: "logic" },
+        { label: "Under threshold?", kind: "logic" },
+        { label: "Bill in QuickBooks", kind: "action" },
       ],
     },
   },
