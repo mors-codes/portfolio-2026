@@ -65,6 +65,9 @@ const FADE_SELECTOR = "[data-reveal], [data-title]";
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
+// Flip to true to show stack logos on the tags again.
+const SHOW_STACK_ICONS = false;
+
 const NAV_BUTTON =
     "grid h-12 w-12 place-items-center border-[2px] border-ink text-ink transition-colors hover:bg-ink hover:text-bg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink";
 
@@ -360,10 +363,10 @@ export default function WorksSwap({ works, initialIndex = 0 }: WorksSwapProps) {
               <li
                 key={item.name}
                 className={`flex items-center gap-2 border border-ink/20 py-1 font-mono text-[8px] text-ink/70 uppercase ${
-                  item.icon ? "pr-2.5 pl-1" : "px-2.5"
+                  SHOW_STACK_ICONS && item.icon ? "pr-2.5 pl-1" : "px-2.5"
                 }`}
               >
-                {item.icon && (
+                {SHOW_STACK_ICONS && item.icon && (
                   <span className="grid h-5 w-5 place-items-center">
                     <Image
                       src={item.icon}

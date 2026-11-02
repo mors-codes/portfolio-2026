@@ -29,6 +29,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 const TOOLS = stackBlockCategories.flatMap((c) => c.tools);
 
+// Flip to true to show stack logos on the tags again.
+const SHOW_STACK_ICONS = false;
+
 // Icons for tags that aren't in the stack data. Add the file, then uncomment.
 const EXTRA_ICONS: Record<string, StackBlockTool["icon"]> = {
   // "Google Drive": "/icons/stack/ai-automation/drive.svg",
@@ -115,7 +118,8 @@ export default async function CaseStudyPage({ params }: Props) {
         </p>
         <ul className="mt-8 flex flex-wrap gap-1.5">
           {study.stack.map((name) => {
-            const hasIcon = name === "AI" || Boolean(iconFor(name));
+            const hasIcon =
+              SHOW_STACK_ICONS && (name === "AI" || Boolean(iconFor(name)));
             return (
               <li
                 key={name}

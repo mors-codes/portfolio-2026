@@ -106,7 +106,6 @@ const WORKS: WorkItem[] = [
       { name: "HCI" },
       { name: "Mobile UI" },
     ],
-    caseStudy: "/works/lozeat",
     visual: {
       type: "phones",
       images: [
