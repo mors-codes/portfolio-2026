@@ -129,8 +129,7 @@ export default function Home() {
         ]}
         socialItems={[
           { label: "GitHub", link: "https://github.com/mors-codes" },
-          { label: "LinkedIn", link: "#" },
-          { label: "Twitter", link: "#" },
+          { label: "Facebook", link: "https://www.facebook.com/mors.matias" },
         ]}
         displaySocials
         displayItemNumbering
