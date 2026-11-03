@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import { archivo, inter, danfo, audiowide, jetbrainsMono } from "@/lib/fonts";
 import "./globals.css";
+import ScrollToTop from "@/components/ui/ScrollToTop";
 
 export const metadata: Metadata = {
   title: "Moriss Matias",
@@ -32,6 +33,7 @@ export default function RootLayout({
           `}
         </Script>
         {children}
+        <ScrollToTop />
       </body>
     </html>
   );
