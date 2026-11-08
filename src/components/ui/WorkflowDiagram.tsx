@@ -68,6 +68,8 @@ const FRAME_PAD = 40;
 const BORDER_W = 6;
 // Wait before un-highlighting, so crossing the gap between nodes doesn't flash.
 const LEAVE_DELAY = 120;
+// Auto-run: how long each step stays lit.
+const STEP_MS = 2800;
 
 function StepNodeView({ id, data }: NodeProps<StepNode>) {
   const { states, selectedId, onToggle, onHover } = useContext(DiagramContext);
@@ -176,9 +178,47 @@ export default function WorkflowDiagram({
   const [hovered, setHovered] = useState<string | null>(null);
   const leaveTimer = useRef<number | null>(null);
 
-  // Hover previews; the clicked step stays lit when the mouse leaves.
-  const activeId = hovered ?? selected;
+  // A step the visitor picked (hover or click) wins over the auto-run.
+  const userId = hovered ?? selected;
+
+  // Auto-run: steps through the nodes, left to right, while nobody is interacting.
+  const order = useMemo(
+    () => [...diagram.nodes].sort((a, b) => a.x - b.x || a.y - b.y),
+    [diagram],
+  );
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(false);
+  const [started, setStarted] = useState(false);
+  const [engaged, setEngaged] = useState(false);
+  const [autoIndex, setAutoIndex] = useState(0);
+  const paused = engaged || userId !== null;
+  const autoId = !reduced && started ? (order[autoIndex]?.id ?? null) : null;
+
+  const activeId = userId ?? autoId;
   const activeNode = diagram.nodes.find((n) => n.id === activeId);
+
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        setInView(entry.isIntersecting);
+        if (entry.isIntersecting) setStarted(true);
+      },
+      { threshold: 0.4 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (reduced || !inView || paused || order.length < 2) return;
+    const t = window.setInterval(
+      () => setAutoIndex((i) => (i + 1) % order.length),
+      STEP_MS,
+    );
+    return () => window.clearInterval(t);
+  }, [reduced, inView, paused, order.length]);
 
   useEffect(
     () => () => {
@@ -209,13 +249,15 @@ export default function WorkflowDiagram({
     );
   }, [diagram]);
 
+  // A picked step lights its whole route. The auto-run lights only the way
+  // there, so it reads like a run moving through the workflow.
   const route = useMemo(() => {
     if (!activeId) return null;
     return {
       up: reach(diagram, activeId, false),
-      down: reach(diagram, activeId, true),
+      down: userId ? reach(diagram, activeId, true) : new Set([activeId]),
     };
-  }, [diagram, activeId]);
+  }, [diagram, activeId, userId]);
 
   const states = useMemo(() => {
     const out: Record<string, NodeState> = {};
@@ -287,7 +329,13 @@ export default function WorkflowDiagram({
   );
 
   return (
-    <>
+    <div
+      ref={wrapRef}
+      onPointerEnter={(e) => {
+        if (e.pointerType === "mouse") setEngaged(true);
+      }}
+      onPointerLeave={() => setEngaged(false)}
+    >
       <figure
         aria-label="Workflow diagram"
         className="m-0 mx-auto max-w-full overflow-x-auto border-[3px] border-ink bg-bg"
@@ -328,12 +376,12 @@ export default function WorkflowDiagram({
       </figure>
 
       <div
-        aria-live="polite"
+        aria-live={userId ? "polite" : "off"}
         className="mx-auto mt-4 max-w-full"
         style={{ width: frameWidth }}
       >
         <div
-          className="min-h-28 border-[3px] border-ink/20 px-5 py-4 transition-colors"
+          className="min-h-40 border-[3px] border-ink/20 px-5 py-4 transition-colors"
           style={{
             borderLeftColor: activeNode
               ? KIND_META[activeNode.kind].color
@@ -364,6 +412,6 @@ export default function WorkflowDiagram({
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 }
