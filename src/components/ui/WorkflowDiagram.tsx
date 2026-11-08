@@ -90,11 +90,6 @@ function StepNodeView({ id, data }: NodeProps<StepNode>) {
       aria-pressed={selectedId === id}
       onClick={() => onToggle(id)}
       onKeyDown={onKeyDown}
-      onPointerEnter={(e) => {
-        // Mouse only, so a tap on a phone doesn't leave a stuck hover.
-        if (e.pointerType === "mouse") onHover(id);
-      }}
-      onPointerLeave={() => onHover(null)}
       className={`pointer-events-auto w-40 cursor-pointer border-[3px] bg-bg px-3 py-2.5 text-ink transition-[opacity,box-shadow] duration-200 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink ${
         state === "dimmed" ? "opacity-30" : "opacity-100"
       }`}
@@ -329,13 +324,7 @@ export default function WorkflowDiagram({
   );
 
   return (
-    <div
-      ref={wrapRef}
-      onPointerEnter={(e) => {
-        if (e.pointerType === "mouse") setEngaged(true);
-      }}
-      onPointerLeave={() => setEngaged(false)}
-    >
+    <div ref={wrapRef}>
       <figure
         aria-label="Workflow diagram"
         className="m-0 mx-auto max-w-full overflow-x-auto border-[3px] border-ink bg-bg"
@@ -381,7 +370,7 @@ export default function WorkflowDiagram({
         style={{ width: frameWidth }}
       >
         <div
-          className="min-h-40 border-[3px] border-ink/20 px-5 py-4 transition-colors"
+          className="border-[3px] border-ink/20 px-5 py-4 transition-colors"
           style={{
             borderLeftColor: activeNode
               ? KIND_META[activeNode.kind].color
@@ -389,7 +378,7 @@ export default function WorkflowDiagram({
           }}
         >
           {activeNode ? (
-            <>
+            <div key={activeNode.id} className="note-in">
               <p
                 className="font-mono text-[10px] tracking-[1.08px] uppercase"
                 style={{ color: KIND_META[activeNode.kind].color }}
@@ -400,14 +389,14 @@ export default function WorkflowDiagram({
                 {activeNode.label}
               </p>
               {activeNode.note && (
-                <p className="mt-2 max-w-3xl font-sans text-sm font-light leading-relaxed text-ink/70">
+                <p className="mt-2 font-sans text-sm font-light leading-relaxed text-ink/70">
                   {activeNode.note}
                 </p>
               )}
-            </>
+            </div>
           ) : (
-            <p className="font-mono text-[10px] tracking-[1.08px] text-ink/40 uppercase">
-              Hover or tap a step to see what it does
+            <p className="note-in font-mono text-[10px] tracking-[1.08px] text-ink/40 uppercase">
+              Click a step to see what it does
             </p>
           )}
         </div>

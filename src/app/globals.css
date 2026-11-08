@@ -98,3 +98,25 @@ body {
   85% { opacity: 1; }
   to { opacity: 0; left: 110%; }
 }
+
+/* diagram note: fade up on reveal */
+@keyframes note-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.note-in {
+  animation: note-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .note-in {
+    animation: none;
+  }
+}
