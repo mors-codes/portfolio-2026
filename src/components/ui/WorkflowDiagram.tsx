@@ -24,26 +24,24 @@ import { GitBranch, Send, Sparkles, Zap } from "lucide-react";
 import "@xyflow/react/dist/style.css";
 import type { CaseStudyDiagram, DiagramNodeKind } from "@/data/caseStudies";
 
-type NodeState = "idle" | "active" | "path" | "dimmed";
+type NodeState = "idle" | "active" | "dimmed";
 
 // Node objects stay fixed. Highlight state flows through context, because
-// swapping the nodes array on every hover makes React Flow re-measure the
+// swapping the nodes array on every step makes React Flow re-measure the
 // nodes, and they flicker.
 type StepData = { label: string; sub?: string; kind: DiagramNodeKind };
 type StepNode = Node<StepData, "step">;
 
 type DiagramState = {
   states: Record<string, NodeState>;
-  selectedId: string | null;
-  onToggle: (id: string) => void;
-  onHover: (id: string | null) => void;
+  activeId: string | null;
+  onSelect: (id: string) => void;
 };
 
 const DiagramContext = createContext<DiagramState>({
   states: {},
-  selectedId: null,
-  onToggle: () => {},
-  onHover: () => {},
+  activeId: null,
+  onSelect: () => {},
 });
 
 const KIND_META = {
@@ -66,20 +64,19 @@ const NODE_W = 160;
 const FRAME_PAD = 40;
 // The frame's 3px border on each side.
 const BORDER_W = 6;
-// Wait before un-highlighting, so crossing the gap between nodes doesn't flash.
-const LEAVE_DELAY = 120;
-// Auto-run: how long each step stays lit.
+// How long each step stays lit while the flow runs.
 const STEP_MS = 2800;
 
 function StepNodeView({ id, data }: NodeProps<StepNode>) {
-  const { states, selectedId, onToggle, onHover } = useContext(DiagramContext);
+  const { states, activeId, onSelect } = useContext(DiagramContext);
   const state = states[id] ?? "idle";
+  const active = state === "active";
   const { label: kindLabel, Icon, color } = KIND_META[data.kind];
 
   const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
-      onToggle(id);
+      onSelect(id);
     }
   };
 
@@ -87,15 +84,15 @@ function StepNodeView({ id, data }: NodeProps<StepNode>) {
     <div
       role="button"
       tabIndex={0}
-      aria-pressed={selectedId === id}
-      onClick={() => onToggle(id)}
+      aria-current={activeId === id ? "step" : undefined}
+      onClick={() => onSelect(id)}
       onKeyDown={onKeyDown}
-      className={`pointer-events-auto w-40 cursor-pointer border-[3px] bg-bg px-3 py-2.5 text-ink transition-[opacity,box-shadow] duration-200 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink ${
+      className={`pointer-events-auto w-40 cursor-pointer border-[3px] bg-bg px-3 py-2.5 text-ink transition-[opacity,box-shadow,border-color] duration-200 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink ${
         state === "dimmed" ? "opacity-30" : "opacity-100"
       }`}
       style={{
         borderColor: color,
-        boxShadow: state === "active" ? `4px 4px 0 0 ${color}` : undefined,
+        boxShadow: active ? `4px 4px 0 0 ${color}` : undefined,
       }}
     >
       <Handle
@@ -146,17 +143,16 @@ function useReducedMotion() {
   );
 }
 
-// Every node reachable from `start`, following edges forward or backward.
-function reach(diagram: CaseStudyDiagram, start: string, forward: boolean) {
+// The node itself plus every node before it, following edges backward.
+function ancestors(diagram: CaseStudyDiagram, start: string) {
   const seen = new Set<string>([start]);
   const stack = [start];
   while (stack.length) {
     const cur = stack.pop()!;
     for (const e of diagram.edges) {
-      const [near, far] = forward ? [e.from, e.to] : [e.to, e.from];
-      if (near === cur && !seen.has(far)) {
-        seen.add(far);
-        stack.push(far);
+      if (e.to === cur && !seen.has(e.from)) {
+        seen.add(e.from);
+        stack.push(e.from);
       }
     }
   }
@@ -169,14 +165,9 @@ export default function WorkflowDiagram({
   diagram: CaseStudyDiagram;
 }) {
   const reduced = useReducedMotion();
-  const [selected, setSelected] = useState<string | null>(null);
-  const [hovered, setHovered] = useState<string | null>(null);
-  const leaveTimer = useRef<number | null>(null);
 
-  // A step the visitor picked (hover or click) wins over the auto-run.
-  const userId = hovered ?? selected;
-
-  // Auto-run: steps through the nodes, left to right, while nobody is interacting.
+  // The flow steps through the nodes left to right and loops. Clicking a step
+  // jumps the flow to it, and it carries on from there.
   const order = useMemo(
     () => [...diagram.nodes].sort((a, b) => a.x - b.x || a.y - b.y),
     [diagram],
@@ -184,12 +175,13 @@ export default function WorkflowDiagram({
   const wrapRef = useRef<HTMLDivElement>(null);
   const [inView, setInView] = useState(false);
   const [started, setStarted] = useState(false);
-  const [engaged, setEngaged] = useState(false);
-  const [autoIndex, setAutoIndex] = useState(0);
-  const paused = engaged || userId !== null;
-  const autoId = !reduced && started ? (order[autoIndex]?.id ?? null) : null;
+  const [clicked, setClicked] = useState(false);
+  const [index, setIndex] = useState(0);
+  const [runKey, setRunKey] = useState(0);
 
-  const activeId = userId ?? autoId;
+  // With reduced motion the flow stays idle until a step is clicked.
+  const shown = (started && !reduced) || clicked;
+  const activeId = shown ? (order[index]?.id ?? null) : null;
   const activeNode = diagram.nodes.find((n) => n.id === activeId);
 
   useEffect(() => {
@@ -206,34 +198,26 @@ export default function WorkflowDiagram({
     return () => io.disconnect();
   }, []);
 
+  // Runs only while the diagram is on screen. Changing `runKey` (a click)
+  // restarts the timer, so the clicked step gets its full time.
   useEffect(() => {
-    if (reduced || !inView || paused || order.length < 2) return;
+    if (reduced || !inView || order.length < 2) return;
     const t = window.setInterval(
-      () => setAutoIndex((i) => (i + 1) % order.length),
+      () => setIndex((i) => (i + 1) % order.length),
       STEP_MS,
     );
     return () => window.clearInterval(t);
-  }, [reduced, inView, paused, order.length]);
+  }, [reduced, inView, order.length, runKey]);
 
-  useEffect(
-    () => () => {
-      if (leaveTimer.current) window.clearTimeout(leaveTimer.current);
+  const onSelect = useCallback(
+    (id: string) => {
+      const i = order.findIndex((n) => n.id === id);
+      if (i < 0) return;
+      setIndex(i);
+      setClicked(true);
+      setRunKey((k) => k + 1);
     },
-    [],
-  );
-
-  const onHover = useCallback((id: string | null) => {
-    if (leaveTimer.current) {
-      window.clearTimeout(leaveTimer.current);
-      leaveTimer.current = null;
-    }
-    if (id) setHovered(id);
-    else leaveTimer.current = window.setTimeout(() => setHovered(null), LEAVE_DELAY);
-  }, []);
-
-  const toggle = useCallback(
-    (id: string) => setSelected((cur) => (cur === id ? null : id)),
-    [],
+    [order],
   );
 
   // Frame width follows the workflow: its span plus padding.
@@ -244,33 +228,27 @@ export default function WorkflowDiagram({
     );
   }, [diagram]);
 
-  // A picked step lights its whole route. The auto-run lights only the way
-  // there, so it reads like a run moving through the workflow.
-  const route = useMemo(() => {
-    if (!activeId) return null;
-    return {
-      up: reach(diagram, activeId, false),
-      down: userId ? reach(diagram, activeId, true) : new Set([activeId]),
-    };
-  }, [diagram, activeId, userId]);
+  // Lights the way to the current step, so it reads like a run moving through.
+  const route = useMemo(
+    () => (activeId ? ancestors(diagram, activeId) : null),
+    [diagram, activeId],
+  );
 
   const states = useMemo(() => {
     const out: Record<string, NodeState> = {};
     for (const n of diagram.nodes) {
-      if (!route) out[n.id] = "idle";
-      else if (n.id === activeId) out[n.id] = "active";
-      else if (route.up.has(n.id) || route.down.has(n.id)) out[n.id] = "path";
-      else out[n.id] = "dimmed";
+      if (!activeId) out[n.id] = "idle";
+      else out[n.id] = n.id === activeId ? "active" : "dimmed";
     }
     return out;
-  }, [diagram, route, activeId]);
+  }, [diagram, activeId]);
 
   const context = useMemo<DiagramState>(
-    () => ({ states, selectedId: selected, onToggle: toggle, onHover }),
-    [states, selected, toggle, onHover],
+    () => ({ states, activeId, onSelect }),
+    [states, activeId, onSelect],
   );
 
-  // Built once per diagram. Never rebuilt on hover.
+  // Built once per diagram. Never rebuilt when the step changes.
   const nodes = useMemo<StepNode[]>(
     () =>
       diagram.nodes.map(
@@ -287,10 +265,7 @@ export default function WorkflowDiagram({
   const edges = useMemo<Edge[]>(
     () =>
       diagram.edges.map((e): Edge => {
-        const onRoute =
-          !route ||
-          (route.up.has(e.from) && route.up.has(e.to)) ||
-          (route.down.has(e.from) && route.down.has(e.to));
+        const onRoute = !route || (route.has(e.from) && route.has(e.to));
         const color = edgeColor(diagram, e.to);
         return {
           id: `${e.from}-${e.to}`,
@@ -351,7 +326,6 @@ export default function WorkflowDiagram({
               zoomOnPinch={false}
               zoomOnDoubleClick={false}
               preventScrolling={false}
-              onPaneClick={() => setSelected(null)}
             >
               <Background
                 gap={24}
@@ -365,7 +339,7 @@ export default function WorkflowDiagram({
       </figure>
 
       <div
-        aria-live={userId ? "polite" : "off"}
+        aria-live="off"
         className="mx-auto mt-4 max-w-full"
         style={{ width: frameWidth }}
       >
