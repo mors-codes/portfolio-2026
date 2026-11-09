@@ -120,3 +120,43 @@ body {
     animation: none;
   }
 }
+
+/* diagram: loading bar on the node the water is flowing into */
+@keyframes node-load {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.node-load {
+  animation: node-load 0.9s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .node-load {
+    animation: none;
+  }
+}
+
+/* diagram: a line that runs once around a node's border */
+@keyframes node-lap {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.node-lap {
+  animation: node-lap linear both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .node-lap {
+    animation: none;
+  }
+}
