@@ -296,7 +296,7 @@ function StepNodeView({ id, data }: NodeProps<StepNode>) {
           aria-hidden="true"
           width={size.w}
           height={size.h}
-          className="pointer-events-none absolute -top-[3px] -left-[3px]"
+          className="pointer-events-none absolute -top-0.75 -left-0.75"
           style={{ overflow: "visible" }}
         >
           {/* The border. Faint while the step is working, so the lap shows. */}
