@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CASE_STUDIES, getCaseStudy } from "@/data/caseStudies";
 import WorkflowDiagram from "@/components/ui/WorkflowDiagram";
+import SiteNav from "@/components/ui/SiteNav";
 import Image from "next/image";
 import { Sparkles } from "lucide-react";
 import {
@@ -100,7 +101,8 @@ export default async function CaseStudyPage({ params }: Props) {
   if (!study) notFound();
 
   return (
-    <main className="mx-auto min-h-screen max-w-2xl px-8 py-16 md:py-24">
+    <main className="mx-auto min-h-screen max-w-2xl px-8 pt-28 pb-16 md:pt-32 md:pb-24">
+      <SiteNav />
       <Link
         href="/#works"
         className={`${META} inline-flex items-center gap-2 transition-colors hover:text-ink`}

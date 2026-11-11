@@ -10,9 +10,17 @@ type MobileNavProps = {
   onMenuToggle: () => void;
   isDark: boolean;
   onToggleTheme: () => void;
+  /** Where the logo goes when clicked. Defaults to scrolling to the top. */
+  onLogoClick?: () => void;
 };
 
-export default function MobileNav({ hidden, onMenuToggle, isDark, onToggleTheme }: MobileNavProps) {
+export default function MobileNav({
+  hidden,
+  onMenuToggle,
+  isDark,
+  onToggleTheme,
+  onLogoClick,
+}: MobileNavProps) {
   const navRef = useRef<HTMLDivElement>(null);
   const [hasEntered, setHasEntered] = useState(false);
 
@@ -71,7 +79,11 @@ export default function MobileNav({ hidden, onMenuToggle, isDark, onToggleTheme 
           : ""
       }`}
     >
-      <button type="button" onClick={scrollToTop} aria-label="Scroll to top">
+      <button
+        type="button"
+        onClick={onLogoClick ?? scrollToTop}
+        aria-label={onLogoClick ? "Go to home page" : "Scroll to top"}
+      >
         <p className="font-logo text-2xl">MORS.</p>
       </button>
 

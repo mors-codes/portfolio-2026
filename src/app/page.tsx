@@ -1,17 +1,7 @@
 "use client";
 
-import { useEffect, useState, useSyncExternalStore, useRef } from "react";
-
-const themeListeners = new Set<() => void>();
-
-function subscribeToThemeChange(callback: () => void) {
-  themeListeners.add(callback);
-  return () => themeListeners.delete(callback);
-}
-
-function notifyThemeChange() {
-  themeListeners.forEach((cb) => cb());
-}
+import { useEffect, useState, useRef } from "react";
+import { useTheme } from "@/lib/useTheme";
 
 import Hero from "@/components/sections/Hero";
 import About from "@/components/sections/About";
@@ -28,34 +18,7 @@ export default function Home() {
   const [pastHero, setPastHero] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<StaggeredMenuHandle>(null);
-  const isDark = useSyncExternalStore(
-    subscribeToThemeChange,
-    () => document.documentElement.classList.contains("dark"),
-    () => false
-  );
-
-  const toggleTheme = () => {
-    const next = !isDark;
-
-    const applyTheme = () => {
-      document.documentElement.classList.toggle("dark", next);
-      localStorage.setItem("theme", next ? "dark" : "light");
-      notifyThemeChange();
-    };
-
-    if (
-      "startViewTransition" in document &&
-      typeof document.startViewTransition === "function"
-    ) {
-      const glint = document.createElement("div");
-      glint.className = "sword-glint slicing";
-      document.body.appendChild(glint);
-      setTimeout(() => glint.remove(), 1000);
-      document.startViewTransition(applyTheme);
-    } else {
-      applyTheme();
-    }
-  };
+  const { isDark, toggleTheme } = useTheme();
 
   const handleMenuToggle = () => {
     menuRef.current?.toggle();
