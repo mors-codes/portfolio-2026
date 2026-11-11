@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import type { ReactNode } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CASE_STUDIES, getCaseStudy } from "@/data/caseStudies";
@@ -82,18 +81,6 @@ function TagIcon({ name }: { name: string }) {
 
 const META =
   "font-mono text-[10px] font-light tracking-[1.08px] text-ink/50 uppercase";
-
-function SectionLabel({ n, children }: { n: string; children: ReactNode }) {
-  return (
-    <p className="flex items-center gap-2 text-2xl text-[#B5B5B5] md:text-3xl">
-      <span className="font-mono-label">{n}</span>
-      <span className="font-sans font-thin">—</span>
-      <span className="font-display font-black -tracking-widest">
-        {children}
-      </span>
-    </p>
-  );
-}
 
 export default async function CaseStudyPage({ params }: Props) {
   const { slug } = await params;
