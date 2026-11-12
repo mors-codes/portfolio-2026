@@ -23,6 +23,34 @@ export interface CaseStudyDiagram {
   edges: DiagramEdge[];
 }
 
+export interface StoryPoint {
+  title: string;
+  body: string;
+}
+
+export interface StoryStat {
+  value: string;
+  label: string;
+  note: string;
+}
+
+/** The long-form Problem / Solution / Result content. */
+export interface CaseStudyStory {
+  problem: { headline: string; body: string; points: StoryPoint[] };
+  solution: {
+    headline: string;
+    body: string;
+    stats: StoryStat[];
+    pull: string;
+  };
+  result: {
+    headline: string;
+    body: string;
+    points: StoryPoint[];
+    takeaway: string;
+  };
+}
+
 export interface CaseStudy {
   slug: string;
   title: string;
@@ -32,6 +60,7 @@ export interface CaseStudy {
   problem: string;
   solution: string;
   diagram?: CaseStudyDiagram;
+  story?: CaseStudyStory;
   outcome: string;
 }
 
@@ -114,6 +143,73 @@ export const CASE_STUDIES: CaseStudy[] = [
     },
     outcome:
       "Every invoice now ends up as a structured Airtable record, with its line items linked and the source file attached for quick checking. Because the math is verified separately from the AI, wrong or uncertain extractions are caught instead of silently saved. Flagged records keep a written reason, so a person can fix them in place rather than re-entering anything.",
+    story: {
+      problem: {
+        headline: "A wrong digit looks exactly like a right one.",
+        body: "Invoices come in as PDFs and images, laid out differently by every vendor. Typing the vendor, dates, totals, and line items into a system by hand is slow, and the mistakes it creates are quiet ones. Nobody notices a transposed digit until the books stop adding up. Handing the reading to AI removes the typing, but not the risk. A model can return a clean, confident answer that is simply wrong.",
+        points: [
+          {
+            title: "No two invoices look alike",
+            body: "Layouts, labels, and currencies change from one vendor to the next, so a fixed template never holds for long.",
+          },
+          {
+            title: "Mistakes hide in plain sight",
+            body: "A mistyped total or a missed line item rarely looks like a mistake. It shows up later, in a reconciliation, when it costs more to trace.",
+          },
+          {
+            title: "A confident answer can still be wrong",
+            body: "A model that sounds sure can still misread a number. Without an independent check, a wrong answer and a right one look identical.",
+          },
+        ],
+      },
+      solution: {
+        headline: "Extract fast. Verify independently. Escalate clearly.",
+        body: "Dropping a file into a Drive folder starts the workflow. An AI vision model turns the invoice into a strict structure: vendor, invoice and PO numbers, dates, currency, subtotal, tax, total, every line item, and its own confidence score. A separate code step then recomputes the arithmetic without trusting the model. Everything lands in Airtable, with line items in a linked table and the original file attached. If a check fails, the record is flagged and an email explains why.",
+        stats: [
+          {
+            value: "0.85",
+            label: "Confidence floor",
+            note: "Below it, the invoice is flagged instead of accepted.",
+          },
+          {
+            value: "±0.02",
+            label: "Math tolerance",
+            note: "Line items must match the subtotal, and subtotal plus tax must match the total.",
+          },
+          {
+            value: "1 min",
+            label: "Folder check",
+            note: "The Drive trigger looks for new files in the intake folder every minute.",
+          },
+          {
+            value: "2",
+            label: "Linked tables",
+            note: "Invoices and line items in Airtable, with the source file attached.",
+          },
+        ],
+        pull: "The model's output is a draft. The code decides whether it moves forward.",
+      },
+      result: {
+        headline: "Every invoice leaves a record. Every exception leaves a reason.",
+        body: "Invoices now arrive in Airtable as structured, linked records with the source file attached. The ones that pass go through untouched. The ones that don't are caught by the checks, saved anyway, and flagged with a written reason, so a person fixes the record in place instead of starting again.",
+        points: [
+          {
+            title: "Structured by default",
+            body: "Vendor, dates, totals, and line items land in a consistent format, with line items linked to their invoice.",
+          },
+          {
+            title: "Questionable data is caught",
+            body: "Failed math, low confidence, or unreadable output is flagged, never silently accepted.",
+          },
+          {
+            title: "Exceptions explain themselves",
+            body: "The alert names the invoice, the vendor, the total, and exactly why it needs a look.",
+          },
+        ],
+        takeaway:
+          "Speed from the model. Trust from the checks. Judgment left to people.",
+      },
+    },
   },
   {
     slug: "lead-scoring",
@@ -193,6 +289,72 @@ export const CASE_STUDIES: CaseStudy[] = [
     },
     outcome:
       "Every inquiry now gets a tier, a written reason, and a personalized reply without anyone touching it. Hot leads reach the owner right away with contact details and the AI's reasoning, so the people ready to act are seen first. Nothing is dropped: warm and cold leads still become HubSpot contacts and deals, and the reasoning stays on both so a person can review or overrule any score.",
+    story: {
+      problem: {
+        headline: "The leads ready to act are the ones that can least afford to wait.",
+        body: "Real estate inquiries arrive at all hours, and they are not equal. Some people want to move this month, others are just browsing, and both come through the same form looking much alike. Without a quick sort, hot leads wait in the same pile as cold ones, and every reply gets written by hand. The fastest answer goes to whoever happens to sit at the top of the inbox.",
+        points: [
+          {
+            title: "Not every lead is equal",
+            body: "A buyer with financing and a short timeline and someone idly browsing look nearly the same on arrival.",
+          },
+          {
+            title: "Speed goes to the wrong lead",
+            body: "Replying in the order leads arrive means the most ready lead can wait behind the least ready one.",
+          },
+          {
+            title: "Thoughtful replies don't scale",
+            body: "Writing a reply around what each person actually said takes time, so replies end up generic or late.",
+          },
+        ],
+      },
+      solution: {
+        headline: "Score every lead. Explain the score. Reply in their words.",
+        body: "A short web form collects contact details, whether the lead wants to buy or sell, free-text details, budget or property value, and timeline. An AI step reads the inquiry against a written rubric covering timeline, budget, financing, and how specific the request is. It returns a tier, a short reason, structured details like location and financing, and a drafted reply. A switch routes each lead by tier. All three become a HubSpot contact with a linked deal, and hot leads also trigger an instant email to the owner. Each lead then gets the drafted reply, written around what they submitted, with a link to book a call.",
+        stats: [
+          {
+            value: "7",
+            label: "Form fields",
+            note: "Contact details, buy or sell, free-text details, budget or value, and timeline.",
+          },
+          {
+            value: "3",
+            label: "Lead tiers",
+            note: "Hot, warm, or cold, scored against a written rubric.",
+          },
+          {
+            value: "≤3 mo",
+            label: "Hot timeline",
+            note: "A move within about three months is one of the signals the rubric treats as hot.",
+          },
+          {
+            value: "2",
+            label: "Deal stages",
+            note: "Hot leads start at Qualified to Buy, the rest at Appointment Scheduled.",
+          },
+        ],
+        pull: "The score comes with its reasoning, so a person can check it and overrule it.",
+      },
+      result: {
+        headline: "Every lead gets answered. The ready ones get noticed first.",
+        body: "Every inquiry now gets a tier, a written reason, and a personalized reply without anyone touching it. Hot leads reach the owner right away, so the people ready to act are seen first. Warm and cold leads aren't dropped. They still become contacts and deals, with the reasoning saved so a person can review or overrule any score.",
+        points: [
+          {
+            title: "Hot leads surface first",
+            body: "The owner gets an instant email with contact details, location, must-haves, and the reason for the score.",
+          },
+          {
+            title: "Nothing falls through",
+            body: "Warm and cold leads still land in HubSpot as contacts with deals, at the stage that fits their tier.",
+          },
+          {
+            title: "Scores can be checked",
+            body: "The AI's reasoning is saved on the contact and the deal, so a person can see why and overrule it.",
+          },
+        ],
+        takeaway: "Every lead answered. The ready ones noticed first.",
+      },
+    },
   },
   {
     slug: "ap-automation",
@@ -272,6 +434,72 @@ export const CASE_STUDIES: CaseStudy[] = [
     },
     outcome:
       "Emailed invoices are read, checked, and logged without anyone retyping them. Duplicates, mismatched totals, missing purchase orders, and bad line items are caught and recorded with a reason, so a person looks at them instead of them becoming bills. Small, clean invoices become QuickBooks bills on their own, and larger ones wait in the log for approval, so people only review what needs it.",
+    story: {
+      problem: {
+        headline: "Before an invoice becomes a bill, someone has to trust it.",
+        body: "Accounts payable starts with invoices landing in an inbox as PDFs. Someone opens each one, retypes the vendor, dates, and amounts, hunts for duplicates and missing purchase orders, and decides what needs approval before anything reaches the books. It is repetitive work, and the errors it produces are quiet ones: a duplicate booked twice, a total that doesn't match its line items. Automating it blindly doesn't fix that, because a bad extraction simply becomes a bad bill.",
+        points: [
+          {
+            title: "Retyping is slow and error-prone",
+            body: "Vendor, dates, totals, and every line item get keyed in by hand, one invoice at a time.",
+          },
+          {
+            title: "Problems hide until later",
+            body: "Duplicates, missing purchase orders, and totals that don't add up are easy to miss by eye.",
+          },
+          {
+            title: "Blind automation is risky",
+            body: "If an AI reads an invoice and a bill is created straight away, a wrong extraction goes into the books.",
+          },
+        ],
+      },
+      solution: {
+        headline: "Read it, test it, then decide what happens next.",
+        body: "A Make.com scenario watches an inbox for new emails with attachments and sends the PDF to an AI model. The model returns structured data: vendor, invoice number, dates, PO number, currency, subtotal, tax, total, and every line item. The invoice then runs through a chain of checks. Its number is looked up in a Google Sheets log to catch duplicates, the line items must add up to the subtotal, subtotal plus tax must equal the total, and a purchase order number is required. Any failure is logged as flagged, with the reason. Invoices that pass and come in under 500 become QuickBooks bills automatically, with their line items carried over, and are logged with the bill ID. Larger invoices are logged as pending approval instead.",
+        stats: [
+          {
+            value: "9",
+            label: "Fields extracted",
+            note: "Plus every line item, with description, quantity, unit price, and amount.",
+          },
+          {
+            value: "4",
+            label: "Checks per invoice",
+            note: "Duplicate number, line items against subtotal, totals, and purchase order.",
+          },
+          {
+            value: "500",
+            label: "Approval threshold",
+            note: "Under it, passing invoices become bills. At 500 or more, they wait for approval.",
+          },
+          {
+            value: "3",
+            label: "Possible outcomes",
+            note: "Flagged, pending approval, or processed, each recorded in the Sheets log.",
+          },
+        ],
+        pull: "A bill is only created after every check has passed.",
+      },
+      result: {
+        headline: "Clean invoices post themselves. Everything else says why.",
+        body: "Emailed invoices are now read, checked, and logged without anyone retyping them. Duplicates, mismatched totals, missing purchase orders, and bad line items are caught and recorded with a reason, so a person looks at them instead of them becoming bills. Small, clean invoices become QuickBooks bills on their own, and larger ones wait in the log for approval, so people only review what needs it.",
+        points: [
+          {
+            title: "Bills without retyping",
+            body: "Passing invoices under 500 go to QuickBooks with the vendor, due date, document number, and every line item carried over.",
+          },
+          {
+            title: "Problems caught before the books",
+            body: "Duplicates, missing POs, and totals that don't match their line items are flagged, not posted.",
+          },
+          {
+            title: "A log of every decision",
+            body: "Each invoice is written to a Google Sheets log as flagged, pending approval, or processed with its bill ID.",
+          },
+        ],
+        takeaway: "Routine invoices post themselves. Risky ones stop and say why.",
+      },
+    },
   },
 ];
 

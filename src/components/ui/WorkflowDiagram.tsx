@@ -28,6 +28,7 @@ import {
 import { GitBranch, Send, Sparkles, Zap } from "lucide-react";
 import "@xyflow/react/dist/style.css";
 import type { CaseStudyDiagram, DiagramNodeKind } from "@/data/caseStudies";
+import { BORDER_W, FRAME_PAD, diagramFrameWidth } from "@/lib/diagramLayout";
 
 type NodeState = "idle" | "active" | "dimmed";
 
@@ -87,11 +88,6 @@ const edgeId = (e: { from: string; to: string }) => `${e.from}-${e.to}`;
 
 const HANDLE_STYLE = { opacity: 0, pointerEvents: "none" } as const;
 
-// Keep NODE_W in sync with the node's w-40 below.
-const NODE_W = 160;
-const FRAME_PAD = 40;
-// The frame's 3px border on each side.
-const BORDER_W = 6;
 // How long a step "works": the line runs once around its border.
 const LAP_MS = 1800;
 // How long the water takes to reach the next step.
@@ -551,12 +547,7 @@ export default function WorkflowDiagram({
   );
 
   // Frame width follows the workflow: its span plus padding.
-  const frameWidth = useMemo(() => {
-    const xs = diagram.nodes.map((n) => n.x);
-    return (
-      Math.max(...xs) - Math.min(...xs) + NODE_W + FRAME_PAD * 2 + BORDER_W
-    );
-  }, [diagram]);
+  const frameWidth = useMemo(() => diagramFrameWidth(diagram), [diagram]);
 
   // The pipes that hold water once the current step has arrived.
   const route = useMemo(

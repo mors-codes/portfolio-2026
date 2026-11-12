@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { CASE_STUDIES, getCaseStudy } from "@/data/caseStudies";
 import WorkflowDiagram from "@/components/ui/WorkflowDiagram";
 import SiteNav from "@/components/ui/SiteNav";
+import { diagramFrameWidth } from "@/lib/diagramLayout";
+import CaseStory from "@/components/ui/CaseStory";
 import Image from "next/image";
 import { Sparkles } from "lucide-react";
 import {
@@ -87,6 +89,9 @@ export default async function CaseStudyPage({ params }: Props) {
   const study = getCaseStudy(slug);
   if (!study) notFound();
 
+  // Problem, Solution, and Result span the same width as the diagram.
+  const wide = study.diagram ? diagramFrameWidth(study.diagram) : null;
+
   return (
     <main className="mx-auto min-h-screen max-w-2xl px-8 pt-28 pb-16 md:pt-32 md:pb-24">
       <SiteNav />
@@ -134,28 +139,39 @@ export default async function CaseStudyPage({ params }: Props) {
         </div>
       )}
 
-      <section className="mt-16">
-        {[
-          { n: "01", label: "Problem", text: study.problem },
-          { n: "02", label: "Solution", text: study.solution },
-          { n: "03", label: "Result", text: study.outcome },
-        ].map(({ n, label, text }) => (
-          <div
-            key={n}
-            className="grid gap-4 border-t border-ink/20 py-10 last:border-b md:grid-cols-[7rem_1fr] md:gap-8"
-          >
-            <div className="flex items-baseline gap-3 md:block">
-              <span className="font-mono-label text-sm text-ink/40">{n}</span>
-              <h2 className="font-display text-xl font-black -tracking-widest md:mt-1">
+      {study.story && <CaseStory story={study.story} width={wide} />}
+
+      {!study.story && (
+      <section
+        className={`mt-16 border-t border-ink/20 pt-10 ${
+          wide ? "relative left-1/2 -translate-x-1/2" : ""
+        }`}
+        style={
+          wide ? { width: `min(${wide}px, calc(100vw - 4rem))` } : undefined
+        }
+      >
+        <div className="grid divide-y divide-ink/20 lg:grid-cols-[1fr_1.35fr_1fr] lg:divide-x lg:divide-y-0">
+          {[
+            { n: "01", label: "Problem", text: study.problem },
+            { n: "02", label: "Solution", text: study.solution },
+            { n: "03", label: "Result", text: study.outcome },
+          ].map(({ n, label, text }) => (
+            <div
+              key={n}
+              className="py-8 first:pt-0 last:pb-0 lg:px-6 lg:py-0 lg:first:pl-0 lg:last:pr-0"
+            >
+              <p className="font-mono-label text-sm text-ink/40">{n}</p>
+              <h2 className="mt-2 font-display text-3xl font-black -tracking-widest lg:text-4xl">
                 {label}
               </h2>
+              <p className="mt-5 max-w-2xl font-sans text-sm font-light leading-relaxed text-ink/70 lg:max-w-none">
+                {text}
+              </p>
             </div>
-            <p className="font-sans text-sm font-light leading-relaxed text-ink/70 md:text-base">
-              {text}
-            </p>
-          </div>
-        ))}
+          ))}
+        </div>
       </section>
+      )}
 
       <Link
         href="/#works"
