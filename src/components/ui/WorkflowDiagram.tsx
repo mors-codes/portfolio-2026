@@ -62,6 +62,10 @@ type DiagramState = {
   onSelect: (id: string) => void;
   /** Changes whenever a step starts its lap, so the lap restarts. */
   lapKey: number;
+  /** Compact version: no sub-lines. */
+  preview: boolean;
+  /** Diagonal layout: lines leave from the bottom of a step. */
+  cascade: boolean;
 };
 
 const DiagramContext = createContext<DiagramState>({
@@ -69,6 +73,8 @@ const DiagramContext = createContext<DiagramState>({
   activeId: null,
   onSelect: () => {},
   lapKey: 0,
+  preview: false,
+  cascade: false,
 });
 
 const KIND_META = {
@@ -240,10 +246,13 @@ const EDGE_TYPES = { flow: FlowEdge };
 /* ----------------------------------- node ---------------------------------- */
 
 function StepNodeView({ id, data }: NodeProps<StepNode>) {
-  const { states, activeId, onSelect, lapKey } = useContext(DiagramContext);
+  const { states, activeId, onSelect, lapKey, preview, cascade } =
+    useContext(DiagramContext);
   const state = states[id] ?? "idle";
   const active = state === "active";
-  const { label: kindLabel, Icon, color } = KIND_META[data.kind];
+  const { label: kindLabel, Icon, color: kindColor } = KIND_META[data.kind];
+  // The Works cards are monochrome: everything is drawn in the ink color.
+  const color = preview ? "var(--color-ink)" : kindColor;
 
   // The visible border is drawn in SVG, so it needs the node's real size.
   const boxRef = useRef<HTMLDivElement>(null);
@@ -328,7 +337,9 @@ function StepNodeView({ id, data }: NodeProps<StepNode>) {
       />
       <div className="mb-2 flex items-center justify-between">
         <span
-          className="px-1.5 py-0.5 font-mono text-[8px] tracking-wider text-white uppercase"
+          className={`px-1.5 py-0.5 font-mono text-[8px] tracking-wider uppercase ${
+            preview ? "text-bg" : "text-white"
+          }`}
           style={{ backgroundColor: color }}
         >
           {kindLabel}
@@ -338,14 +349,14 @@ function StepNodeView({ id, data }: NodeProps<StepNode>) {
       <p className="font-sans text-[14px] leading-tight font-medium">
         {data.label}
       </p>
-      {data.sub && (
+      {data.sub && !preview && (
         <p className="mt-1 font-sans text-[11px] leading-tight font-light opacity-60">
           {data.sub}
         </p>
       )}
       <Handle
         type="source"
-        position={Position.Right}
+        position={cascade ? Position.Bottom : Position.Right}
         isConnectable={false}
         style={HANDLE_STYLE}
       />
@@ -431,18 +442,36 @@ function planTravel(
 
 export default function WorkflowDiagram({
   diagram,
+  preview = false,
+  cascade = false,
 }: {
   diagram: CaseStudyDiagram;
-}) {
+  /** Compact, non-interactive version that fills its parent (used on the Works cards). */
+  preview?: boolean;
+  /** Lines leave from the bottom of a step, for a diagonal upper-left to lower-right layout. */
+  cascade?: boolean;
+}) { 
   const reduced = useReducedMotion();
 
   // The flow goes through the steps left to right and loops. A step runs a lap
   // around its border, then water runs along the pipe into the next step,
   // which starts its own lap. Clicking a step starts the flow from that step.
-  const order = useMemo(
-    () => [...diagram.nodes].sort((a, b) => a.x - b.x || a.y - b.y),
-    [diagram],
-  );
+  const order = useMemo(() => {
+    // Depth of each step in the flow, so a wrapped row still runs in order.
+    const depth = new Map(diagram.nodes.map((n) => [n.id, 0]));
+    for (let pass = 0; pass < diagram.nodes.length; pass++) {
+      for (const e of diagram.edges) {
+        const next = (depth.get(e.from) ?? 0) + 1;
+        if (next > (depth.get(e.to) ?? 0)) depth.set(e.to, next);
+      }
+    }
+    return [...diagram.nodes].sort(
+      (a, b) =>
+        (depth.get(a.id) ?? 0) - (depth.get(b.id) ?? 0) ||
+        a.y - b.y ||
+        a.x - b.x,
+    );
+  }, [diagram]);
   const wrapRef = useRef<HTMLDivElement>(null);
   const startedRef = useRef(false);
   // Index (in `order`) of the step that is working.
@@ -565,8 +594,8 @@ export default function WorkflowDiagram({
   }, [diagram, activeId]);
 
   const context = useMemo<DiagramState>(
-    () => ({ states, activeId, onSelect, lapKey }),
-    [states, activeId, onSelect, lapKey],
+    () => ({ states, activeId, onSelect, lapKey, preview, cascade }),
+    [states, activeId, onSelect, lapKey, preview, cascade],
   );
 
   // Built once per diagram. Never rebuilt when the step changes.
@@ -590,7 +619,7 @@ export default function WorkflowDiagram({
         const planned = travel?.plan.get(id);
         const inRoute = !!route && route.has(e.from) && route.has(e.to);
         const fill: PipeFill = planned ? "filling" : inRoute ? "full" : "empty";
-        const color = edgeColor(diagram, e.to);
+        const color = preview ? "var(--color-ink)" : edgeColor(diagram, e.to);
         return {
           id,
           source: e.from,
@@ -603,7 +632,7 @@ export default function WorkflowDiagram({
             delay: planned?.delay ?? 0,
             duration: planned?.duration ?? TRAVEL_MS,
             color,
-            fromColor: edgeColor(diagram, e.from),
+            fromColor: preview ? "var(--color-ink)" : edgeColor(diagram, e.from),
           },
           labelStyle: {
             fill: color,
@@ -617,8 +646,46 @@ export default function WorkflowDiagram({
           labelBgBorderRadius: 0,
         };
       }),
-    [diagram, route, travel],
+    [diagram, route, travel, preview],
   );
+
+  // Compact version for the Works cards: no frame, no note card, no clicks.
+  if (preview) {
+    return (
+      <div ref={wrapRef} inert aria-hidden="true" className="h-full w-full">
+        <DiagramContext.Provider value={context}>
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            nodeTypes={NODE_TYPES}
+            edgeTypes={EDGE_TYPES}
+            proOptions={{ hideAttribution: true }}
+            fitView
+            fitViewOptions={{ padding: "24px" }}
+            minZoom={0.1}
+            maxZoom={1.25}
+            nodesDraggable={false}
+            nodesConnectable={false}
+            nodesFocusable={false}
+            edgesFocusable={false}
+            elementsSelectable={false}
+            panOnDrag={false}
+            zoomOnScroll={false}
+            zoomOnPinch={false}
+            zoomOnDoubleClick={false}
+            preventScrolling={false}
+          >
+            <Background
+              gap={24}
+              size={2.4}
+              color="var(--color-ink)"
+              style={{ opacity: 0.18 }}
+            />
+          </ReactFlow>
+        </DiagramContext.Provider>
+      </div>
+    );
+  }
 
   return (
     <div ref={wrapRef}>

@@ -1,8 +1,9 @@
 "use client";
 
-import { useId, useLayoutEffect, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import Image from "next/image";
-import gsap from "gsap";
+import WorkflowDiagram from "@/components/ui/WorkflowDiagram";
+import { getCaseStudy, type CaseStudyDiagram } from "@/data/caseStudies";
 
 /* -------------------------------------------------------------------------- */
 /*  Data shapes — this is what you edit when adding a project's visual         */
@@ -37,6 +38,7 @@ export type WorkVisualData =
   | { type: "screens"; screens: WorkScreen[] }
   | { type: "phones"; images: string[] }
   | { type: "workflow"; nodes: WorkflowNode[] }
+  | { type: "diagram"; slug: string }
   | { type: "artwork"; image: string };
 
 interface WorkVisualProps {
@@ -288,151 +290,34 @@ function PhonesVisual({ images, title }: { images: string[]; title: string }) {
 /*  Workflow — AI automation                                                   */
 /* -------------------------------------------------------------------------- */
 
-const WF = {
-  width: 800,
-  height: 500,
-  pad: 48,
-  nodeW: 196,
-  nodeH: 56,
-  max: 5,
-} as const;
+// Each step sits a little right of and below the one before it, so the flow
+// cascades from the upper left to the lower right.
+const CARD_STEP_X = 110;
+const CARD_STEP_Y = 96;
+const CARD_MAX_STEPS = 5;
 
-function WorkflowVisual({
-  nodes,
-  title,
-}: {
-  nodes: WorkflowNode[];
-  title: string;
-}) {
-  const svgRef = useRef<SVGSVGElement>(null);
-  const rawId = useId();
-  const patternId = `wf-dots-${rawId.replace(/:/g, "")}`;
-
-  const shown = nodes.slice(0, WF.max);
-  const count = shown.length;
-  const stepX =
-    count > 1
-      ? Math.min(190, (WF.width - WF.pad * 2 - WF.nodeW) / (count - 1))
-      : 0;
-  const stepY =
-    count > 1
-      ? Math.min(130, (WF.height - WF.pad * 2 - WF.nodeH) / (count - 1))
-      : 0;
-  const originX = (WF.width - ((count - 1) * stepX + WF.nodeW)) / 2;
-  const originY = (WF.height - ((count - 1) * stepY + WF.nodeH)) / 2;
-  const points = shown.map((_, i) => ({
-    x: originX + i * stepX,
-    y: originY + i * stepY,
-  }));
-
-  useLayoutEffect(() => {
-    if (prefersReducedMotion()) return;
-    const ctx = gsap.context(() => {
-      gsap.to(".wf-flow", {
-        strokeDashoffset: -24,
-        duration: 1.2,
-        ease: "none",
-        repeat: -1,
-      });
-    }, svgRef);
-    return () => ctx.revert();
-  }, []);
+/** Lays a plain list of steps out in rows of three, so it fills a card. */
+function WorkflowVisual({ nodes }: { nodes: WorkflowNode[]; title: string }) {
+  const diagram = useMemo<CaseStudyDiagram>(() => {
+    const shown = nodes.slice(0, CARD_MAX_STEPS);
+    return {
+      nodes: shown.map((n, i) => ({
+        id: `step-${i}`,
+        label: n.label,
+        kind: n.kind ?? "action",
+        x: i * CARD_STEP_X,
+        y: i * CARD_STEP_Y,
+      })),
+      edges: shown.slice(1).map((_, i) => ({
+        from: `step-${i}`,
+        to: `step-${i + 1}`,
+      })),
+    };
+  }, [nodes]);
 
   return (
-    <div className="h-full w-full overflow-hidden border-[3px] border-ink bg-bg text-ink">
-      <svg
-        ref={svgRef}
-        viewBox={`0 0 ${WF.width} ${WF.height}`}
-        className="h-full w-full"
-        role="img"
-        aria-label={`${title} workflow: ${shown.map((n) => n.label).join(", then ")}`}
-      >
-        <defs>
-          <pattern
-            id={patternId}
-            width="24"
-            height="24"
-            patternUnits="userSpaceOnUse"
-          >
-            <circle cx="2" cy="2" r="1.2" className="fill-ink" opacity="0.18" />
-          </pattern>
-        </defs>
-        <rect
-          width={WF.width}
-          height={WF.height}
-          fill={`url(#${patternId})`}
-        />
-
-        {shown.map((node, i) => {
-          const { x, y } = points[i];
-          const inverted = node.kind === "ai";
-          return (
-            <g key={`${node.label}-${i}`}>
-              <rect
-                x={x}
-                y={y}
-                width={WF.nodeW}
-                height={WF.nodeH}
-                strokeWidth="3"
-                className={`stroke-ink ${inverted ? "fill-ink" : "fill-bg"}`}
-              />
-              <text
-                x={x + 16}
-                y={y + 21}
-                fontSize="10"
-                letterSpacing="1"
-                className={`font-mono-label ${inverted ? "fill-bg" : "fill-ink"}`}
-                opacity="0.6"
-              >
-                {String(i + 1).padStart(2, "0")}
-              </text>
-              {node.kind && (
-                <text
-                  x={x + WF.nodeW - 16}
-                  y={y + 21}
-                  fontSize="11"
-                  textAnchor="end"
-                  className={`font-sans ${inverted ? "fill-bg" : "fill-ink"}`}
-                  opacity="0.6"
-                >
-                  {node.kind}
-                </text>
-              )}
-              <text
-                x={x + 16}
-                y={y + 42}
-                fontSize="17"
-                fontWeight="500"
-                className={`font-sans ${inverted ? "fill-bg" : "fill-ink"}`}
-              >
-                {node.label}
-              </text>
-            </g>
-          );
-        })}
-
-        {points.slice(0, -1).map((from, i) => {
-          const to = points[i + 1];
-          const sx = from.x + WF.nodeW / 2;
-          const sy = from.y + WF.nodeH;
-          const ex = to.x;
-          const ey = to.y + WF.nodeH / 2;
-          return (
-            <g key={i}>
-              <path
-                d={`M${sx} ${sy} Q${sx} ${ey} ${ex} ${ey}`}
-                className="wf-flow stroke-ink"
-                fill="none"
-                strokeWidth="2.5"
-                strokeDasharray="6 6"
-                strokeLinecap="round"
-              />
-              <circle cx={sx} cy={sy} r="4" className="fill-ink" />
-              <circle cx={ex} cy={ey} r="4" className="fill-ink" />
-            </g>
-          );
-        })}
-      </svg>
+    <div className="h-full w-full overflow-hidden border-[3px] border-ink bg-bg">
+      <WorkflowDiagram diagram={diagram} preview cascade />
     </div>
   );
 }
@@ -453,6 +338,30 @@ function ArtworkVisual({ image, title }: { image: string; title: string }) {
 /*  Entry point                                                                */
 /* -------------------------------------------------------------------------- */
 
+/* -------------------------------------------------------------------------- */
+/*  Diagram — the case study workflow, in compact form                         */
+/* -------------------------------------------------------------------------- */
+
+function DiagramVisual({ slug }: { slug: string }) {
+  const diagram = getCaseStudy(slug)?.diagram;
+
+  // No diagram for this slug: blank frame instead of a crash.
+  if (!diagram) {
+    return (
+      <div
+        aria-hidden="true"
+        className="h-full w-full border-[3px] border-ink bg-ink/6"
+      />
+    );
+  }
+
+  return (
+    <div className="h-full w-full overflow-hidden border-[3px] border-ink bg-bg">
+      <WorkflowDiagram diagram={diagram} preview />
+    </div>
+  );
+}
+
 export default function WorkVisual({ visual, title }: WorkVisualProps) {
   switch (visual.type) {
     case "browser":
@@ -465,6 +374,8 @@ export default function WorkVisual({ visual, title }: WorkVisualProps) {
       return <PhonesVisual images={visual.images} title={title} />;
     case "workflow":
       return <WorkflowVisual nodes={visual.nodes} title={title} />;
+    case "diagram":
+      return <DiagramVisual slug={visual.slug} />;
     case "artwork":
       return <ArtworkVisual image={visual.image} title={title} />;
   }
